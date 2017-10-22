@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,9 +43,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IWpfTextView wpfTextView;
 
 		public DocumentViewerMouseProcessor(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
@@ -173,7 +171,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		Cursor oldCursor;
 
 		public override void PostprocessMouseLeave(MouseEventArgs e) => RestoreState();
-		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => RestoreState();
+
+		void WpfTextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) {
+			if (e.OldSnapshot != e.NewSnapshot)
+				RestoreState();
+		}
 
 		void VisualElement_PreviewKeyDown(object sender, KeyEventArgs e) => UpdateModifiers();
 		void VisualElement_PreviewKeyUp(object sender, KeyEventArgs e) => UpdateModifiers();

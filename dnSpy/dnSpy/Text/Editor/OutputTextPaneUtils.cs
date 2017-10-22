@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,8 +49,7 @@ namespace dnSpy.Text.Editor {
 		public static IOutputTextPane TryGetInstance(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			IOutputTextPane outputTextPane;
-			textView.Properties.TryGetProperty(Key, out outputTextPane);
+			textView.Properties.TryGetProperty(Key, out IOutputTextPane outputTextPane);
 			return outputTextPane;
 		}
 	}

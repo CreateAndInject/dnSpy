@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,8 +34,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 		static DecompilerSettingsService __instance_DONT_USE;
 
 		protected DecompilerSettingsService() {
-			this.CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings();
-			this.ILDecompilerSettings = new ILDecompilerSettings();
+			CSharpVBDecompilerSettings = new CSharpVBDecompilerSettings();
+			ILDecompilerSettings = new ILDecompilerSettings();
 		}
 
 		public CSharpVBDecompilerSettings CSharpVBDecompilerSettings { get; protected set; }

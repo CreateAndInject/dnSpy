@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,11 +34,9 @@ namespace dnSpy.Text.Editor {
 		readonly LayerKind layerKind;
 
 		public AdornmentLayerCollection(IWpfTextView wpfTextView, LayerKind layerKind) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
 			this.layerKind = layerKind;
-			this.adornmentLayers = new List<AdornmentLayer>();
+			adornmentLayers = new List<AdornmentLayer>();
 			if (layerKind != LayerKind.Normal)
 				ClipToBounds = true;
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -74,7 +72,7 @@ namespace dnSpy.Text.Editor {
 				Height = wpfTextView.VisualElement.ActualHeight;
 				if (layerKind == LayerKind.Normal) {
 					// Needed when HW acceleration isn't enabled (virtual machine or remote desktop).
-					// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(VS.100).aspx
+					// https://msdn.microsoft.com/en-us/library/system.windows.media.visual.visualscrollableareaclip(v=vs.110).aspx
 					// It's ignored if HW acceleration is enabled.
 					// This will reduce the number of bytes sent over the network and should speed up the display
 					// if it's a slow connection.

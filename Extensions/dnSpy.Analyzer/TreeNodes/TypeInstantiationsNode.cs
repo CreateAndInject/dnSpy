@@ -31,11 +31,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool isSystemObject;
 
 		public TypeInstantiationsNode(TypeDef analyzedType) {
-			if (analyzedType == null)
-				throw new ArgumentNullException(nameof(analyzedType));
-
-			this.analyzedType = analyzedType;
-			this.isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
+			this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
+			isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
@@ -59,8 +56,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				Instruction foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
-					IMethod mr = instr.Operand as IMethod;
-					if (mr != null && !mr.IsField && mr.Name == ".ctor") {
+					if (instr.Operand is IMethod mr && !mr.IsField && mr.Name == ".ctor") {
 						if (Helpers.IsReferencedBy(analyzedType, mr.DeclaringType)) {
 							foundInstr = instr;
 							break;

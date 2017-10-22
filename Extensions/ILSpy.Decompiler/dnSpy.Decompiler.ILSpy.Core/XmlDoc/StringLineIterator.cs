@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public readonly int Length;
 
 		public SubStringInfo(int index, int length) {
-			this.Index = index;
-			this.Length = length;
+			Index = index;
+			Length = length;
 		}
 	}
 
@@ -43,9 +43,9 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public StringLineIterator(string s, int index, int length) {
 			this.s = s;
 			this.index = index;
-			this.end = index + length;
-			this.info = default(SubStringInfo);
-			this.finished = false;
+			end = index + length;
+			info = default;
+			finished = false;
 		}
 
 		public StringLineIterator GetEnumerator() => this;
@@ -69,25 +69,23 @@ namespace dnSpy.Decompiler.ILSpy.Core.XmlDoc {
 		public void Dispose() { }
 
 		public bool MoveNext() {
-			int newLineIndex = this.s.IndexOfAny(newLineChars, this.index, end - this.index);
+			int newLineIndex = s.IndexOfAny(newLineChars, index, end - index);
 			if (newLineIndex < 0) {
-				if (this.finished)
+				if (finished)
 					return false;
-				this.info = new SubStringInfo(this.index, end - this.index);
-				this.finished = true;
+				info = new SubStringInfo(index, end - index);
+				finished = true;
 				return true;
 			}
-			int len = newLineIndex - this.index;
-			this.info = new SubStringInfo(this.index, len);
+			int len = newLineIndex - index;
+			info = new SubStringInfo(index, len);
 			if (s[newLineIndex] == '\r' && newLineIndex + 1 < s.Length && s[newLineIndex + 1] == '\n')
 				newLineIndex++;
-			this.index = newLineIndex + 1;
+			index = newLineIndex + 1;
 			return true;
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n', '\u0085', '\u2028', '\u2029' };
 
-		public void Reset() {
-			throw new NotImplementedException();
-		}
+		public void Reset() => throw new NotImplementedException();
 	}
 }

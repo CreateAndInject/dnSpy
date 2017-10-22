@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="ilOffset">IL offset of instruction</param>
-		public BodyResult(uint ilOffset) {
-			this.ILOffset = ilOffset;
-		}
+		public BodyResult(uint ilOffset) => ILOffset = ilOffset;
 	}
 }

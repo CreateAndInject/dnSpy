@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,8 +38,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="md">Metadata, eg. an <see cref="ExportMenuItemAttribute"/> instance</param>
 		/// <param name="menuItem">Menu item</param>
 		public CreatedMenuItem(IMenuItemMetadata md, IMenuItem menuItem) {
-			this.Metadata = md;
-			this.MenuItem = menuItem;
+			Metadata = md;
+			MenuItem = menuItem;
 		}
 	}
 }

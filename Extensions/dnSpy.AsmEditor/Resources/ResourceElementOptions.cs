@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,13 +28,13 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		public ResourceElementOptions(ResourceElement resEl) {
-			this.Name = resEl.Name;
-			this.ResourceData = resEl.ResourceData;
+			Name = resEl.Name;
+			ResourceData = resEl.ResourceData;
 		}
 
 		public ResourceElement CopyTo(ResourceElement other) {
-			other.Name = this.Name;
-			other.ResourceData = this.ResourceData;
+			other.Name = Name;
+			other.ResourceData = ResourceData;
 			return other;
 		}
 

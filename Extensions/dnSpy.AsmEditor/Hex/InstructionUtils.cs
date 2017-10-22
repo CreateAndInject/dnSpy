@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.AsmEditor.Hex {
 				using (var reader = mod.MetaData.PEImage.CreateFullStream()) {
 					reader.Position = (long)mod.MetaData.PEImage.ToFileOffset(md.RVA);
 					var start = reader.Position;
-					ushort flags;
-					uint codeSize;
-					if (!ReadHeader(reader, out flags, out codeSize))
+					if (!ReadHeader(reader, out ushort flags, out uint codeSize))
 						return 0;
 
 					reader.Position += codeSize;

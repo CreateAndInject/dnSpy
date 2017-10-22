@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,9 +46,7 @@ namespace dnSpy.Contracts.AsmEditor.Compiler {
 		public bool IsAssemblyReference { get; }
 
 		CompilerMetadataReference(byte[] data, IAssembly assembly, string filename, bool isAssemblyReference) {
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-			Data = data;
+			Data = data ?? throw new ArgumentNullException(nameof(data));
 			Assembly = assembly;
 			Filename = filename;
 			IsAssemblyReference = isAssemblyReference;

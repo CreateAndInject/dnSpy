@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Property {
 	sealed partial class PropertyOptionsDlg : WindowBase {
-		public PropertyOptionsDlg() {
-			InitializeComponent();
-		}
+		public PropertyOptionsDlg() => InitializeComponent();
 	}
 }

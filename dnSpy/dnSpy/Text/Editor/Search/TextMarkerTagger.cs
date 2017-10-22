@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchServiceProvider searchServiceProvider;
 
 		[ImportingConstructor]
-		TextMarkerTaggerProvider(ISearchServiceProvider searchServiceProvider) {
-			this.searchServiceProvider = searchServiceProvider;
-		}
+		TextMarkerTaggerProvider(ISearchServiceProvider searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			var wpfTextView = textView as IWpfTextView;
@@ -58,7 +56,7 @@ namespace dnSpy.Text.Editor.Search {
 				throw new ArgumentNullException(nameof(searchServiceProvider));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			this.searchService = searchServiceProvider.Get(wpfTextView);
+			searchService = searchServiceProvider.Get(wpfTextView);
 			searchService.RegisterTextMarkerListener(this);
 		}
 

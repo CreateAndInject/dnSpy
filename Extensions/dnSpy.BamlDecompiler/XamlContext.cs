@@ -72,8 +72,7 @@ namespace dnSpy.BamlDecompiler {
 			NodeMap[node.Header] = node;
 
 			foreach (var child in node.Children) {
-				var childBlock = child as BamlBlockNode;
-				if (childBlock != null)
+				if (child is BamlBlockNode childBlock)
 					BuildNodeMap(childBlock, counter);
 			}
 
@@ -93,16 +92,13 @@ namespace dnSpy.BamlDecompiler {
 		class DummyAssemblyRefFinder : IAssemblyRefFinder {
 			readonly IAssembly assemblyDef;
 
-			public DummyAssemblyRefFinder(IAssembly assemblyDef) {
-				this.assemblyDef = assemblyDef;
-			}
+			public DummyAssemblyRefFinder(IAssembly assemblyDef) => this.assemblyDef = assemblyDef;
 
 			public AssemblyRef FindAssemblyRef(TypeRef nonNestedTypeRef) => assemblyDef.ToAssemblyRef();
 		}
 
 		public XamlType ResolveType(ushort id) {
-			XamlType xamlType;
-			if (typeMap.TryGetValue(id, out xamlType))
+			if (typeMap.TryGetValue(id, out var xamlType))
 				return xamlType;
 
 			ITypeDefOrRef type;
@@ -129,8 +125,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public XamlProperty ResolveProperty(ushort id) {
-			XamlProperty xamlProp;
-			if (propertyMap.TryGetValue(id, out xamlProp))
+			if (propertyMap.TryGetValue(id, out var xamlProp))
 				return xamlProp;
 
 			XamlType type;
@@ -172,8 +167,7 @@ namespace dnSpy.BamlDecompiler {
 			if (xmlns == null)
 				return null;
 
-			XNamespace ns;
-			if (!xmlnsMap.TryGetValue(xmlns, out ns))
+			if (!xmlnsMap.TryGetValue(xmlns, out var ns))
 				xmlnsMap[xmlns] = ns = XNamespace.Get(xmlns);
 			return ns;
 		}

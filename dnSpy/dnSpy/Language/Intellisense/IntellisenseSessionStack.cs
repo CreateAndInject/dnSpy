@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,26 +46,20 @@ namespace dnSpy.Language.Intellisense {
 			public ISpaceReservationManager SpaceReservationManager { get; private set; }
 			public ISpaceReservationAgent SpaceReservationAgent;
 			public IPopupIntellisensePresenter PopupIntellisensePresenter { get; set; }
-			public SessionState(IIntellisenseSession session) {
-				Session = session;
-			}
+			public SessionState(IIntellisenseSession session) => Session = session;
 			public void SetSpaceReservationManager(ISpaceReservationManager manager) {
-				if (manager == null)
-					throw new ArgumentNullException(nameof(manager));
 				if (SpaceReservationManager != null)
 					throw new InvalidOperationException();
-				SpaceReservationManager = manager;
+				SpaceReservationManager = manager ?? throw new ArgumentNullException(nameof(manager));
 			}
 		}
 
 		public IntellisenseSessionStack(IWpfTextView wpfTextView) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.wpfTextView = wpfTextView;
-			this.sessions = new ObservableCollection<IIntellisenseSession>();
-			this.commandTargetFilter = new CommandTargetFilter(this);
-			this.sessionStates = new List<SessionState>();
-			this.clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfTextView.VisualElement.Dispatcher);
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			sessions = new ObservableCollection<IIntellisenseSession>();
+			commandTargetFilter = new CommandTargetFilter(this);
+			sessionStates = new List<SessionState>();
+			clearOpacityTimer = new DispatcherTimer(DispatcherPriority.Background, wpfTextView.VisualElement.Dispatcher);
 			clearOpacityTimer.Interval = TimeSpan.FromMilliseconds(clearOpacityIntervalMilliSecs);
 			clearOpacityTimer.Tick += ClearOpacityTimer_Tick;
 			Sessions = new ReadOnlyObservableCollection<IIntellisenseSession>(sessions);
@@ -116,8 +110,7 @@ namespace dnSpy.Language.Intellisense {
 				return;
 			isInClearOpacityMode = newIsInClearOpacityMode;
 			foreach (var session in sessions.ToArray()) {
-				var popupPresenter = session.Presenter as IPopupIntellisensePresenter;
-				if (popupPresenter != null)
+				if (session.Presenter is IPopupIntellisensePresenter popupPresenter)
 					popupPresenter.Opacity = opacity;
 			}
 		}
@@ -228,8 +221,7 @@ namespace dnSpy.Language.Intellisense {
 			Debug.Assert(sessionState.SpaceReservationAgent == null);
 
 			var presenter = session.Presenter;
-			var popupPresenter = presenter as IPopupIntellisensePresenter;
-			if (popupPresenter != null) {
+			if (presenter is IPopupIntellisensePresenter popupPresenter) {
 				if (sessionState.SpaceReservationManager == null) {
 					sessionState.SetSpaceReservationManager(wpfTextView.GetSpaceReservationManager(popupPresenter.SpaceReservationManagerName));
 					sessionState.SpaceReservationManager.AgentChanged += SpaceReservationManager_AgentChanged;
@@ -246,8 +238,7 @@ namespace dnSpy.Language.Intellisense {
 				}
 			}
 			else {
-				var customPresenter = presenter as ICustomIntellisensePresenter;
-				if (customPresenter != null)
+				if (presenter is ICustomIntellisensePresenter customPresenter)
 					customPresenter.Render();
 				else
 					Debug.Assert(presenter == null, $"Unsupported presenter: {presenter?.GetType()}");

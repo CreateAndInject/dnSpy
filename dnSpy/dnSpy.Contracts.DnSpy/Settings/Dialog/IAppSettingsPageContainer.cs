@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,14 +58,10 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <param name="icon">Icon shown in the UI or null</param>
 		public ExportAppSettingsPageContainerAttribute(string title, string guid, double order = double.MaxValue, string parentGuid = null, string icon = null)
 			: base(typeof(IAppSettingsPageContainer)) {
-			if (title == null)
-				throw new ArgumentNullException(nameof(title));
-			if (guid == null)
-				throw new ArgumentNullException(nameof(guid));
 			ParentGuid = parentGuid;
-			Guid = guid;
+			Guid = guid ?? throw new ArgumentNullException(nameof(guid));
 			Order = order;
-			Title = title;
+			Title = title ?? throw new ArgumentNullException(nameof(title));
 			Icon = icon;
 		}
 

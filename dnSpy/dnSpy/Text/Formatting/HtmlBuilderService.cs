@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Threading;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Formatting;
 using dnSpy.Text.Editor;
@@ -31,8 +32,9 @@ using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 namespace dnSpy.Text.Formatting {
 	[Export(typeof(IHtmlBuilderService))]
 	sealed class HtmlBuilderService : IHtmlBuilderService {
-		const string defaultDelimiter = "<br/>";
 		const int defaultTabSize = 4;
+
+		public string DefaultDelimiter => "<br/>";
 
 		readonly IClassificationFormatMapService classificationFormatMapService;
 		readonly ISynchronousClassifierAggregatorService synchronousClassifierAggregatorService;
@@ -46,7 +48,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) =>
-			GenerateHtmlFragment(spans, defaultDelimiter, cancellationToken);
+			GenerateHtmlFragment(spans, DefaultDelimiter, cancellationToken);
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, string delimiter, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));
@@ -57,7 +59,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, CancellationToken cancellationToken) =>
-			GenerateHtmlFragment(spans, textView, defaultDelimiter, cancellationToken);
+			GenerateHtmlFragment(spans, textView, DefaultDelimiter, cancellationToken);
 		public string GenerateHtmlFragment(NormalizedSnapshotSpanCollection spans, ITextView textView, string delimiter, CancellationToken cancellationToken) {
 			if (spans == null)
 				throw new ArgumentNullException(nameof(spans));

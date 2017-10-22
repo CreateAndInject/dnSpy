@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,6 +32,7 @@ namespace dnSpy.Contracts.MVVM {
 		public static readonly string DotNetAssemblyOrModuleFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_DotNetExecutables} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 		public static readonly string NetModuleFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_DotNetNetModules} (*.netmodule)|*.netmodule|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 		public static readonly string ExecutableFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_Executables} (*.exe)|*.exe|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
+		public static readonly string XmlFilenameFilter = $"{dnSpy_Contracts_DnSpy_Resources.Files_XmlFiles} (*.xml)|*.xml|{dnSpy_Contracts_DnSpy_Resources.AllFiles} (*.*)|*.*";
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

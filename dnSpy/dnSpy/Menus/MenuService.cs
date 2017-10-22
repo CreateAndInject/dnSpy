@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,9 +40,7 @@ namespace dnSpy.Menus {
 		public IMenuItem MenuItem => lazy.Value;
 		public IMenuItemMetadata Metadata => lazy.Metadata;
 
-		public MenuItemMD(Lazy<IMenuItem, IMenuItemMetadata> lazy) {
-			this.lazy = lazy;
-		}
+		public MenuItemMD(Lazy<IMenuItem, IMenuItemMetadata> lazy) => this.lazy = lazy;
 	}
 
 	sealed class MenuItemGroupMD {
@@ -50,8 +48,8 @@ namespace dnSpy.Menus {
 		public readonly List<MenuItemMD> Items;
 
 		public MenuItemGroupMD(double order) {
-			this.Order = order;
-			this.Items = new List<MenuItemMD>();
+			Order = order;
+			Items = new List<MenuItemMD>();
 		}
 	}
 
@@ -61,9 +59,7 @@ namespace dnSpy.Menus {
 		public IMenu Menu => lazy.Value;
 		public IMenuMetadata Metadata => lazy.Metadata;
 
-		public MenuMD(Lazy<IMenu, IMenuMetadata> lazy) {
-			this.lazy = lazy;
-		}
+		public MenuMD(Lazy<IMenu, IMenuMetadata> lazy) => this.lazy = lazy;
 	}
 
 	[Export(typeof(IWpfFocusChecker))]
@@ -73,16 +69,14 @@ namespace dnSpy.Menus {
 		readonly MenuService menuService;
 
 		[ImportingConstructor]
-		MenuWpfFocusChecker(MenuService menuService) {
-			this.menuService = menuService;
-		}
+		MenuWpfFocusChecker(MenuService menuService) => this.menuService = menuService;
 	}
 
 	[Export, Export(typeof(IMenuService))]
 	sealed class MenuService : IMenuService {
 		[ImportingConstructor]
 		MenuService([ImportMany] IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus, [ImportMany] IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems) {
-			this.guidToGroups = null;
+			guidToGroups = null;
 			this.mefMenus = mefMenus;
 			this.mefMenuItems = mefMenuItems;
 		}
@@ -108,15 +102,13 @@ namespace dnSpy.Menus {
 			guidToMenu = new Dictionary<Guid, List<MenuMD>>();
 			foreach (var item in mefMenus) {
 				string ownerGuidString = item.Metadata.OwnerGuid ?? MenuConstants.APP_MENU_GUID;
-				Guid ownerGuid;
-				bool b = Guid.TryParse(ownerGuidString, out ownerGuid);
+				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
 				Debug.Assert(b, string.Format("Menu: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
 				if (!b)
 					continue;
 
 				string guidString = item.Metadata.Guid;
-				Guid guid;
-				b = Guid.TryParse(guidString, out guid);
+				b = Guid.TryParse(guidString, out var guid);
 				Debug.Assert(b, string.Format("Menu: Couldn't parse Guid property: '{0}'", guidString));
 				if (!b)
 					continue;
@@ -127,8 +119,7 @@ namespace dnSpy.Menus {
 				if (!b)
 					continue;
 
-				List<MenuMD> list;
-				if (!guidToMenu.TryGetValue(ownerGuid, out list))
+				if (!guidToMenu.TryGetValue(ownerGuid, out var list))
 					guidToMenu.Add(ownerGuid, list = new List<MenuMD>());
 				list.Add(new MenuMD(item));
 			}
@@ -154,16 +145,14 @@ namespace dnSpy.Menus {
 			var dict = new Dictionary<Guid, Dictionary<string, MenuItemGroupMD>>();
 			foreach (var item in mefMenuItems) {
 				string ownerGuidString = item.Metadata.OwnerGuid ?? MenuConstants.CTX_MENU_GUID;
-				Guid ownerGuid;
-				bool b = Guid.TryParse(ownerGuidString, out ownerGuid);
+				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
 				Debug.Assert(b, string.Format("MenuItem: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
 				if (!b)
 					continue;
 
 				string guidString = item.Metadata.Guid;
 				if (guidString != null) {
-					Guid guid;
-					b = Guid.TryParse(guidString, out guid);
+					b = Guid.TryParse(guidString, out var guid);
 					Debug.Assert(b, string.Format("MenuItem: Couldn't parse Guid property: '{0}'", guidString));
 					if (!b)
 						continue;
@@ -173,18 +162,14 @@ namespace dnSpy.Menus {
 				Debug.Assert(b, "MenuItem: Group property is empty or null");
 				if (!b)
 					continue;
-				double groupOrder;
-				string groupName;
-				b = ParseGroup(item.Metadata.Group, out groupOrder, out groupName);
+				b = ParseGroup(item.Metadata.Group, out double groupOrder, out string groupName);
 				Debug.Assert(b, "MenuItem: Group property must be of the format \"<order>,<name>\" where <order> is a System.Double");
 				if (!b)
 					continue;
 
-				Dictionary<string, MenuItemGroupMD> groupDict;
-				if (!dict.TryGetValue(ownerGuid, out groupDict))
+				if (!dict.TryGetValue(ownerGuid, out var groupDict))
 					dict.Add(ownerGuid, groupDict = new Dictionary<string, MenuItemGroupMD>());
-				MenuItemGroupMD mdGroup;
-				if (!groupDict.TryGetValue(groupName, out mdGroup))
+				if (!groupDict.TryGetValue(groupName, out var mdGroup))
 					groupDict.Add(groupName, mdGroup = new MenuItemGroupMD(groupOrder));
 				Debug.Assert(mdGroup.Order == groupOrder, string.Format("MenuItem: Group order is different: {0} vs {1}", mdGroup.Order, groupOrder));
 				mdGroup.Items.Add(new MenuItemMD(item));
@@ -217,20 +202,28 @@ namespace dnSpy.Menus {
 		internal bool? ShowContextMenu(object evArgs, FrameworkElement ctxMenuElem, Guid topLevelMenuGuid, Guid ownerMenuGuid, GuidObject creatorObject, IGuidObjectsProvider provider, IContextMenuInitializer initCtxMenu, bool openedFromKeyboard) {
 			InitializeMenuItemObjects();
 
-			// There could be nested contex menu handler calls, eg. first text editor followed by
+			// There could be nested context menu handler calls, eg. first text editor followed by
 			// the TabControl. We don't wan't the TabControl to disable the text editor's ctx menu.
 			if (prevEventArgs.Target == evArgs)
 				return null;
 
 			var ctx = new MenuItemContext(topLevelMenuGuid, openedFromKeyboard, creatorObject, provider?.GetGuidObjects(new GuidObjectsProviderArgs(creatorObject, openedFromKeyboard)));
 
-			List<MenuItemGroupMD> groups;
-			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out groups);
+			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out var groups);
 			if (!b)
 				return false;
 
 			var menu = new ContextMenu();
 			BindBackgroundBrush(menu, isCtxMenu: true);
+
+			// The owner control could be zoomed (eg. text editor) but the context menu isn't, so make
+			// sure we use 100% zoom here (same as the context menu).
+			double defaultZoom = 1.0;
+			DsImage.SetZoom(menu, defaultZoom);
+			// Also make sure we use Display mode. Let MetroWindow handle it since it has some extra checks
+			var window = Window.GetWindow(ctxMenuElem) as MetroWindow;
+			window?.SetScaleTransform(menu, defaultZoom);
+
 			var allItems = CreateMenuItems(ctx, groups, null, null, true);
 			if (allItems.Count == 0)
 				return false;
@@ -269,8 +262,7 @@ namespace dnSpy.Menus {
 				needSeparator = true;
 
 				foreach (var item in items) {
-					var itemProvider = item.MenuItem as IMenuItemProvider;
-					if (itemProvider != null) {
+					if (item.MenuItem is IMenuItemProvider itemProvider) {
 						foreach (var createdItem in itemProvider.Create(ctx)) {
 							var menuItem = Create(createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 							firstMenuItem = null;
@@ -319,8 +311,7 @@ namespace dnSpy.Menus {
 
 			if (metadata.Guid != null) {
 				var itemGuid = Guid.Parse(metadata.Guid);
-				List<MenuItemGroupMD> list;
-				if (guidToGroups.TryGetValue(itemGuid, out list)) {
+				if (guidToGroups.ContainsKey(itemGuid)) {
 					menuItem.Items.Add(new MenuItem());
 					menuItem.SubmenuOpened += (s, e) => {
 						if (e.Source == menuItem)
@@ -372,8 +363,7 @@ namespace dnSpy.Menus {
 		void InitializeSubMenu(MenuItem menuItem, MenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget, bool isCtxMenu) {
 			Reinitialize(menuItem);
 
-			List<MenuItemGroupMD> groups;
-			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out groups);
+			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out var groups);
 			Debug.Assert(b);
 			if (b) {
 				BindBackgroundBrush(menuItem, isCtxMenu);
@@ -389,9 +379,8 @@ namespace dnSpy.Menus {
 		MenuItemContext InitializeMainSubMenu(MenuItem menuItem, MenuMD md, IInputElement commandTarget) {
 			Reinitialize(menuItem);
 
-			List<MenuItemGroupMD> groups;
 			var guid = new Guid(md.Metadata.Guid);
-			bool b = guidToGroups.TryGetValue(guid, out groups);
+			bool b = guidToGroups.TryGetValue(guid, out var groups);
 			Debug.Assert(b);
 			if (b) {
 				BindBackgroundBrush(menuItem, isCtxMenu: false);
@@ -413,14 +402,12 @@ namespace dnSpy.Menus {
 
 			var menu = new Menu();
 
-			List<MenuMD> list;
-			if (!guidToMenu.TryGetValue(menuGuid, out list))
+			if (!guidToMenu.TryGetValue(menuGuid, out var list))
 				return menu;
 
 			foreach (var md in list) {
 				var guid = new Guid(md.Metadata.Guid);
-				List<MenuItemGroupMD> itemGroups;
-				if (!guidToGroups.TryGetValue(guid, out itemGroups))
+				if (!guidToGroups.TryGetValue(guid, out var itemGroups))
 					continue;
 
 				var topMenuItem = new MenuItem() { Header = ResourceHelper.GetString(md.Menu, md.Metadata.Header) };

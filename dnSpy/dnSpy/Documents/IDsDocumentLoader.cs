@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,8 +25,8 @@ namespace dnSpy.Documents {
 		public readonly DsDocumentInfo Info;
 		public readonly bool IsAutoLoaded;
 		public DocumentToLoad(DsDocumentInfo info, bool isAutoLoaded = false) {
-			this.Info = info;
-			this.IsAutoLoaded = isAutoLoaded;
+			Info = info;
+			IsAutoLoaded = isAutoLoaded;
 		}
 	}
 

@@ -214,13 +214,13 @@
     <value>Als Te_xt kopieren</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
-    <value>Cop_y</value>
+    <value>_Kopieren</value>
   </data>
   <data name="CopyILBytesCommand" xml:space="preserve">
-    <value>Kopiere IL Bytes</value>
+    <value>IL Bytes kopieren</value>
   </data>
   <data name="CopyILBytesKey" xml:space="preserve">
-    <value>STRG + B</value>
+    <value>Strg+B</value>
   </data>
   <data name="CouldNotResolveType" xml:space="preserve">
     <value>Der Typ konnte nicht aufgelöst werden. Stellen Sie sicher, dass dessen Assembly bereits geladen wurde.</value>
@@ -494,7 +494,7 @@
     <value>Art</value>
   </data>
   <data name="GP_Kind_ToolTip" xml:space="preserve">
-    <value>Wird nur verwendet wenn die MD Kopfversion 1.1 (0x0101) ist. Es ist nie 1.1, drum ignoriere Kind</value>
+    <value>Wird nur bei der MD Header-Version 1.1 (0x0101) verwendet. Es ist niemals 1.1, drum ignoriere Kind</value>
   </data>
   <data name="GP_Name" xml:space="preserve">
     <value>_Name</value>
@@ -507,15 +507,6 @@
   </data>
   <data name="GP_Variance" xml:space="preserve">
     <value>_Variance</value>
-  </data>
-  <data name="HexField_RelativeVirtualAddress" xml:space="preserve">
-    <value>{0} RVA</value>
-  </data>
-  <data name="HexField_Size" xml:space="preserve">
-    <value>{0} Größe</value>
-  </data>
-  <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
-    <value>Schreibe {0}.{1}</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
     <value>32-Bit bevorzugt</value>
@@ -539,13 +530,13 @@
     <value>Verfolge Debug Daten</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
-    <value>Cor20 Kopf</value>
+    <value>Cor20-Header</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>DOS Kopf</value>
+    <value>DOS-Header</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>Dateikopf</value>
+    <value>Datei-Header</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
     <value>Optionaler Header (32-bit)</value>
@@ -1044,10 +1035,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Code in einer anderen Assembly könnte auf diesen Typ verweisen. Sind Sie sicher, dass Sie den Typ löschen möchten?</value>
   </data>
   <data name="AskExitUnsavedFile" xml:space="preserve">
-    <value>Es gibt eine ungespeicherte Datei. Möchten Sie wirklich beenden?</value>
+    <value>Es gibt eine nicht gespeicherte Datei. Möchten Sie sie vor dem Beenden speichern?</value>
   </data>
   <data name="AskExitUnsavedFiles" xml:space="preserve">
-    <value>Es gibt {0} ungespeicherte Dateien. Möchten Sie wirklich beenden?</value>
+    <value>Es gibt {0} nicht gespeicherte Dateien. Möchten Sie sie vor dem Beenden speichern?</value>
   </data>
   <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
     <value>Sind Sie sicher, dass Sie neue Assemblys laden und alle Änderungen verwerfen möchten?</value>
@@ -1086,25 +1077,25 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Konvertiere NetModule zu Assembly</value>
   </data>
   <data name="CopyAsTextCommand2" xml:space="preserve">
-    <value>Kopiere als _Text</value>
+    <value>Als _Text kopieren</value>
   </data>
   <data name="CopyFileOffsetCommand" xml:space="preserve">
-    <value>Kopiere Dateiversatz</value>
+    <value>Dateiversatz kopieren</value>
   </data>
   <data name="CopyFileOffsetsCommand" xml:space="preserve">
-    <value>Kopiere Dateiversätze</value>
+    <value>Dateiversätze kopieren</value>
   </data>
   <data name="CopyMetaDataToken" xml:space="preserve">
-    <value>Kopiere _MD Token</value>
+    <value>_MD Token kopieren</value>
   </data>
   <data name="CopyMetaDataTokens" xml:space="preserve">
-    <value>Kopiere _MD Tokens</value>
+    <value>_MD Tokens kopieren</value>
   </data>
   <data name="CopyRVACommand" xml:space="preserve">
-    <value>K_opiere RVA</value>
+    <value>RVA _kopieren</value>
   </data>
   <data name="CopyRVAsCommand" xml:space="preserve">
-    <value>K_opiere RVAs</value>
+    <value>RVAs _kopieren</value>
   </data>
   <data name="CreateAnExceptionCatchType" xml:space="preserve">
     <value>Erstelle einen Ausnahmefangtyp</value>
@@ -1511,26 +1502,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
     <value>'return true' Rumpf als Hex schreiben</value>
   </data>
-  <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
-    <value>Fülle {0} Bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
-    <value>Füge ASCII ein</value>
-  </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
     <value>Füge Bytes ein</value>
-  </data>
-  <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
-    <value>Einfügen von {0} Bytes @ {1:X8}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Record" xml:space="preserve">
-    <value>Einfügen von {0} {1} Datensatz @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Paste_Records" xml:space="preserve">
-    <value>Einfügen von {0} {1} Datensätzen @ {2:X8}, RID {3}</value>
-  </data>
-  <data name="Hex_Undo_Message_Write_Bytes" xml:space="preserve">
-    <value>Schreibe {0} Bytes zu Versatz {1:X8}</value>
   </data>
   <data name="Images" xml:space="preserve">
     <value>Bilder</value>
@@ -1629,10 +1602,10 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Cod_etyp</value>
   </data>
   <data name="MethodBody_HeaderOffset" xml:space="preserve">
-    <value>Kopfversatz</value>
+    <value>Header O_ffset</value>
   </data>
   <data name="MethodBody_HeaderRVA" xml:space="preserve">
-    <value>Kopf _RVA</value>
+    <value>Header _RVA</value>
   </data>
   <data name="MethodBody_InitLocals" xml:space="preserve">
     <value>Felder _initialisieren</value>
@@ -1764,7 +1737,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Nochmal</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Nochmal (Ctrl + Y)</value>
+    <value>Nochmal</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
     <value>R_emove und Pops hinzufügen</value>
@@ -1821,7 +1794,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>A_lles speichern...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Alles speichern (Strg+Shift+S)</value>
+    <value>Alles speichern</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
     <value>_Modul speichern...</value>
@@ -1892,7 +1865,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Verwenden Sie den MaxStack Wert von der Methode anstelle der Berechnung eines neuen MaxStack-Wert. Erforderlich, wenn die Methoden noch obfuskiert sind</value>
   </data>
   <data name="SaveModule_MetadataHeaderOptions" xml:space="preserve">
-    <value>Metadaten Kopfoptionen</value>
+    <value>Metadaten-Header Optionen</value>
   </data>
   <data name="SaveModule_MiscOptions" xml:space="preserve">
     <value>Sonstige Optionen</value>
@@ -1944,9 +1917,6 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   </data>
   <data name="ShortCutKeyB" xml:space="preserve">
     <value>B</value>
-  </data>
-  <data name="ShortCutKeyCtrlE" xml:space="preserve">
-    <value>Strg+E</value>
   </data>
   <data name="ShortCutKeyCtrlF" xml:space="preserve">
     <value>Strg+F</value>
@@ -2020,14 +1990,8 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
   <data name="SortMetadataTableCommand" xml:space="preserve">
     <value>Tabelle _sortieren</value>
   </data>
-  <data name="SortMetadataTableCommand2" xml:space="preserve">
-    <value>Tabelle {0} sortieren</value>
-  </data>
   <data name="SortSelectionCommand" xml:space="preserve">
     <value>Auswahl so_rtieren</value>
-  </data>
-  <data name="SortTable_RowIdentifier" xml:space="preserve">
-    <value>Sortiert Tabelle {0}, RID {1} - {2}</value>
   </data>
   <data name="TablesHeapOptionsTab" xml:space="preserve">
     <value>Tabellen Heap Optionen</value>
@@ -2054,7 +2018,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Rückgängig</value>
   </data>
   <data name="UndoToolBarToolTip" xml:space="preserve">
-    <value>Rückgängig (Strg+Z)</value>
+    <value>Rückgängig</value>
   </data>
   <data name="UnsavedFile" xml:space="preserve">
     <value>Es gibt eine ungespeicherte Datei.</value>
@@ -2240,7 +2204,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>_Verfolge Debug Daten</value>
   </data>
   <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
-    <value>_Kopfversion</value>
+    <value>_Header Version</value>
   </data>
   <data name="Module_Metadata_VersionString" xml:space="preserve">
     <value>_Versionszeichenfolge</value>
@@ -2408,7 +2372,7 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Strg+Umschalt+E</value>
   </data>
   <data name="EditMethodBodyCode" xml:space="preserve">
-    <value>Bearbeite {0} Code...</value>
+    <value>Methode ({0}) bearbeiten...</value>
   </data>
   <data name="EditCodeTitle" xml:space="preserve">
     <value>Code bearbeiten</value>
@@ -2498,9 +2462,45 @@ Sind Sie sicher, dass Sie das Fenster schließen möchten?</value>
     <value>Abbrechen</value>
   </data>
   <data name="EditAssemblyCode" xml:space="preserve">
-    <value>Edit Assembly Attributes</value>
+    <value>Assemblyattribute bearbeiten</value>
   </data>
   <data name="EditCodeAddClass" xml:space="preserve">
-    <value>Add Class</value>
+    <value>Klasse hinzufügen</value>
+  </data>
+  <data name="MergeWithAssemblyCommand" xml:space="preserve">
+    <value>Mit Assembly zusammenführen...</value>
+  </data>
+  <data name="MergeWithAssemblyCommand2" xml:space="preserve">
+    <value>Mit Assembly zusammenführen</value>
+  </data>
+  <data name="EditAssemblyCode2" xml:space="preserve">
+    <value>Assemblyattribute bearbeiten ({0})...</value>
+  </data>
+  <data name="EditCodeAddClass2" xml:space="preserve">
+    <value>Klasse ({0}) hinzufügen...</value>
+  </data>
+  <data name="EditCodeEditClass" xml:space="preserve">
+    <value>Klasse bearbeiten</value>
+  </data>
+  <data name="EditCodeEditClass2" xml:space="preserve">
+    <value>Klasse ({0}) bearbeiten...</value>
+  </data>
+  <data name="ERR_IM_CouldNotFindEditedType" xml:space="preserve">
+    <value>Der bearbeitete Typ konnte nicht gefunden werden: {0}</value>
+  </data>
+  <data name="CloseOldInMemoryModules" xml:space="preserve">
+    <value>Alte In-Memory-Module schließen</value>
+  </data>
+  <data name="CloseAllMissingFilesCommand" xml:space="preserve">
+    <value>Alle fehlenden Dateien schließen</value>
+  </data>
+  <data name="CompileDiagnostics_Header_Severity" xml:space="preserve">
+    <value>Warnstufe</value>
+  </data>
+  <data name="ParamDef_Flags_Lcid" xml:space="preserve">
+    <value>Lcid</value>
+  </data>
+  <data name="ParamDef_Flags_Retval" xml:space="preserve">
+    <value>Retval</value>
   </data>
 </root>

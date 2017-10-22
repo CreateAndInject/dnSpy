@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Documents.TreeView {
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public MethodNodeImpl(ITreeNodeGroup treeNodeGroup, MethodDef methodDef)
-			: base(methodDef) {
-			this.TreeNodeGroup = treeNodeGroup;
-		}
+			: base(methodDef) => TreeNodeGroup = treeNodeGroup;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			new NodePrinter().Write(output, decompiler, MethodDef, GetShowToken(options));

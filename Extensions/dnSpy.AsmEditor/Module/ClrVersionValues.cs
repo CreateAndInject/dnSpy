@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,11 +58,11 @@ namespace dnSpy.AsmEditor.Module {
 		public readonly AssemblyRef CorLibRef;
 
 		public ClrVersionValues(ClrVersion clrVersion, uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion, AssemblyRef corLibRef) {
-			this.ClrVersion = clrVersion;
-			this.Cor20HeaderRuntimeVersion = cor20HeaderRuntimeVersion;
-			this.TablesHeaderVersion = tablesHeaderVersion;
-			this.RuntimeVersion = runtimeVersion;
-			this.CorLibRef = corLibRef;
+			ClrVersion = clrVersion;
+			Cor20HeaderRuntimeVersion = cor20HeaderRuntimeVersion;
+			TablesHeaderVersion = tablesHeaderVersion;
+			RuntimeVersion = runtimeVersion;
+			CorLibRef = corLibRef;
 		}
 	}
 }

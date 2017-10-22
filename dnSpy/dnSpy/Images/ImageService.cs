@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,12 +78,11 @@ namespace dnSpy.Images {
 		ImageService(IThemeService themeService, IDpiService dpiService, [ImportMany] IEnumerable<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> imageSourceInfoProviders) {
 			this.themeService = themeService;
 			this.dpiService = dpiService;
-			this.imageCache = new Dictionary<ImageKey, WeakReference>();
-			this.imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
+			imageCache = new Dictionary<ImageKey, WeakReference>();
+			imageSourceInfoProvidersDict = new Dictionary<Assembly, List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>>();
 			this.themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
 			foreach (var lz in imageSourceInfoProviders.OrderBy(a => a.Metadata.Order)) {
-				List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> list;
-				if (!imageSourceInfoProvidersDict.TryGetValue(lz.Metadata.Type.Assembly, out list)) {
+				if (!imageSourceInfoProvidersDict.TryGetValue(lz.Metadata.Type.Assembly, out var list)) {
 					list = new List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>();
 					imageSourceInfoProvidersDict.Add(lz.Metadata.Type.Assembly, list);
 					list.Add(CreateDefaultProvider(lz.Metadata.Type.Assembly));
@@ -106,8 +105,7 @@ namespace dnSpy.Images {
 		List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> GetProviders(Assembly assembly) {
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
-			List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>> list;
-			if (imageSourceInfoProvidersDict.TryGetValue(assembly, out list))
+			if (imageSourceInfoProvidersDict.TryGetValue(assembly, out var list))
 				return list;
 			list = new List<Lazy<IImageSourceInfoProvider, IImageSourceInfoProviderMetadata>>();
 			list.Add(CreateDefaultProvider(assembly));
@@ -120,12 +118,22 @@ namespace dnSpy.Images {
 			isHighContrast = themeService.Theme.IsHighContrast;
 		}
 
-		Color? GetColor(Brush brush) => (brush as SolidColorBrush)?.Color;
+		Color? GetColor(Brush brush) {
+			if (brush is SolidColorBrush scb)
+				return scb.Color;
+			if (brush is GradientBrush gb) {
+				int count = gb.GradientStops.Count;
+				if (count > 0) {
+					// Pick the middle one, perhaps it's more correct for most images
+					return gb.GradientStops[count / 2].Color;
+				}
+			}
+			return null;
+		}
 
 		Size GetDpi(DependencyObject dpiObject, Size dpi) {
 			if (dpiObject != null) {
-				var window = Window.GetWindow(dpiObject) as MetroWindow;
-				if (window != null)
+				if (Window.GetWindow(dpiObject) is MetroWindow window)
 					return window.WindowDpi;
 			}
 
@@ -211,9 +219,8 @@ namespace dnSpy.Images {
 				return null;
 
 			var key = new ImageKey(uriString, options);
-			WeakReference weakImage;
 			BitmapSource image;
-			if (imageCache.TryGetValue(key, out weakImage)) {
+			if (imageCache.TryGetValue(key, out var weakImage)) {
 				image = weakImage.Target as BitmapSource;
 				if (image != null)
 					return image;
@@ -235,8 +242,7 @@ namespace dnSpy.Images {
 				var info = Application.GetResourceStream(uri);
 				if (info.ContentType.Equals("application/xaml+xml", StringComparison.OrdinalIgnoreCase) || info.ContentType.Equals("application/baml+xml", StringComparison.OrdinalIgnoreCase)) {
 					var component = Application.LoadComponent(uri);
-					var elem = component as FrameworkElement;
-					if (elem != null)
+					if (component is FrameworkElement elem)
 						return ResizeElement(elem, physicalSize);
 					return null;
 				}

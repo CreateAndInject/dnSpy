@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,14 +19,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +38,9 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Resources;
 using dnSpy.Contracts.Settings;
 using dnSpy.Controls;
 using dnSpy.Culture;
@@ -47,21 +50,21 @@ using dnSpy.Images;
 using dnSpy.Roslyn.Shared.Text.Classification;
 using dnSpy.Scripting;
 using dnSpy.Settings;
+using Microsoft.VisualStudio.Composition;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
-		static App() {
+		static void NotExecuted() {
 			// Make sure we have a ref to the assembly. The file is copied to the correct location
 			// but unless we have a reference to it in the code (or XAML), it could easily happen
 			// that someone accidentally removes the reference. This code makes sure there'll be
 			// a compilation error if that ever happens.
 			var t = typeof(Images.Dummy);
-			InstallExceptionHandlers();
 		}
 
 		static void InstallExceptionHandlers() {
 			TaskScheduler.UnobservedTaskException += (s, e) => e.SetObserved();
-			if (!Debugger.IsAttached) {
+			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += (s, e) => ShowException(e.ExceptionObject as Exception);
 				Dispatcher.CurrentDispatcher.UnhandledException += (s, e) => {
 					ShowException(e.Exception);
@@ -75,42 +78,37 @@ namespace dnSpy.MainApp {
 			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
-		[Import]
-		AppWindow appWindow = null;
-		[Import]
-		SettingsService settingsService = null;
-		[Import]
-		ExtensionService extensionService = null;
-		[Import]
-		IDsLoaderService dsLoaderService = null;
-		[Import]
-		Lazy<IDocumentTabService> documentTabService = null;
-		[Import]
-		Lazy<IDecompilerService> decompilerService = null;
-		[ImportMany]
-		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
+		readonly ResourceManagerTokenCacheImpl resourceManagerTokenCacheImpl;
+		long resourceManagerTokensOffset;
+		volatile Assembly[] mefAssemblies;
+		AppWindow appWindow;
+		ExtensionService extensionService;
+		IDsLoaderService dsLoaderService;
 		readonly List<LoadedExtension> loadedExtensions = new List<LoadedExtension>();
-		CompositionContainer compositionContainer;
-
 		readonly IAppCommandLineArgs args;
+		ExportProvider exportProvider;
 
-		public App(bool readSettings) {
-			this.args = new AppCommandLineArgs();
-			AppDirectories.SetSettingsFilename(this.args.SettingsFilename);
+		Task<ExportProvider> initializeMEFTask;
+		Stopwatch startupStopwatch;
+		public App(bool readSettings, Stopwatch startupStopwatch) {
+			// PERF: Init MEF on a BG thread. Results in slightly faster startup, eg. InitializeComponent() becomes a 'free' call on this UI thread
+			initializeMEFTask = Task.Run(() => InitializeMEF(readSettings, useCache: readSettings));
+			this.startupStopwatch = startupStopwatch;
+
+			resourceManagerTokenCacheImpl = new ResourceManagerTokenCacheImpl();
+			resourceManagerTokenCacheImpl.TokensUpdated += ResourceManagerTokenCacheImpl_TokensUpdated;
+			ResourceHelper.SetResourceManagerTokenCache(resourceManagerTokenCacheImpl);
+			args = new AppCommandLineArgs();
+			AppDirectories.SetSettingsFilename(args.SettingsFilename);
 			if (args.SingleInstance)
 				SwitchToOtherInstance();
 
 			AddAppContextFixes();
-
+			InstallExceptionHandlers();
 			InitializeComponent();
 			UIFixes();
 
-			InitializeMEF(readSettings);
-			compositionContainer.ComposeParts(this);
-			this.extensionService.LoadedExtensions = this.loadedExtensions;
-			this.appWindow.CommandLineArgs = this.args;
-
-			this.Exit += App_Exit;
+			Exit += App_Exit;
 		}
 
 		// These can also be put in the App.config file (semicolon-separated) but I prefer code in
@@ -121,11 +119,16 @@ namespace dnSpy.MainApp {
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotApplyLayoutRoundingToMarginsAndBorderThickness", true);
 		}
 
-		void InitializeMEF(bool readSettings) {
-			compositionContainer = InitializeCompositionContainer();
-			compositionContainer.GetExportedValue<ServiceLocator>().SetCompositionContainer(compositionContainer);
+		ExportProvider InitializeMEF(bool readSettings, bool useCache) {
+			mefAssemblies = GetAssemblies();
+			var resolver = Resolver.DefaultInstance;
+
+			var factory = TryCreateExportProviderFactoryCached(resolver, useCache, out resourceManagerTokensOffset) ?? CreateExportProviderFactorySlow(resolver);
+			var exportProvider = factory.CreateExportProvider();
+
+			exportProvider.GetExportedValue<ServiceLocator>().SetExportProvider(Dispatcher, exportProvider);
 			if (readSettings) {
-				var settingsService = compositionContainer.GetExportedValue<ISettingsService>();
+				var settingsService = exportProvider.GetExportedValue<ISettingsService>();
 				try {
 					new XmlSettingsReader(settingsService).Read();
 				}
@@ -133,47 +136,173 @@ namespace dnSpy.MainApp {
 				}
 			}
 
-			var cultureService = compositionContainer.GetExportedValue<CultureService>();
-			cultureService.Initialize(this.args);
-
-			// Make sure IDpiService gets created before any MetroWindows
-			compositionContainer.GetExportedValue<IDpiService>();
-
-			// It's needed very early, and an IAutoLoaded can't be used (it gets called too late for the first 64x64 image request)
-			DsImageConverter.imageService = compositionContainer.GetExportedValue<IImageService>();
+			return exportProvider;
 		}
 
-		CompositionContainer InitializeCompositionContainer() {
-			var aggregateCatalog = new AggregateCatalog();
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(GetType().Assembly));
+		static string GetCachedCompositionConfigurationFilename() {
+			var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
+			return Path.Combine(profileDir, "dnSpy-mef-info-" + (IntPtr.Size == 4 ? "32" : "64") + ".bin");
+		}
+
+		IExportProviderFactory TryCreateExportProviderFactoryCached(Resolver resolver, bool useCache, out long resourceManagerTokensOffset) {
+			resourceManagerTokensOffset = -1;
+			if (!useCache)
+				return null;
+			try {
+				return TryCreateExportProviderFactoryCachedCore(resolver, out resourceManagerTokensOffset);
+			}
+			catch (Exception ex) {
+				Debug.Fail(ex.ToString());
+				return null;
+			}
+		}
+
+		IExportProviderFactory TryCreateExportProviderFactoryCachedCore(Resolver resolver, out long resourceManagerTokensOffset) {
+			resourceManagerTokensOffset = -1;
+			var filename = GetCachedCompositionConfigurationFilename();
+			if (!File.Exists(filename))
+				return null;
+
+			Stream cachedStream = null;
+			try {
+				try {
+					cachedStream = File.OpenRead(filename);
+					if (!new CachedMefInfo(mefAssemblies, cachedStream).CheckFile(resourceManagerTokenCacheImpl, out resourceManagerTokensOffset))
+						return null;
+				}
+				catch (Exception ex) when (IsFileIOException(ex)) {
+					return null;
+				}
+				try {
+					return new CachedComposition().LoadExportProviderFactoryAsync(cachedStream, resolver).Result;
+				}
+				catch (AggregateException ex) when (ex.InnerExceptions.Count == 1 && IsFileIOException(ex.InnerExceptions[0])) {
+					return null;
+				}
+			}
+			finally {
+				cachedStream?.Dispose();
+			}
+
+			bool IsFileIOException(Exception ex) => ex is IOException || ex is UnauthorizedAccessException || ex is SecurityException;
+		}
+
+		IExportProviderFactory CreateExportProviderFactorySlow(Resolver resolver) {
+			var discovery = new AttributedPartDiscoveryV1(resolver);
+			var parts = discovery.CreatePartsAsync(mefAssemblies).Result;
+			Debug.Assert(parts.ThrowOnErrors() == parts);
+
+			var catalog = ComposableCatalog.Create(resolver).AddParts(parts).WithDesktopSupport();
+			var config = CompositionConfiguration.Create(catalog);
+			Debug.Assert(config.ThrowOnErrors() == config);
+
+			writingCachedMefFile = true;
+			Task.Run(() => SaveMefStateAsync(config)).ContinueWith(t => {
+				var ex = t.Exception;
+				Debug.Assert(ex == null);
+				writingCachedMefFile = false;
+			}, CancellationToken.None);
+
+			return config.CreateExportProviderFactory();
+		}
+
+		bool writingCachedMefFile;
+		async Task SaveMefStateAsync(CompositionConfiguration config) {
+			string filename = GetCachedCompositionConfigurationFilename();
+			bool fileCreated = false;
+			bool deleteFile = true;
+			try {
+				using (var cachedStream = File.Create(filename)) {
+					fileCreated = true;
+					long resourceManagerTokensOffsetTmp;
+					new CachedMefInfo(mefAssemblies, cachedStream).WriteFile(resourceManagerTokenCacheImpl.GetTokens(mefAssemblies), out resourceManagerTokensOffsetTmp);
+					await new CachedComposition().SaveAsync(config, cachedStream);
+					resourceManagerTokensOffset = resourceManagerTokensOffsetTmp;
+					deleteFile = false;
+				}
+			}
+			catch (IOException) {
+			}
+			catch (UnauthorizedAccessException) {
+			}
+			catch (SecurityException) {
+			}
+			finally {
+				if (fileCreated && deleteFile) {
+					try {
+						File.Delete(filename);
+					}
+					catch { }
+				}
+			}
+		}
+
+		void ResourceManagerTokenCacheImpl_TokensUpdated(object sender, EventArgs e) => OnTokensUpdated();
+
+		void OnTokensUpdated() {
+			if (writingCachedMefFile)
+				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(OnTokensUpdated));
+			else
+				UpdateResourceManagerTokens();
+		}
+
+		void UpdateResourceManagerTokens() {
+			var tokensOffset = resourceManagerTokensOffset;
+			if (tokensOffset < 0)
+				return;
+			string filename = GetCachedCompositionConfigurationFilename();
+			if (!File.Exists(filename))
+				return;
+			bool deleteFile = true;
+			try {
+				using (var cachedStream = File.OpenWrite(filename)) {
+					new CachedMefInfo(mefAssemblies, cachedStream).UpdateResourceManagerTokens(tokensOffset, resourceManagerTokenCacheImpl);
+					deleteFile = false;
+				}
+			}
+			catch (IOException) {
+			}
+			catch (UnauthorizedAccessException) {
+			}
+			catch (SecurityException) {
+			}
+			if (deleteFile) {
+				try {
+					File.Delete(filename);
+				}
+				catch { }
+			}
+		}
+
+		Assembly[] GetAssemblies() {
+			var list = new List<Assembly>();
+			list.Add(GetType().Assembly);
 			// dnSpy.Contracts.DnSpy
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(MetroWindow).Assembly));
+			list.Add(typeof(MetroWindow).Assembly);
 			// dnSpy.Roslyn.Shared
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(RoslynClassifier).Assembly));
+			list.Add(typeof(RoslynClassifier).Assembly);
 			// Microsoft.VisualStudio.Text.Logic (needed for the editor option definitions)
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly));
+			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.ConvertTabsToSpaces).Assembly);
 			// Microsoft.VisualStudio.Text.UI (needed for the editor option definitions)
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly));
+			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.AutoScrollEnabled).Assembly);
 			// Microsoft.VisualStudio.Text.UI.Wpf (needed for the editor option definitions)
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly));
+			list.Add(typeof(Microsoft.VisualStudio.Text.Editor.HighlightCurrentLineOption).Assembly);
 			// dnSpy.Roslyn.EditorFeatures
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.EditorFeatures.Dummy).Assembly));
+			list.Add(typeof(Roslyn.EditorFeatures.Dummy).Assembly);
 			// dnSpy.Roslyn.VisualBasic.EditorFeatures
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly));
-			AddExtensionFiles(aggregateCatalog);
-			var options = CompositionOptions.Default;
-#if DEBUG
-			options |= CompositionOptions.DisableSilentRejection;
-#endif
-			return new CompositionContainer(aggregateCatalog, options);
+			list.Add(typeof(Roslyn.VisualBasic.EditorFeatures.Dummy).Assembly);
+			foreach (var asm in LoadExtensionAssemblies())
+				list.Add(asm);
+			return list.ToArray();
 		}
 
-		void AddExtensionFiles(AggregateCatalog aggregateCatalog) {
+		Assembly[] LoadExtensionAssemblies() {
 			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
 			var files = GetExtensionFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+			var asms = new List<Assembly>();
 			foreach (var file in files) {
 				try {
 					if (!File.Exists(file))
@@ -185,13 +314,14 @@ namespace dnSpy.MainApp {
 						Debug.WriteLine($"Old extension detected ({file})");
 						continue;
 					}
-					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
+					asms.Add(asm);
 					loadedExtensions.Add(new LoadedExtension(asm));
 				}
 				catch (Exception ex) {
 					Debug.WriteLine($"Failed to load file '{file}', msg: {ex.Message}");
 				}
 			}
+			return asms.ToArray();
 		}
 
 		IEnumerable<string> GetExtensionFiles(string baseDir) {
@@ -334,14 +464,15 @@ namespace dnSpy.MainApp {
 		}
 
 		void App_Exit(object sender, ExitEventArgs e) {
-			extensionService.OnAppExit();
-			dsLoaderService.Save();
+			extensionService?.OnAppExit();
+			dsLoaderService?.Save();
 			try {
-				new XmlSettingsWriter(settingsService).Write();
+				var settingsService = exportProvider?.GetExportedValue<SettingsService>();
+				if (settingsService != null)
+					new XmlSettingsWriter(settingsService).Write();
 			}
 			catch {
 			}
-			compositionContainer.Dispose();
 		}
 
 		void UIFixes() {
@@ -360,31 +491,60 @@ namespace dnSpy.MainApp {
 			if (type == null)
 				return;
 			const string styleKey = "EditorContextMenuStyle";
-			var style = this.Resources[styleKey];
+			var style = Resources[styleKey];
 			Debug.Assert(style != null);
 			if (style == null)
 				return;
-			this.Resources.Remove(styleKey);
-			this.Resources.Add(type, style);
+			Resources.Remove(styleKey);
+			Resources.Add(type, style);
 		}
 
 		protected override void OnStartup(StartupEventArgs e) {
 			base.OnStartup(e);
 
+			exportProvider = initializeMEFTask.GetAwaiter().GetResult();
+
+			var cultureService = exportProvider.GetExportedValue<CultureService>();
+			cultureService.Initialize(args);
+
+			// Make sure IDpiService gets created before any MetroWindows
+			exportProvider.GetExportedValue<IDpiService>();
+
+			// It's needed very early, and an IAutoLoaded can't be used (it gets called too late for the first 64x64 image request)
+			DsImageConverter.imageService = exportProvider.GetExportedValue<IImageService>();
+
+			appWindow = exportProvider.GetExportedValue<AppWindow>();
+			extensionService = exportProvider.GetExportedValue<ExtensionService>();
+			dsLoaderService = exportProvider.GetExportedValue<IDsLoaderService>();
+
+			extensionService.LoadedExtensions = loadedExtensions;
+			appWindow.CommandLineArgs = args;
+
 			var win = appWindow.InitializeMainWindow();
 			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dsLoaderService.OnAppLoaded += DsLoaderService_OnAppLoaded;
 			dsLoaderService.Initialize(appWindow, win, args);
-			extensionService.LoadExtensions(this.Resources.MergedDictionaries);
+			extensionService.LoadExtensions(Resources.MergedDictionaries);
 			win.Show();
 		}
 
 		void DsLoaderService_OnAppLoaded(object sender, EventArgs e) {
+			startupStopwatch.Stop();
+			DnSpyEventSource.Log.StartupStop();
+			var sw = startupStopwatch;
+			startupStopwatch = null;
+
+			if (args.ShowStartupTime)
+				ShowElapsedTime(sw);
+
 			dsLoaderService.OnAppLoaded -= DsLoaderService_OnAppLoaded;
 			appWindow.AppLoaded = true;
 			extensionService.OnAppLoaded();
 			HandleAppArgs(args);
 		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		static void ShowElapsedTime(Stopwatch sw) => MsgBox.Instance.Show($"{sw.ElapsedMilliseconds} ms, {sw.ElapsedTicks} ticks");
 
 		void HandleAppArgs(IAppCommandLineArgs appArgs) {
 			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
@@ -392,17 +552,17 @@ namespace dnSpy.MainApp {
 
 			var decompiler = GetDecompiler(appArgs.Language);
 			if (decompiler != null)
-				decompilerService.Value.Decompiler = decompiler;
+				exportProvider.GetExportedValue<IDecompilerService>().Decompiler = decompiler;
 
 			if (appArgs.FullScreen != null)
 				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
 
 			if (appArgs.NewTab)
-				documentTabService.Value.OpenEmptyTab();
+				exportProvider.GetExportedValue<IDocumentTabService>().OpenEmptyTab();
 
 			var files = appArgs.Filenames.ToArray();
 			if (files.Length > 0)
-				OpenDocumentsHelper.OpenDocuments(documentTabService.Value.DocumentTreeView, appWindow.MainWindow, files, false);
+				OpenDocumentsHelper.OpenDocuments(exportProvider.GetExportedValue<IDocumentTabService>().DocumentTreeView, appWindow.MainWindow, files, false);
 
 			// The files were lazily added to the treeview. Make sure they've been added to the TV
 			// before we process the remaining command line args.
@@ -413,7 +573,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
-			foreach (var handler in appCommandLineArgsHandlers.OrderBy(a => a.Value.Order))
+			foreach (var handler in exportProvider.GetExports<IAppCommandLineArgsHandler>().OrderBy(a => a.Value.Order))
 				handler.Value.OnNewArgs(appArgs);
 		}
 
@@ -421,15 +581,15 @@ namespace dnSpy.MainApp {
 			if (string.IsNullOrEmpty(language))
 				return null;
 
-			Guid guid;
-			if (Guid.TryParse(language, out guid)) {
-				var lang = decompilerService.Value.Find(guid);
+			var decompilerService = exportProvider.GetExportedValue<IDecompilerService>();
+			if (Guid.TryParse(language, out var guid)) {
+				var lang = decompilerService.Find(guid);
 				if (lang != null)
 					return lang;
 			}
 
-			return decompilerService.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
-				decompilerService.Value.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
+			return decompilerService.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
+				decompilerService.AllDecompilers.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
 		}
 	}
 }

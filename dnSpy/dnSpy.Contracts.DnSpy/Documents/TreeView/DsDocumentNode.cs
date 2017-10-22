@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,11 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="document">Document</param>
-		protected DsDocumentNode(IDsDocument document) {
-			if (document == null)
-				throw new ArgumentNullException(nameof(document));
-			this.Document = document;
-		}
+		protected DsDocumentNode(IDsDocument document) => Document = document ?? throw new ArgumentNullException(nameof(document));
 
 		/// <summary>
 		/// Gets the node path name

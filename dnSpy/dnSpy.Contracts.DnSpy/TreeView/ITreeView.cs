@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -56,6 +56,11 @@ namespace dnSpy.Contracts.TreeView {
 		void SelectItems(IEnumerable<TreeNodeData> items);
 
 		/// <summary>
+		/// Selects all visible items
+		/// </summary>
+		void SelectAll();
+
+		/// <summary>
 		/// Raised when selection has changed
 		/// </summary>
 		event EventHandler<TreeViewSelectionChangedEventArgs> SelectionChanged;
@@ -84,6 +89,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// Focuses the treeview, possibly getting keyboard focus
 		/// </summary>
 		void Focus();
+
+		/// <summary>
+		/// Scrolls the current node into view
+		/// </summary>
+		void ScrollIntoView();
 
 		/// <summary>
 		/// Calls all nodes' <see cref="ITreeNode.RefreshUI()"/> method

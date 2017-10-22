@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,8 +53,7 @@ namespace dnSpy.Documents.Tabs {
 		void DeserializeResources() {
 			var modifiedResourceNodes = new HashSet<TreeNodeData>();
 			foreach (var node in documentTabService.DocumentTreeView.TreeView.Root.Data.Descendants()) {
-				var elemNode = node as SerializedResourceElementNode;
-				if (elemNode != null) {
+				if (node is SerializedResourceElementNode elemNode) {
 					if (elemNode.CanDeserialize) {
 						elemNode.Deserialize();
 						modifiedResourceNodes.Add(elemNode);

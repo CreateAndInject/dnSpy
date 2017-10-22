@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,8 +45,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public static ScriptControlVM TryGetInstance(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			ScriptControlVM vm;
-			textView.Properties.TryGetProperty(Key, out vm);
+			textView.Properties.TryGetProperty(Key, out ScriptControlVM vm);
 			return vm;
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly IClassificationType gacMatchHighlightClassificationType;
 
 		[ImportingConstructor]
-		OpenFromGACTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.gacMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.GacMatchHighlight);
-		}
+		OpenFromGACTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => gacMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.GacMatchHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new OpenFromGACTextClassifier(gacMatchHighlightClassificationType);
 	}
@@ -43,11 +41,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class OpenFromGACTextClassifier : ITextClassifier {
 		readonly IClassificationType gacMatchHighlightClassificationType;
 
-		public OpenFromGACTextClassifier(IClassificationType gacMatchHighlightClassificationType) {
-			if (gacMatchHighlightClassificationType == null)
-				throw new ArgumentNullException(nameof(gacMatchHighlightClassificationType));
-			this.gacMatchHighlightClassificationType = gacMatchHighlightClassificationType;
-		}
+		public OpenFromGACTextClassifier(IClassificationType gacMatchHighlightClassificationType) => this.gacMatchHighlightClassificationType = gacMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(gacMatchHighlightClassificationType));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var gacContext = context as OpenFromGACTextClassifierContext;

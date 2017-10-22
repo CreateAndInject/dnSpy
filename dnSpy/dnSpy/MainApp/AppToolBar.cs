@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		public AppToolBar(IToolBarService toolBarService) {
 			this.toolBarService = toolBarService;
-			this.toolBar = new ToolBar();
+			toolBar = new ToolBar();
 		}
 
 		internal void Initialize(MetroWindow window) =>

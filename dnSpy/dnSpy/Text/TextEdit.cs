@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,11 +46,9 @@ namespace dnSpy.Text {
 		readonly object editTag;
 
 		public TextEdit(TextBuffer textBuffer, EditOptions options, int? reiteratedVersionNumber, object editTag) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			this.textBuffer = textBuffer;
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			TextSnapshot = textBuffer.CurrentSnapshot;
-			this.changes = new List<ITextChange>();
+			changes = new List<ITextChange>();
 			this.options = options;
 			this.reiteratedVersionNumber = reiteratedVersionNumber;
 			this.editTag = editTag;
@@ -65,7 +63,13 @@ namespace dnSpy.Text {
 			return textBuffer.CurrentSnapshot;
 		}
 
-		public void Cancel() => textBuffer.Cancel(this);
+		public void Cancel() {
+			if (Canceled)
+				return;
+			Canceled = true;
+			textBuffer.Cancel(this);
+		}
+
 		public bool Delete(int startPosition, int charsToDelete) => Delete(new Span(startPosition, charsToDelete));
 		public bool Delete(Span deleteSpan) => Replace(deleteSpan, string.Empty);
 		public bool Insert(int position, char[] characterBuffer, int startIndex, int length) => Insert(position, new string(characterBuffer, startIndex, length));

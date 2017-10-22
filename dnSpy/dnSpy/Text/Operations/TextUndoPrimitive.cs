@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Text.Operations {
 		bool canUndo;
 
 		public TextUndoPrimitive(ITextBuffer textBuffer, ChangeInfo info, object editTag) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			this.textBuffer = textBuffer;
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			this.info = info;
 			this.editTag = editTag;
 			canUndo = true;

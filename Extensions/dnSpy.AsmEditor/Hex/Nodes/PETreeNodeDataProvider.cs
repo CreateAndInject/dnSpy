@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,17 +21,23 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using dnlib.DotNet;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class PETreeNodeDataProviderBase : ITreeNodeDataProvider {
-		readonly Lazy<IHexDocumentService> hexDocumentService;
+		readonly Lazy<IHexBufferService> hexBufferService;
+		readonly Lazy<PEStructureProviderFactory> peStructureProviderFactory;
+		readonly Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory;
 
-		protected PETreeNodeDataProviderBase(Lazy<IHexDocumentService> hexDocumentService) {
-			this.hexDocumentService = hexDocumentService;
+		protected PETreeNodeDataProviderBase(Lazy<IHexBufferService> hexBufferService, Lazy<PEStructureProviderFactory> peStructureProviderFactory, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory) {
+			this.hexBufferService = hexBufferService;
+			this.peStructureProviderFactory = peStructureProviderFactory;
+			this.hexBufferFileServiceFactory = hexBufferFileServiceFactory;
 		}
 
 		public IEnumerable<TreeNodeData> Create(TreeNodeDataProviderContext context) {
@@ -43,8 +49,17 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			bool hasPENode = HasPENode(fileNode);
 			var peImage = fileNode.Document.PEImage;
 			Debug.Assert(!hasPENode || peImage != null);
-			if (hasPENode && peImage != null)
-				yield return new PENode(hexDocumentService.Value, peImage, fileNode.Document.ModuleDef as ModuleDefMD);
+			if (hasPENode && peImage != null) {
+				Func<HexBufferFile> createBufferFile = () => {
+					var buffer = hexBufferService.Value.GetOrCreate(peImage);
+					var service = hexBufferFileServiceFactory.Value.Create(buffer);
+					var pePosition = HexPosition.Zero;
+					var bufferFile = service.GetFile(pePosition, checkNestedFiles: false);
+					Debug.Assert(bufferFile != null, "File hasn't been created");
+					return bufferFile;
+				};
+				yield return new PENode(createBufferFile, peStructureProviderFactory.Value);
+			}
 		}
 
 		public static bool HasPENode(DsDocumentNode node) {
@@ -65,16 +80,16 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.MODULE_NODE_GUID)]
 	sealed class ModulePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		ModulePETreeNodeDataProvider(Lazy<IHexDocumentService> hexDocumentService)
-			: base(hexDocumentService) {
+		ModulePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService, Lazy<PEStructureProviderFactory> peStructureProviderFactory, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory)
+			: base(hexBufferService, peStructureProviderFactory, hexBufferFileServiceFactory) {
 		}
 	}
 
 	[ExportTreeNodeDataProvider(Guid = DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID)]
 	sealed class PEFilePETreeNodeDataProvider : PETreeNodeDataProviderBase {
 		[ImportingConstructor]
-		PEFilePETreeNodeDataProvider(Lazy<IHexDocumentService> hexDocumentService)
-			: base(hexDocumentService) {
+		PEFilePETreeNodeDataProvider(Lazy<IHexBufferService> hexBufferService, Lazy<PEStructureProviderFactory> peStructureProviderFactory, Lazy<HexBufferFileServiceFactory> hexBufferFileServiceFactory)
+			: base(hexBufferService, peStructureProviderFactory, hexBufferFileServiceFactory) {
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,9 +30,7 @@ namespace dnSpy.MainApp {
 		readonly IDsToolWindowService toolWindowService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IDsToolWindowService toolWindowService) {
-			this.toolWindowService = toolWindowService;
-		}
+		AppCommandLineArgsHandler(IDsToolWindowService toolWindowService) => this.toolWindowService = toolWindowService;
 
 		public double Order => 0;
 
@@ -40,9 +38,7 @@ namespace dnSpy.MainApp {
 			public Guid Guid { get; }
 			public AppToolWindowLocation? Location { get; set; }
 
-			public ToolWindowInfo(Guid guid) {
-				this.Guid = guid;
-			}
+			public ToolWindowInfo(Guid guid) => Guid = guid;
 		}
 
 		public void OnNewArgs(IAppCommandLineArgs args) {
@@ -65,8 +61,7 @@ namespace dnSpy.MainApp {
 				yield break;
 			foreach (var tw in arg.Split(new char[] { ',' })) {
 				var opts = tw.Split(new char[] { '!' }, 2);
-				Guid guid;
-				bool b = Guid.TryParse(opts[0], out guid);
+				bool b = Guid.TryParse(opts[0], out var guid);
 				Debug.Assert(b);
 				if (!b)
 					continue;

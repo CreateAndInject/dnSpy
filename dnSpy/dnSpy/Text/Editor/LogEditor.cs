@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -60,9 +60,7 @@ namespace dnSpy.Text.Editor {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly LogEditor logEditorUI;
 
-			public GuidObjectsProvider(LogEditor logEditorUI) {
-				this.logEditorUI = logEditorUI;
-			}
+			public GuidObjectsProvider(LogEditor logEditorUI) => this.logEditorUI = logEditorUI;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_LOG_EDITOR_GUID, logEditorUI);
@@ -79,8 +77,8 @@ namespace dnSpy.Text.Editor {
 		};
 
 		public LogEditor(LogEditorOptions options, IDsTextEditorFactoryService dsTextEditorFactoryService, IContentTypeRegistryService contentTypeRegistryService, ITextBufferFactoryService textBufferFactoryService, IEditorOptionsFactoryService editorOptionsFactoryService) {
-			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.cachedColorsList = new CachedColorsList();
+			dispatcher = Dispatcher.CurrentDispatcher;
+			cachedColorsList = new CachedColorsList();
 			options = options?.Clone() ?? new LogEditorOptions();
 			options.CreateGuidObjects = CommonGuidObjectsProvider.Create(options.CreateGuidObjects, new GuidObjectsProvider(this));
 
@@ -93,7 +91,7 @@ namespace dnSpy.Text.Editor {
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
 			var wpfTextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
 			this.wpfTextViewHost = wpfTextViewHost;
-			this.wpfTextView = wpfTextViewHost.TextView;
+			wpfTextView = wpfTextViewHost.TextView;
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.DragDropEditingId, false);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.ViewProhibitUserInputId, true);
 			wpfTextView.Options.SetOptionValue(DefaultTextViewOptions.AutoScrollId, true);

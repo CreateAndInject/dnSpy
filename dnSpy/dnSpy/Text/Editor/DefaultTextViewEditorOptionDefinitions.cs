@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -104,7 +104,7 @@ namespace dnSpy.Text.Editor {
 	[Export(typeof(EditorOptionDefinition))]
 	sealed class BlockStructureLineKindEditorOptionDefinition : ViewOptionDefinition<BlockStructureLineKind> {
 		public override EditorOptionKey<BlockStructureLineKind> Key => DefaultDsTextViewOptions.BlockStructureLineKindId;
-		public override BlockStructureLineKind Default => BlockStructureLineKind.Dashed_2_2;
+		public override BlockStructureLineKind Default => BlockStructureLineKind.Dashed_3_3;
 	}
 
 	[Export(typeof(EditorOptionDefinition))]

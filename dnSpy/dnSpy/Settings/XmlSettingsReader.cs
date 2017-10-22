@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,8 +47,7 @@ namespace dnSpy.Settings {
 				var name = XmlUtils.UnescapeAttributeValue((string)xmlSect.Attribute(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
 				if (name == null)
 					continue;
-				Guid guid;
-				if (!Guid.TryParse(name, out guid))
+				if (!Guid.TryParse(name, out var guid))
 					continue;
 				var section = mgr.GetOrCreateSection(guid);
 				ReadSection(xmlSect, section, 0);

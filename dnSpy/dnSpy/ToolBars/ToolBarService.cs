@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,9 +46,7 @@ namespace dnSpy.ToolBars {
 		public override IToolBarItem ToolBarItem => md.Value;
 		public override IToolBarItemMetadata Metadata => md.Metadata;
 
-		public ToolBarButtonMD(Lazy<IToolBarButton, IToolBarButtonMetadata> md) {
-			this.md = md;
-		}
+		public ToolBarButtonMD(Lazy<IToolBarButton, IToolBarButtonMetadata> md) => this.md = md;
 	}
 
 	sealed class ToolBarObjectMD : ToolBarItemMD {
@@ -57,9 +55,7 @@ namespace dnSpy.ToolBars {
 		public override IToolBarItem ToolBarItem => md.Value;
 		public override IToolBarItemMetadata Metadata => md.Metadata;
 
-		public ToolBarObjectMD(Lazy<IToolBarObject, IToolBarObjectMetadata> md) {
-			this.md = md;
-		}
+		public ToolBarObjectMD(Lazy<IToolBarObject, IToolBarObjectMetadata> md) => this.md = md;
 	}
 
 	sealed class ToolBarItemGroupMD {
@@ -67,8 +63,8 @@ namespace dnSpy.ToolBars {
 		public readonly List<ToolBarItemMD> Items;
 
 		public ToolBarItemGroupMD(double order) {
-			this.Order = order;
-			this.Items = new List<ToolBarItemMD>();
+			Order = order;
+			Items = new List<ToolBarItemMD>();
 		}
 	}
 
@@ -86,12 +82,10 @@ namespace dnSpy.ToolBars {
 
 			var dict = new Dictionary<Guid, Dictionary<string, ToolBarItemGroupMD>>();
 			foreach (var md in GetToolBarItemMDs()) {
-				string ownerGuidString, groupName;
-				double groupOrder;
+				string ownerGuidString;
 
 				ownerGuidString = md.Metadata.OwnerGuid ?? ToolBarConstants.APP_TB_GUID;
-				Guid ownerGuid;
-				bool b = Guid.TryParse(ownerGuidString, out ownerGuid);
+				bool b = Guid.TryParse(ownerGuidString, out var ownerGuid);
 				Debug.Assert(b, string.Format("ToolBarItem: Couldn't parse OwnerGuid property: '{0}'", ownerGuidString));
 				if (!b)
 					continue;
@@ -100,16 +94,14 @@ namespace dnSpy.ToolBars {
 				Debug.Assert(b, "ToolBarItem: Group property is empty or null");
 				if (!b)
 					continue;
-				b = Menus.MenuService.ParseGroup(md.Metadata.Group, out groupOrder, out groupName);
+				b = Menus.MenuService.ParseGroup(md.Metadata.Group, out double groupOrder, out string groupName);
 				Debug.Assert(b, "ToolBarItem: Group property must be of the format \"<order>,<name>\" where <order> is a System.Double");
 				if (!b)
 					continue;
 
-				Dictionary<string, ToolBarItemGroupMD> groupDict;
-				if (!dict.TryGetValue(ownerGuid, out groupDict))
+				if (!dict.TryGetValue(ownerGuid, out var groupDict))
 					dict.Add(ownerGuid, groupDict = new Dictionary<string, ToolBarItemGroupMD>());
-				ToolBarItemGroupMD mdGroup;
-				if (!groupDict.TryGetValue(groupName, out mdGroup))
+				if (!groupDict.TryGetValue(groupName, out var mdGroup))
 					groupDict.Add(groupName, mdGroup = new ToolBarItemGroupMD(groupOrder));
 				Debug.Assert(mdGroup.Order == groupOrder, string.Format("ToolBarItem: Group order is different: {0} vs {1}", mdGroup.Order, groupOrder));
 				mdGroup.Items.Add(md);
@@ -143,8 +135,7 @@ namespace dnSpy.ToolBars {
 
 			toolBar.Items.Clear();
 
-			List<ToolBarItemGroupMD> groups;
-			bool b = guidToGroups.TryGetValue(toolBarGuid, out groups);
+			bool b = guidToGroups.TryGetValue(toolBarGuid, out var groups);
 			Debug.Assert(b);
 			if (b) {
 				var ctx = new ToolBarItemContext(toolBarGuid);
@@ -176,12 +167,10 @@ namespace dnSpy.ToolBars {
 		}
 
 		object Create(ToolBarItemMD md, IToolBarItemContext ctx, IInputElement commandTarget) {
-			var mdButton = md as ToolBarButtonMD;
-			if (mdButton != null)
+			if (md is ToolBarButtonMD mdButton)
 				return Create(mdButton, ctx, commandTarget);
 
-			var mdObj = md as ToolBarObjectMD;
-			if (mdObj != null)
+			if (md is ToolBarObjectMD mdObj)
 				return Create(mdObj, ctx, commandTarget);
 
 			Debug.Fail("Unknown TB MD");
@@ -201,7 +190,7 @@ namespace dnSpy.ToolBars {
 			header = item.GetHeader(ctx) ?? header;
 			toolTip = item.GetToolTip(ctx) ?? toolTip;
 
-			var imgRef = item.GetIcon(ctx) ?? ImageReferenceHelper.GetImageReference(item, icon) ?? default(ImageReference);
+			var imgRef = item.GetIcon(ctx) ?? ImageReferenceHelper.GetImageReference(item, icon) ?? default;
 			var toggleButtonCmd = item as IToolBarToggleButton;
 			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");
 			if (toggleButtonCmd != null)

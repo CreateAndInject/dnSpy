@@ -32,13 +32,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public MethodNode(MethodDef analyzedMethod, bool hidesParent = false) {
-			if (analyzedMethod == null)
-				throw new ArgumentNullException(nameof(analyzedMethod));
-			this.analyzedMethod = analyzedMethod;
+			this.analyzedMethod = analyzedMethod ?? throw new ArgumentNullException(nameof(analyzedMethod));
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedMethod);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
@@ -61,6 +59,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new VirtualMethodUsedByNode(analyzedMethod);
 			else
 				yield return new MethodUsedByNode(analyzedMethod);
+
+			if (MethodOverriddenNode.CanShow(analyzedMethod))
+				yield return new MethodOverriddenNode(analyzedMethod);
 
 			if (MethodOverridesNode.CanShow(analyzedMethod))
 				yield return new MethodOverridesNode(analyzedMethod);

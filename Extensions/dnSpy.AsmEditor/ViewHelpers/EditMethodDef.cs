@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public EditMethodDef(ModuleDef ownerModule, Window ownerWindow) {
 			this.ownerModule = ownerModule;
-			this.dnlibTypePicker = new DnlibTypePicker(ownerWindow);
+			dnlibTypePicker = new DnlibTypePicker(ownerWindow);
 		}
 
 		public MethodDefVM Edit(string title, MethodDefVM vm) {

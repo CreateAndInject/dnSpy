@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,6 +27,8 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Contracts.Utilities;
+using dnSpy.Properties;
 
 namespace dnSpy.Search {
 	[ExportAutoLoaded]
@@ -35,7 +37,7 @@ namespace dnSpy.Search {
 
 		static SearchCommandLoader() {
 			SearchRoutedCommand = new RoutedCommand("SearchRoutedCommand", typeof(SearchCommandLoader));
-			SearchRoutedCommand.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control));
+			SearchRoutedCommand.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control | ModifierKeys.Shift));
 		}
 
 		readonly IDsToolWindowService toolWindowService;
@@ -54,14 +56,17 @@ namespace dnSpy.Search {
 		void Search(object sender, ExecutedRoutedEventArgs e) => toolWindowService.Show(SearchToolWindowContent.THE_GUID);
 	}
 
-	[ExportToolBarButton(Icon = DsImagesAttribute.Search, ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
+	[ExportToolBarButton(Icon = DsImagesAttribute.Search, Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
 	sealed class SearchAssembliesToolBarButtonCommand : ToolBarButtonCommand {
 		public SearchAssembliesToolBarButtonCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {
 		}
+
+		public override string GetToolTip(IToolBarItemContext context) =>
+			ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.SearchAssembliesToolBarToolTip, dnSpy_Resources.ShortCutKeyCtrlShiftK);
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:SearchAssembliesKey", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftK", Icon = DsImagesAttribute.Search, Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
 	sealed class SearchAssembliesMenuItemCommand : MenuItemCommand {
 		public SearchAssembliesMenuItemCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {
@@ -114,9 +119,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		SyntaxHighlightCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		SyntaxHighlightCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.SyntaxHighlight;
@@ -128,9 +131,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		MatchWholeWordsCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		MatchWholeWordsCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.MatchWholeWords;
@@ -142,9 +143,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		CaseSensitiveCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		CaseSensitiveCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.CaseSensitive;
@@ -156,9 +155,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		MatchAnyCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		MatchAnyCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.MatchAnySearchTerm;
@@ -170,9 +167,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		DecompileResourcesCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		DecompileResourcesCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchDecompiledData;
@@ -184,9 +179,7 @@ namespace dnSpy.Search {
 		readonly SearchSettingsImpl searchSettings;
 
 		[ImportingConstructor]
-		SearchGacAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) {
-			this.searchSettings = searchSettings;
-		}
+		SearchGacAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) => this.searchSettings = searchSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
 		public override bool IsChecked(IMenuItemContext context) => searchSettings.SearchGacAssemblies;

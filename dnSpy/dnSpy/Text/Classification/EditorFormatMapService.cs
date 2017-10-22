@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,27 +22,47 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Threading;
 using dnSpy.Contracts.Themes;
+using dnSpy.Settings.AppearanceCategory;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Classification {
-	[Export(typeof(IEditorFormatMapService))]
-	sealed class EditorFormatMapService : IEditorFormatMapService {
+	abstract class EditorFormatMapService {
 		readonly IThemeService themeService;
-		readonly ITextEditorFontSettingsService textEditorFontSettingsService;
+		readonly ITextAppearanceCategoryService textAppearanceCategoryService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
-		readonly Dictionary<ITextEditorFontSettings, IEditorFormatMap> toCategoryMap;
+		readonly Dictionary<ITextAppearanceCategory, IEditorFormatMap> toCategoryMap;
 		readonly List<CategoryEditorFormatMapUpdater> cachedUpdaters;
 		readonly Dispatcher dispatcher;
 
-		[ImportingConstructor]
-		public EditorFormatMapService(IThemeService themeService, ITextEditorFontSettingsService textEditorFontSettingsService, IEditorFormatDefinitionService editorFormatDefinitionService) {
+		protected EditorFormatMapService(IThemeService themeService, ITextAppearanceCategoryService textAppearanceCategoryService, IEditorFormatDefinitionService editorFormatDefinitionService) {
 			this.themeService = themeService;
-			this.textEditorFontSettingsService = textEditorFontSettingsService;
+			this.textAppearanceCategoryService = textAppearanceCategoryService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
-			this.toCategoryMap = new Dictionary<ITextEditorFontSettings, IEditorFormatMap>();
-			this.cachedUpdaters = new List<CategoryEditorFormatMapUpdater>();
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			toCategoryMap = new Dictionary<ITextAppearanceCategory, IEditorFormatMap>();
+			cachedUpdaters = new List<CategoryEditorFormatMapUpdater>();
+			dispatcher = Dispatcher.CurrentDispatcher;
+		}
+
+		public IEditorFormatMap GetEditorFormatMap(string category) {
+			if (category == null)
+				throw new ArgumentNullException(nameof(category));
+			var textAppearanceCategory = textAppearanceCategoryService.GetSettings(category);
+			if (toCategoryMap.TryGetValue(textAppearanceCategory, out var map))
+				return map;
+			map = new CategoryEditorFormatMap(dispatcher, editorFormatDefinitionService);
+			var updater = new CategoryEditorFormatMapUpdater(themeService, textAppearanceCategory, editorFormatDefinitionService, map);
+			cachedUpdaters.Add(updater);
+			toCategoryMap.Add(textAppearanceCategory, map);
+			return map;
+		}
+	}
+
+	[Export(typeof(IEditorFormatMapService))]
+	sealed class EditorFormatMapServiceImpl : EditorFormatMapService, IEditorFormatMapService {
+		[ImportingConstructor]
+		public EditorFormatMapServiceImpl(IThemeService themeService, ITextAppearanceCategoryService textAppearanceCategoryService, IEditorFormatDefinitionService editorFormatDefinitionService)
+			: base(themeService, textAppearanceCategoryService, editorFormatDefinitionService) {
 		}
 
 		public IEditorFormatMap GetEditorFormatMap(ITextView view) {
@@ -53,7 +73,7 @@ namespace dnSpy.Text.Classification {
 
 		ViewEditorFormatMap CreateViewEditorFormatMap(ITextView textView) {
 			textView.Closed += TextView_Closed;
-			return new ViewEditorFormatMap(textView, this);
+			return new TextViewEditorFormatMap(textView, this);
 		}
 
 		void TextView_Closed(object sender, EventArgs e) {
@@ -62,20 +82,6 @@ namespace dnSpy.Text.Classification {
 			var map = (ViewEditorFormatMap)textView.Properties[typeof(ViewEditorFormatMap)];
 			textView.Properties.RemoveProperty(typeof(ViewEditorFormatMap));
 			map.Dispose();
-		}
-
-		public IEditorFormatMap GetEditorFormatMap(string category) {
-			if (category == null)
-				throw new ArgumentNullException(nameof(category));
-			var textEditorFontSettings = textEditorFontSettingsService.GetSettings(category);
-			IEditorFormatMap map;
-			if (toCategoryMap.TryGetValue(textEditorFontSettings, out map))
-				return map;
-			map = new CategoryEditorFormatMap(dispatcher, editorFormatDefinitionService);
-			var updater = new CategoryEditorFormatMapUpdater(themeService, textEditorFontSettings, editorFormatDefinitionService, map);
-			cachedUpdaters.Add(updater);
-			toCategoryMap.Add(textEditorFontSettings, map);
-			return map;
 		}
 	}
 }

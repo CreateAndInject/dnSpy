@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.Text.Formatting;
 namespace dnSpy.Text.Formatting {
 	struct LinePart {
 		/// <summary>
-		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="Contracts.Text.Span.Start"/>
+		/// Column (visible character index). This is usually equal to <see cref="Span"/>'s <see cref="Microsoft.VisualStudio.Text.Span.Start"/>
 		/// property unless there's one or more hidden characters before this <see cref="LinePart"/> or if there's a <see cref="LinePart"/>
 		/// with a non-null <see cref="AdornmentElement"/>.
 		/// </summary>
@@ -60,21 +60,21 @@ namespace dnSpy.Text.Formatting {
 		public LinePart(int index, int column, Span span, IAdornmentElement adornmentElement, TextRunProperties textRunProperties) {
 			Debug.Assert(adornmentElement != null);
 			Debug.Assert(textRunProperties != null);
-			this.Index = index;
-			this.Column = column;
-			this.Span = span;
-			this.AdornmentElement = adornmentElement;
-			this.TextRunProperties = textRunProperties;
+			Index = index;
+			Column = column;
+			Span = span;
+			AdornmentElement = adornmentElement;
+			TextRunProperties = textRunProperties;
 		}
 
 		public LinePart(int index, int column, Span span, TextRunProperties textRunProperties) {
 			Debug.Assert(!span.IsEmpty);
 			Debug.Assert(textRunProperties != null);
-			this.Index = index;
-			this.Column = column;
-			this.Span = span;
-			this.AdornmentElement = null;
-			this.TextRunProperties = textRunProperties;
+			Index = index;
+			Column = column;
+			Span = span;
+			AdornmentElement = null;
+			TextRunProperties = textRunProperties;
 		}
 
 		public bool BelongsTo(int lineIndex) {

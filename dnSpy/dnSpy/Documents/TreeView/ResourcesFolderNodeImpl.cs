@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Documents.TreeView {
 		readonly ModuleDef module;
 
 		public ResourcesFolderNodeImpl(ITreeNodeGroup treeNodeGroup, ModuleDef module) {
-			this.TreeNodeGroup = treeNodeGroup;
+			TreeNodeGroup = treeNodeGroup;
 			this.module = module;
 		}
 

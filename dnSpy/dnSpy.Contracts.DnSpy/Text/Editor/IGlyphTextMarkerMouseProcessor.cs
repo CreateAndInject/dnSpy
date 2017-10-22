@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,6 +70,11 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Sorted markers shown in the glyph margin. The first marker is the top most marker.
 		/// </summary>
 		IGlyphTextMarker[] Markers { get; }
+
+		/// <summary>
+		/// Gets the span provider
+		/// </summary>
+		IGlyphTextMarkerSpanProvider SpanProvider { get; }
 	}
 
 	/// <summary>

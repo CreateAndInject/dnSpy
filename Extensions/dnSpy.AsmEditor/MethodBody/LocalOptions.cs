@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,15 +30,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public LocalOptions(Local local) {
-			this.Type = local.Type;
-			this.Name = local.Name;
-			this.PdbAttributes = local.PdbAttributes;
+			Type = local.Type;
+			Name = local.Name;
+			PdbAttributes = local.PdbAttributes;
 		}
 
 		public Local CopyTo(Local local) {
-			local.Type = this.Type;
-			local.Name = this.Name;
-			local.PdbAttributes = this.PdbAttributes;
+			local.Type = Type;
+			local.Name = Name;
+			local.PdbAttributes = PdbAttributes;
 			return local;
 		}
 

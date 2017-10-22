@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,6 +34,9 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>Document viewer</summary>
 		public const double DocumentViewer = TextEditor - 3000;
 
+		/// <summary>Document viewer</summary>
+		public const double Bookmarks = TextEditor - 4000;
+
 		/// <summary>REPL editor</summary>
 		public const double REPL = TextEditor - 3000;
 
@@ -42,5 +45,8 @@ namespace dnSpy.Contracts.Command {
 
 		/// <summary>Edit Code</summary>
 		public const double EditCode = TextEditor - 3000;
+
+		/// <summary>Hex editor</summary>
+		public const double HexEditor = TextEditor;
 	}
 }

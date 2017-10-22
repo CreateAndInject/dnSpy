@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,8 +47,7 @@ namespace dnSpy.Text.Operations {
 			var propertyOwner = context as IPropertyOwner;
 			if (propertyOwner == null)
 				throw new ArgumentException();
-			TextUndoHistory history;
-			if (propertyOwner.Properties.TryGetProperty(textUndoHistoryKey, out history))
+			if (propertyOwner.Properties.TryGetProperty(textUndoHistoryKey, out TextUndoHistory history))
 				return history;
 			throw new ArgumentException();
 		}

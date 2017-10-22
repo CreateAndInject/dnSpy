@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditMethodOverride(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditMethodOverride(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public MethodOverrideVM Edit(string title, MethodOverrideVM mo) {
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);

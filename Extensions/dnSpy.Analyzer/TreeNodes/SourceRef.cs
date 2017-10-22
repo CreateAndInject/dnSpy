@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,9 +25,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public uint ILOffset { get; }
 		public IMDTokenProvider Reference { get; }
 		public SourceRef(MethodDef method, uint offset, IMDTokenProvider reference) {
-			this.Method = method;
-			this.ILOffset = offset;
-			this.Reference = reference;
+			Method = method;
+			ILOffset = offset;
+			Reference = reference;
 		}
 	}
 }

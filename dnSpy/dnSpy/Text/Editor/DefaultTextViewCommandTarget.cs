@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,13 +32,10 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService;
 
 		[ImportingConstructor]
-		DefaultTextViewCommandTargetFilterProvider(Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService) {
-			this.editorOperationsFactoryService = editorOperationsFactoryService;
-		}
+		DefaultTextViewCommandTargetFilterProvider(Lazy<IEditorOperationsFactoryService> editorOperationsFactoryService) => this.editorOperationsFactoryService = editorOperationsFactoryService;
 
 		public ICommandTargetFilter Create(object target) {
-			var textView = target as ITextView;
-			if (textView != null)
+			if (target is ITextView textView)
 				return new DefaultTextViewCommandTarget(textView, editorOperationsFactoryService.Value);
 			return null;
 		}
@@ -51,9 +48,7 @@ namespace dnSpy.Text.Editor {
 		IEditorOperations2 EditorOperations2 => EditorOperations as IEditorOperations2;
 
 		public DefaultTextViewCommandTarget(ITextView textView, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 			EditorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,9 +48,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IBracePairServiceProvider bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairViewTaggerProvider(IBracePairServiceProvider bracePairServiceProvider) {
-			this.bracePairServiceProvider = bracePairServiceProvider;
-		}
+		BracePairViewTaggerProvider(IBracePairServiceProvider bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag {
 			if (textView.TextBuffer != buffer)
@@ -82,9 +80,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly Lazy<IBracePairServiceProvider> bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) {
-			this.bracePairServiceProvider = bracePairServiceProvider;
-		}
+		BracePairCommandTargetFilterProvider(Lazy<IBracePairServiceProvider> bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
@@ -155,13 +151,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			var t = GetMatchingBracePosition(documentViewer);
 			if (t == null)
 				return;
-			var pos = t.Item1;
+			var pos = t.Value.position;
 			if (pos == null)
 				return;
 			var snapshot = documentViewer.TextView.TextSnapshot;
 			if (pos.Value > snapshot.Length)
 				return;
-			var bpResult = t.Item2;
+			var bpResult = t.Value.bracePairResult;
 			if (bpResult.Left.End > snapshot.Length || bpResult.Right.End > snapshot.Length)
 				return;
 			if (bpResult.Left.Start > bpResult.Right.Start)
@@ -177,7 +173,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			documentViewer.Caret.EnsureVisible();
 		}
 
-		static Tuple<int?, BracePairResult> GetMatchingBracePosition(IDocumentViewer documentViewer) {
+		static (int? position, BracePairResult bracePairResult)? GetMatchingBracePosition(IDocumentViewer documentViewer) {
 			var caretPos = documentViewer.TextView.Caret.Position;
 			if (caretPos.VirtualSpaces > 0)
 				return null;
@@ -190,18 +186,18 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				return null;
 			var pair = pairColl.Value.First;
 			if (pair.Left.Start == pos)
-				return Tuple.Create<int?, BracePairResult>(pair.Right.End, pair);
+				return (pair.Right.End, pair);
 			if (pair.Right.End == pos)
-				return Tuple.Create<int?, BracePairResult>(pair.Left.Start, pair);
+				return (pair.Left.Start, pair);
 			if (pair.Right.Start == pos) {
 				var pair2 = coll.GetBracePairs(pos - 1);
 				if (pair2 != null && pair2.Value.First.Right.End == pos)
-					return Tuple.Create<int?, BracePairResult>(pair2.Value.First.Left.Start, pair2.Value.First);
+					return (pair2.Value.First.Left.Start, pair2.Value.First);
 			}
 			if (pair.Left.Start <= pos && pos <= pair.Left.End)
-				return Tuple.Create<int?, BracePairResult>(pair.Right.End, pair);
+				return (pair.Right.End, pair);
 			if (pair.Right.Start <= pos && pos <= pair.Right.End)
-				return Tuple.Create<int?, BracePairResult>(pair.Left.Start, pair);
+				return (pair.Left.Start, pair);
 			return null;
 		}
 
@@ -214,9 +210,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IBracePairServiceProvider bracePairServiceProvider;
 
 		[ImportingConstructor]
-		BracePairDocumentViewerListener(IBracePairServiceProvider bracePairServiceProvider) {
-			this.bracePairServiceProvider = bracePairServiceProvider;
-		}
+		BracePairDocumentViewerListener(IBracePairServiceProvider bracePairServiceProvider) => this.bracePairServiceProvider = bracePairServiceProvider;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)
@@ -255,10 +249,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		BracePairResultCollection? currentBracePair;
 
 		public BracePairService(ITextView textView) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.textView = textView;
-			this.bracePairCollection = BracePairCollection.Empty;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			bracePairCollection = BracePairCollection.Empty;
 			textView.Closed += TextView_Closed;
 			textView.Options.OptionChanged += Options_OptionChanged;
 			UpdateBraceMatching();
@@ -326,14 +318,10 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		void RefreshTags(BracePairResultCollection? a, BracePairResultCollection? b) {
 			if (a != null) {
 				RefreshTags(a.Value.First);
-				RefreshTags(a.Value.First);
-				RefreshTags(a.Value.Second);
 				RefreshTags(a.Value.Second);
 			}
 			if (b != null) {
 				RefreshTags(b.Value.First);
-				RefreshTags(b.Value.First);
-				RefreshTags(b.Value.Second);
 				RefreshTags(b.Value.Second);
 			}
 		}
@@ -367,11 +355,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public void SetBracePairViewTagger(BracePairViewTagger tagger) {
-			if (tagger == null)
-				throw new ArgumentNullException(nameof(tagger));
 			if (this.tagger != null)
 				throw new InvalidOperationException();
-			this.tagger = tagger;
+			this.tagger = tagger ?? throw new ArgumentNullException(nameof(tagger));
 		}
 
 		public IEnumerable<ITagSpan<IBracePairTag>> GetTags(NormalizedSnapshotSpanCollection spans) {

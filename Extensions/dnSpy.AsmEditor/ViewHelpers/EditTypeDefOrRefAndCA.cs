@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditTypeDefOrRefAndCA(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditTypeDefOrRefAndCA(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj) {
 			var win = new TypeDefOrRefAndCADlg();

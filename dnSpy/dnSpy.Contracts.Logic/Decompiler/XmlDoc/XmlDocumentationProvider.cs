@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			{
 				if (size <= 0)
 					throw new ArgumentOutOfRangeException(nameof(size), size, "Value must be positive");
-				this.entries = new KeyValuePair<string, string>[size];
+				entries = new KeyValuePair<string, string>[size];
 			}
 			
 			internal bool TryGet(string key, out string value)
@@ -86,11 +86,11 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			
 			internal IndexEntry(int hashCode, int positionInFile)
 			{
-				this.HashCode = hashCode;
-				this.PositionInFile = positionInFile;
+				HashCode = hashCode;
+				PositionInFile = positionInFile;
 			}
 
-			public int CompareTo(IndexEntry other) => this.HashCode.CompareTo(other.HashCode);
+			public int CompareTo(IndexEntry other) => HashCode.CompareTo(other.HashCode);
 		}
 		
 		[NonSerialized]
@@ -144,7 +144,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					xmlReader.MoveToContent();
 					if (string.IsNullOrEmpty(xmlReader.GetAttribute("redirect"))) {
 						this.fileName = fileName;
-						this.encoding = GetEncoding(xmlReader.Encoding);
+						encoding = GetEncoding(xmlReader.Encoding);
 						ReadXmlDoc(xmlReader);
 					} else {
 						string redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
@@ -155,7 +155,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 									redirectedXmlReader.XmlResolver = null; // no DTD resolving
 									redirectedXmlReader.MoveToContent();
 									this.fileName = redirectionTarget;
-									this.encoding = GetEncoding(redirectedXmlReader.Encoding);
+									encoding = GetEncoding(redirectedXmlReader.Encoding);
 									ReadXmlDoc(redirectedXmlReader);
 								}
 							}
@@ -247,7 +247,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					}
 				}
 				indexList.Sort();
-				this.index = indexList.ToArray(); // volatile write
+				index = indexList.ToArray(); // volatile write
 			}
 		}
 		
@@ -263,7 +263,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			
 			public LinePositionMapper(FileStream fs, Encoding encoding)
 			{
-				this.decoder = encoding.GetDecoder();
+				decoder = encoding.GetDecoder();
 				this.fs = fs;
 			}
 			
@@ -276,10 +276,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 					int b = fs.ReadByte();
 					if (b < 0)
 						throw new EndOfStreamException();
-					int bytesUsed, charsUsed;
-					bool completed;
 					inputLocal[0] = (byte)b;
-					decoder.Convert(inputLocal, 0, 1, outputLocal, 0, outputLocal.Length, false, out bytesUsed, out charsUsed, out completed);
+					decoder.Convert(inputLocal, 0, 1, outputLocal, 0, outputLocal.Length, false, out int bytesUsed, out int charsUsed, out bool completed);
 					Debug.Assert(bytesUsed == 1);
 					for (int i = 0; i < charsUsed; i++) {
 						if (outputLocal[i] == '\n')
@@ -367,8 +365,7 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			
 			XmlDocumentationCache cache = this.cache;
 			lock (cache) {
-				string val;
-				if (!cache.TryGet(key, out val)) {
+				if (!cache.TryGet(key, out string val)) {
 					try {
 						// go through all items that have the correct hash
 						while (++m < index.Length && index[m].HashCode == hashcode) {
@@ -403,10 +400,10 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 				}
 			} catch (IOException) {
 				// Ignore errors on reload; IEntity.Documentation callers aren't prepared to handle exceptions
-				this.index = new IndexEntry[0]; // clear index to avoid future load attempts
+				index = new IndexEntry[0]; // clear index to avoid future load attempts
 				return null;
 			} catch (XmlException) {
-				this.index = new IndexEntry[0]; // clear index to avoid future load attempts
+				index = new IndexEntry[0]; // clear index to avoid future load attempts
 				return null;				
 			}
 			return GetDocumentation(key, allowReload: false); // prevent infinite reload loops
@@ -436,11 +433,8 @@ namespace dnSpy.Contracts.Decompiler.XmlDoc {
 			}
 		}
 		#endregion
-		
+
 		/// <inheritdoc/>
-		public virtual void OnDeserialization(object sender)
-		{
-			cache = new XmlDocumentationCache();
-		}
+		public virtual void OnDeserialization(object sender) => cache = new XmlDocumentationCache();
 	}
 }

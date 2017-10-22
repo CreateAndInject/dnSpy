@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,14 +37,13 @@ namespace dnSpy.Documents.Tabs {
 		public string ResourceName { get; }
 
 		ResourceRef(ModuleDef module, string resourcesFilename, string resourceName) {
-			this.Module = module;
-			this.Filename = resourcesFilename;
-			this.ResourceName = resourceName;
+			Module = module;
+			Filename = resourcesFilename;
+			ResourceName = resourceName;
 		}
 
 		public static ResourceRef TryCreate(object o) {
-			if (o is PropertyDef) {
-				var pd = (PropertyDef)o;
+			if (o is PropertyDef pd) {
 				if (pd.SetMethod != null)
 					return null;
 				o = pd.GetMethod;
@@ -160,9 +159,7 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			TextEditorCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			TextEditorCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
@@ -186,17 +183,14 @@ namespace dnSpy.Documents.Tabs {
 			readonly IDocumentTabService documentTabService;
 
 			[ImportingConstructor]
-			DocumentTreeViewCommand(IDocumentTabService documentTabService) {
-				this.documentTabService = documentTabService;
-			}
+			DocumentTreeViewCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 			public override void Execute(IMenuItemContext context) => GoToResourceCommand.Execute(documentTabService, TryCreate(context));
 
 			static ResourceRef TryCreate(TreeNodeData[] nodes) {
 				if (nodes == null || nodes.Length != 1)
 					return null;
-				var tokNode = nodes[0] as IMDTokenNode;
-				if (tokNode != null)
+				if (nodes[0] is IMDTokenNode tokNode)
 					return ResourceRef.TryCreate(tokNode.Reference);
 				return null;
 			}

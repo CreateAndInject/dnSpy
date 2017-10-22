@@ -14,9 +14,7 @@ namespace Example1.Extension {
 
 		// This constructor gets the single MySettingsImpl instance exported by MySettingsImpl in MySettings.cs
 		[ImportingConstructor]
-		MyAppSettingsPageProvider(MySettings mySettings) {
-			this.mySettings = mySettings;
-		}
+		MyAppSettingsPageProvider(MySettings mySettings) => this.mySettings = mySettings;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			// We only create one page
@@ -60,14 +58,13 @@ namespace Example1.Extension {
 		readonly MySettings newSettings;
 
 		public MyAppSettingsPage(MySettings mySettings) {
-			this.globalSettings = mySettings;
-			this.newSettings = mySettings.Clone();
+			globalSettings = mySettings;
+			newSettings = mySettings.Clone();
 		}
 
-		public override void OnApply() {
+		public override void OnApply() =>
 			// OK/Apply was pressed, save the settings
 			newSettings.CopyTo(globalSettings);
-		}
 
 		public override void OnClosed() {
 			// The dialog box was closed

@@ -1,5 +1,5 @@
 ﻿<!--
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@
         <ListView Name="listView"
                   Grid.Row="0"
                   Margin="5 5 5 0"
-                  MouseDoubleClick="listView_MouseDoubleClick"
+                  MouseDoubleClick="ListView_MouseDoubleClick"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
                   mvvm:InitDataTemplateAP.Initialize="True"

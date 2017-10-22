@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -91,22 +91,22 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public MemberRefVM(MemberRefOptions options, TypeSigCreatorOptions typeSigCreatorOptions, bool isField) {
-			this.IsField = isField;
+			IsField = isField;
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone();
-			this.origOptions = options;
-			this.CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
+			origOptions = options;
+			CustomAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.DecompilerService);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 
-			this.TypeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
+			TypeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
 			TypeSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			var mopts = new MethodSigCreatorOptions(this.typeSigCreatorOptions.Clone());
 			mopts.CanHaveSentinel = true;
-			this.MethodSigCreatorVM = new MethodSigCreatorVM(mopts);
+			MethodSigCreatorVM = new MethodSigCreatorVM(mopts);
 			MethodSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			Reinitialize();
@@ -125,8 +125,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
-				var mr = typeSigCreatorOptions.OwnerModule.Import(newMethod) as MemberRef;
-				if (mr != null)
+				if (typeSigCreatorOptions.OwnerModule.Import(newMethod) is MemberRef mr)
 					InitializeFrom(new MemberRefOptions(mr));
 			}
 		}
@@ -142,8 +141,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickTypeSpec() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
-			bool canceled;
-			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec), (Class as ITypeDefOrRef).ToTypeSig(), out canceled);
+			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec), (Class as ITypeDefOrRef).ToTypeSig(), out bool canceled);
 			if (!canceled)
 				Class = newType.ToTypeDefOrRef();
 		}
@@ -177,8 +175,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MemberRefOptions CreateMemberRefOptions() => CopyTo(new MemberRefOptions());
 
 		void InitializeFrom(MemberRefOptions options) {
-			this.Class = options.Class;
-			this.Name = options.Name;
+			Class = options.Class;
+			Name = options.Name;
 			if (IsField) {
 				var fs = options.Signature as FieldSig;
 				TypeSigCreatorVM.TypeSig = fs?.Type;
@@ -189,8 +187,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		MemberRefOptions CopyTo(MemberRefOptions options) {
-			options.Class = this.Class;
-			options.Name = this.Name;
+			options.Class = Class;
+			options.Name = Name;
 			if (IsField)
 				options.Signature = new FieldSig(TypeSigCreatorVM.TypeSig);
 			else

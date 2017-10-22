@@ -1,5 +1,5 @@
 ﻿<!--
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@
             </Grid.ColumnDefinitions>
             <ListView Name="listView"
                       Grid.Column="0"
-                      MouseDoubleClick="listView_MouseDoubleClick"
+                      MouseDoubleClick="ListView_MouseDoubleClick"
                       VirtualizingStackPanel.IsVirtualizing="True"
                       VirtualizingStackPanel.VirtualizationMode="Recycling"
                       mvvm:InitDataTemplateAP.Initialize="True"
@@ -90,7 +90,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" Name="searchBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static p:dnSpy_Resources.OpenGAC_Search_ToolTip}" />
+                <TextBox Grid.Row="0" Name="searchBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding OpenGAC_Search_ToolTip}" />
                 <CheckBox Grid.Row="1" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.OpenGAC_ShowDupes_CheckBox}" IsChecked="{Binding ShowDuplicates}" />
                 <TextBlock Grid.Row="2" Margin="10 5 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_Name_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="3" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.Name}" TextWrapping="Wrap" />
@@ -111,7 +111,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ProgressBar Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingGAC, Converter={StaticResource booleanToVisibilityConverter}}" />
+            <ProgressBar Name="progressBar" Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingGAC, Converter={StaticResource booleanToVisibilityConverter}}" />
             <TextBlock Grid.Column="0" Text="{Binding FilesShownInfo}" Visibility="{Binding NotSearchingGAC, Converter={StaticResource booleanToVisibilityConverter}}" />
             <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.Button_OK}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
             <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />

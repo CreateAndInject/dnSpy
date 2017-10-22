@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public ShowWarningMessage(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public ShowWarningMessage(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public void Show(Guid? guid, string msg) {
 			if (guid == null)

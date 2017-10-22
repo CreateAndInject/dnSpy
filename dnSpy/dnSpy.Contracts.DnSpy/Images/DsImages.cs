@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,19 +29,32 @@ namespace dnSpy.Contracts.Images {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public static ImageReference Add { get; } = new ImageReference(assembly, DsImageStrings.Add);
 		public static ImageReference AddReference { get; } = new ImageReference(assembly, DsImageStrings.AddReference);
+		public static ImageReference AdvancedBreakpointDisabled { get; } = new ImageReference(assembly, DsImageStrings.AdvancedBreakpointDisabled);
+		public static ImageReference AdvancedBreakpointEnabled { get; } = new ImageReference(assembly, DsImageStrings.AdvancedBreakpointEnabled);
+		public static ImageReference AdvancedTracepointDisabled { get; } = new ImageReference(assembly, DsImageStrings.AdvancedTracepointDisabled);
+		public static ImageReference AdvancedTracepointEnabled { get; } = new ImageReference(assembly, DsImageStrings.AdvancedTracepointEnabled);
 		public static ImageReference Assembly { get; } = new ImageReference(assembly, DsImageStrings.Assembly);
 		public static ImageReference AssemblyError { get; } = new ImageReference(assembly, DsImageStrings.AssemblyError);
 		public static ImageReference AssemblyExe { get; } = new ImageReference(assembly, DsImageStrings.AssemblyExe);
 		public static ImageReference AutoSizeOptimize { get; } = new ImageReference(assembly, DsImageStrings.AutoSizeOptimize);
+		public static ImageReference AutosWindow { get; } = new ImageReference(assembly, DsImageStrings.AutosWindow);
 		public static ImageReference Backwards { get; } = new ImageReference(assembly, DsImageStrings.Backwards);
 		public static ImageReference Binary { get; } = new ImageReference(assembly, DsImageStrings.Binary);
 		public static ImageReference BinaryFile { get; } = new ImageReference(assembly, DsImageStrings.BinaryFile);
+		public static ImageReference Bookmark { get; } = new ImageReference(assembly, DsImageStrings.Bookmark);
+		public static ImageReference BookmarkDisabled { get; } = new ImageReference(assembly, DsImageStrings.BookmarkDisabled);
+		public static ImageReference BookmarkGroupDisabled { get; } = new ImageReference(assembly, DsImageStrings.BookmarkGroupDisabled);
+		public static ImageReference BookmarkMainMenuItem { get; } = new ImageReference(assembly, DsImageStrings.BookmarkMainMenuItem);
+		public static ImageReference BoundBreakpoint { get; } = new ImageReference(assembly, DsImageStrings.BoundBreakpoint);
 		public static ImageReference Branch { get; } = new ImageReference(assembly, DsImageStrings.Branch);
 		public static ImageReference BreakpointDisabled { get; } = new ImageReference(assembly, DsImageStrings.BreakpointDisabled);
 		public static ImageReference BreakpointEnabled { get; } = new ImageReference(assembly, DsImageStrings.BreakpointEnabled);
+		public static ImageReference BreakpointError { get; } = new ImageReference(assembly, DsImageStrings.BreakpointError);
 		public static ImageReference BreakpointsWindow { get; } = new ImageReference(assembly, DsImageStrings.BreakpointsWindow);
+		public static ImageReference BreakpointWarning { get; } = new ImageReference(assembly, DsImageStrings.BreakpointWarning);
 		public static ImageReference BuildSolution { get; } = new ImageReference(assembly, DsImageStrings.BuildSolution);
 		public static ImageReference CallReturnInstructionPointer { get; } = new ImageReference(assembly, DsImageStrings.CallReturnInstructionPointer);
+		public static ImageReference CallReturnInstructionPointerAlert { get; } = new ImageReference(assembly, DsImageStrings.CallReturnInstructionPointerAlert);
 		public static ImageReference CallStackWindow { get; } = new ImageReference(assembly, DsImageStrings.CallStackWindow);
 		public static ImageReference Cancel { get; } = new ImageReference(assembly, DsImageStrings.Cancel);
 		public static ImageReference CheckDot { get; } = new ImageReference(assembly, DsImageStrings.CheckDot);
@@ -50,6 +63,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference ClassProtected { get; } = new ImageReference(assembly, DsImageStrings.ClassProtected);
 		public static ImageReference ClassPublic { get; } = new ImageReference(assembly, DsImageStrings.ClassPublic);
 		public static ImageReference ClassShortcut { get; } = new ImageReference(assembly, DsImageStrings.ClassShortcut);
+		public static ImageReference ClearBookmark { get; } = new ImageReference(assembly, DsImageStrings.ClearBookmark);
 		public static ImageReference ClearBreakpointGroup { get; } = new ImageReference(assembly, DsImageStrings.ClearBreakpointGroup);
 		public static ImageReference ClearWindowContent { get; } = new ImageReference(assembly, DsImageStrings.ClearWindowContent);
 		public static ImageReference CloseAll { get; } = new ImageReference(assembly, DsImageStrings.CloseAll);
@@ -67,6 +81,8 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference CSInteractiveWindow { get; } = new ImageReference(assembly, DsImageStrings.CSInteractiveWindow);
 		public static ImageReference CSProjectNode { get; } = new ImageReference(assembly, DsImageStrings.CSProjectNode);
 		public static ImageReference CurrentInstructionPointer { get; } = new ImageReference(assembly, DsImageStrings.CurrentInstructionPointer);
+		public static ImageReference CurrentInstructionPointerPaused { get; } = new ImageReference(assembly, DsImageStrings.CurrentInstructionPointerPaused);
+		public static ImageReference CurrentInstructionPointerStopped { get; } = new ImageReference(assembly, DsImageStrings.CurrentInstructionPointerStopped);
 		public static ImageReference Cursor { get; } = new ImageReference(assembly, DsImageStrings.Cursor);
 		public static ImageReference Cut { get; } = new ImageReference(assembly, DsImageStrings.Cut);
 		public static ImageReference DelegateInternal { get; } = new ImageReference(assembly, DsImageStrings.DelegateInternal);
@@ -74,11 +90,15 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference DelegateProtected { get; } = new ImageReference(assembly, DsImageStrings.DelegateProtected);
 		public static ImageReference DelegatePublic { get; } = new ImageReference(assembly, DsImageStrings.DelegatePublic);
 		public static ImageReference DelegateShortcut { get; } = new ImageReference(assembly, DsImageStrings.DelegateShortcut);
+		public static ImageReference DeleteBreakpoint { get; } = new ImageReference(assembly, DsImageStrings.DeleteBreakpoint);
+		public static ImageReference DeleteWatch { get; } = new ImageReference(assembly, DsImageStrings.DeleteWatch);
 		public static ImageReference Dialog { get; } = new ImageReference(assembly, DsImageStrings.Dialog);
 		public static ImageReference DisableAllBreakpoints { get; } = new ImageReference(assembly, DsImageStrings.DisableAllBreakpoints);
 		public static ImageReference DisassemblyWindow { get; } = new ImageReference(assembly, DsImageStrings.DisassemblyWindow);
 		public static ImageReference DownloadNoColor { get; } = new ImageReference(assembly, DsImageStrings.DownloadNoColor);
 		public static ImageReference DraggedCurrentInstructionPointer { get; } = new ImageReference(assembly, DsImageStrings.DraggedCurrentInstructionPointer);
+		public static ImageReference DraggedInstructionPointerPaused { get; } = new ImageReference(assembly, DsImageStrings.DraggedInstructionPointerPaused);
+		public static ImageReference Edit { get; } = new ImageReference(assembly, DsImageStrings.Edit);
 		public static ImageReference Editor { get; } = new ImageReference(assembly, DsImageStrings.Editor);
 		public static ImageReference EnableAllBreakpoints { get; } = new ImageReference(assembly, DsImageStrings.EnableAllBreakpoints);
 		public static ImageReference EntryPoint { get; } = new ImageReference(assembly, DsImageStrings.EntryPoint);
@@ -112,6 +132,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference FieldPublic { get; } = new ImageReference(assembly, DsImageStrings.FieldPublic);
 		public static ImageReference FieldSealed { get; } = new ImageReference(assembly, DsImageStrings.FieldSealed);
 		public static ImageReference FieldShortcut { get; } = new ImageReference(assembly, DsImageStrings.FieldShortcut);
+		public static ImageReference FileSystemWatcher { get; } = new ImageReference(assembly, DsImageStrings.FileSystemWatcher);
 		public static ImageReference Fill { get; } = new ImageReference(assembly, DsImageStrings.Fill);
 		public static ImageReference Filter { get; } = new ImageReference(assembly, DsImageStrings.Filter);
 		public static ImageReference FolderClosed { get; } = new ImageReference(assembly, DsImageStrings.FolderClosed);
@@ -121,6 +142,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference GoToNextInList { get; } = new ImageReference(assembly, DsImageStrings.GoToNextInList);
 		public static ImageReference GoToSourceCode { get; } = new ImageReference(assembly, DsImageStrings.GoToSourceCode);
 		public static ImageReference Image { get; } = new ImageReference(assembly, DsImageStrings.Image);
+		public static ImageReference Import { get; } = new ImageReference(assembly, DsImageStrings.Import);
 		public static ImageReference IntellisenseKeyword { get; } = new ImageReference(assembly, DsImageStrings.IntellisenseKeyword);
 		public static ImageReference InterfaceInternal { get; } = new ImageReference(assembly, DsImageStrings.InterfaceInternal);
 		public static ImageReference InterfacePrivate { get; } = new ImageReference(assembly, DsImageStrings.InterfacePrivate);
@@ -157,8 +179,12 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference NewMethod { get; } = new ImageReference(assembly, DsImageStrings.NewMethod);
 		public static ImageReference NewProperty { get; } = new ImageReference(assembly, DsImageStrings.NewProperty);
 		public static ImageReference NewWindow { get; } = new ImageReference(assembly, DsImageStrings.NewWindow);
+		public static ImageReference NextBookmark { get; } = new ImageReference(assembly, DsImageStrings.NextBookmark);
+		public static ImageReference NextBookmarkInFile { get; } = new ImageReference(assembly, DsImageStrings.NextBookmarkInFile);
+		public static ImageReference NextBookmarkInFolder { get; } = new ImageReference(assembly, DsImageStrings.NextBookmarkInFolder);
 		public static ImageReference NuGet { get; } = new ImageReference(assembly, DsImageStrings.NuGet);
 		public static ImageReference OneLevelUp { get; } = new ImageReference(assembly, DsImageStrings.OneLevelUp);
+		public static ImageReference Open { get; } = new ImageReference(assembly, DsImageStrings.Open);
 		public static ImageReference OpenFolder { get; } = new ImageReference(assembly, DsImageStrings.OpenFolder);
 		public static ImageReference OperatorInternal { get; } = new ImageReference(assembly, DsImageStrings.OperatorInternal);
 		public static ImageReference OperatorPrivate { get; } = new ImageReference(assembly, DsImageStrings.OperatorPrivate);
@@ -170,6 +196,9 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference Parameter { get; } = new ImageReference(assembly, DsImageStrings.Parameter);
 		public static ImageReference Paste { get; } = new ImageReference(assembly, DsImageStrings.Paste);
 		public static ImageReference Pause { get; } = new ImageReference(assembly, DsImageStrings.Pause);
+		public static ImageReference PreviousBookmark { get; } = new ImageReference(assembly, DsImageStrings.PreviousBookmark);
+		public static ImageReference PreviousBookmarkInFile { get; } = new ImageReference(assembly, DsImageStrings.PreviousBookmarkInFile);
+		public static ImageReference PreviousBookmarkInFolder { get; } = new ImageReference(assembly, DsImageStrings.PreviousBookmarkInFolder);
 		public static ImageReference Process { get; } = new ImageReference(assembly, DsImageStrings.Process);
 		public static ImageReference Property { get; } = new ImageReference(assembly, DsImageStrings.Property);
 		public static ImageReference PropertyInternal { get; } = new ImageReference(assembly, DsImageStrings.PropertyInternal);
@@ -192,10 +221,12 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference Settings { get; } = new ImageReference(assembly, DsImageStrings.Settings);
 		public static ImageReference Snippet { get; } = new ImageReference(assembly, DsImageStrings.Snippet);
 		public static ImageReference Solution { get; } = new ImageReference(assembly, DsImageStrings.Solution);
+		public static ImageReference SortAscending { get; } = new ImageReference(assembly, DsImageStrings.SortAscending);
 		public static ImageReference SourceFileGroup { get; } = new ImageReference(assembly, DsImageStrings.SourceFileGroup);
 		public static ImageReference SplitScreenHorizontally { get; } = new ImageReference(assembly, DsImageStrings.SplitScreenHorizontally);
 		public static ImageReference SplitScreenVertically { get; } = new ImageReference(assembly, DsImageStrings.SplitScreenVertically);
 		public static ImageReference StatusError { get; } = new ImageReference(assembly, DsImageStrings.StatusError);
+		public static ImageReference StatusHelp { get; } = new ImageReference(assembly, DsImageStrings.StatusHelp);
 		public static ImageReference StatusHidden { get; } = new ImageReference(assembly, DsImageStrings.StatusHidden);
 		public static ImageReference StatusInformation { get; } = new ImageReference(assembly, DsImageStrings.StatusInformation);
 		public static ImageReference StatusWarning { get; } = new ImageReference(assembly, DsImageStrings.StatusWarning);
@@ -215,6 +246,7 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference TemplatePrivate { get; } = new ImageReference(assembly, DsImageStrings.TemplatePrivate);
 		public static ImageReference TemplateProtected { get; } = new ImageReference(assembly, DsImageStrings.TemplateProtected);
 		public static ImageReference TemplateShortcut { get; } = new ImageReference(assembly, DsImageStrings.TemplateShortcut);
+		public static ImageReference TerminateProcess { get; } = new ImageReference(assembly, DsImageStrings.TerminateProcess);
 		public static ImageReference TextFile { get; } = new ImageReference(assembly, DsImageStrings.TextFile);
 		public static ImageReference Thread { get; } = new ImageReference(assembly, DsImageStrings.Thread);
 		public static ImageReference ToggleAllBreakpoints { get; } = new ImageReference(assembly, DsImageStrings.ToggleAllBreakpoints);
@@ -222,6 +254,10 @@ namespace dnSpy.Contracts.Images {
 		public static ImageReference ToolstripPanelLeft { get; } = new ImageReference(assembly, DsImageStrings.ToolstripPanelLeft);
 		public static ImageReference ToolstripPanelRight { get; } = new ImageReference(assembly, DsImageStrings.ToolstripPanelRight);
 		public static ImageReference ToolstripPanelTop { get; } = new ImageReference(assembly, DsImageStrings.ToolstripPanelTop);
+		public static ImageReference TracepointDisabled { get; } = new ImageReference(assembly, DsImageStrings.TracepointDisabled);
+		public static ImageReference TracepointEnabled { get; } = new ImageReference(assembly, DsImageStrings.TracepointEnabled);
+		public static ImageReference TracepointError { get; } = new ImageReference(assembly, DsImageStrings.TracepointError);
+		public static ImageReference TracepointWarning { get; } = new ImageReference(assembly, DsImageStrings.TracepointWarning);
 		public static ImageReference Type { get; } = new ImageReference(assembly, DsImageStrings.Type);
 		public static ImageReference Undo { get; } = new ImageReference(assembly, DsImageStrings.Undo);
 		public static ImageReference UndoCheckBoxList { get; } = new ImageReference(assembly, DsImageStrings.UndoCheckBoxList);

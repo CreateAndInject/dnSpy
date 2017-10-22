@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Scripting;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Scripting.Roslyn.Common;
@@ -33,7 +34,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	sealed class VisualBasicContent : ScriptContent, IVisualBasicContent {
 		[ImportingConstructor]
 		VisualBasicContent(IReplEditorProvider replEditorProvider, VisualBasicReplSettingsImpl replSettings, IServiceLocator serviceLocator)
-			: base(replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, Constants.REPL_VisualBasic) {
+			: base(replEditorProvider, CreateReplEditorOptions(), replSettings, serviceLocator, AppearanceCategoryConstants.TextEditor) {
 		}
 
 		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator, ReplSettings replSettings) =>
@@ -44,7 +45,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
 				ContentTypeString = ContentTypes.ReplVisualBasicRoslyn,
 			};
-			options.Roles.Add(PredefinedDnSpyTextViewRoles.VisualBasicRepl);
+			options.Roles.Add(PredefinedDsTextViewRoles.VisualBasicRepl);
 			return options;
 		}
 	}

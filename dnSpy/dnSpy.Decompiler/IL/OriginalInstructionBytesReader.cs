@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,10 +26,11 @@ namespace dnSpy.Decompiler.IL {
 	sealed class OriginalInstructionBytesReader : IInstructionBytesReader {
 		readonly IImageStream stream;
 
-		public OriginalInstructionBytesReader(MethodDef method) {
+		public bool IsOriginalBytes => true;
+
+		public OriginalInstructionBytesReader(MethodDef method) =>
 			//TODO: This fails and returns null if it's a CorMethodDef!
-			this.stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
-		}
+			stream = GetImageStream(method.Module, (uint)method.RVA + method.Body.HeaderSize);
 
 		static IImageStream GetImageStream(ModuleDef module, uint rva) {
 			var m = module as ModuleDefMD;//TODO: Support CorModuleDef

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,9 +46,9 @@ namespace dnSpy.Contracts.Tabs {
 		/// <param name="selected">Selected content or null</param>
 		/// <param name="unselected">Unselected content or null</param>
 		public TabSelectedEventArgs(ITabGroup tabGroup, ITabContent selected, ITabContent unselected) {
-			this.TabGroup = tabGroup;
-			this.Selected = selected;
-			this.Unselected = unselected;
+			TabGroup = tabGroup;
+			Selected = selected;
+			Unselected = unselected;
 		}
 	}
 }

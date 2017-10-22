@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,9 +27,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public NativeMethodBodyOptions() {
 		}
 
-		public NativeMethodBodyOptions(NativeMethodBody body) {
-			this.RVA = body.RVA;
-		}
+		public NativeMethodBodyOptions(NativeMethodBody body) => RVA = body.RVA;
 
 		public NativeMethodBody CopyTo(NativeMethodBody body) {
 			body.RVA = RVA;

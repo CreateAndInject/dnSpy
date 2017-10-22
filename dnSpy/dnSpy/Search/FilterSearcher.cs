@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,9 +38,7 @@ namespace dnSpy.Search {
 	sealed class FilterSearcher {
 		readonly FilterSearcherOptions options;
 
-		public FilterSearcher(FilterSearcherOptions options) {
-			this.options = options;
-		}
+		public FilterSearcher(FilterSearcherOptions options) => this.options = options;
 
 		bool IsMatch(string text, object obj) => options.SearchComparer.IsMatch(text, obj);
 
@@ -160,8 +158,7 @@ namespace dnSpy.Search {
 
 			foreach (var node in asmNode.TreeNode.DataChildren) {
 				options.CancellationToken.ThrowIfCancellationRequested();
-				var modNode = node as ModuleDocumentNode;
-				if (modNode != null)
+				if (node is ModuleDocumentNode modNode)
 					SearchModule(modNode.Document);
 			}
 		}
@@ -326,8 +323,7 @@ namespace dnSpy.Search {
 			if (res.IsMatch) {
 				bool m = IsMatch(resElNode.Name, resElNode);
 				if (!m) {
-					var builtin = resElNode.ResourceElement.ResourceData as BuiltInResourceData;
-					if (builtin != null) {
+					if (resElNode.ResourceElement.ResourceData is BuiltInResourceData builtin) {
 						var val = builtin.Data;
 						if (builtin.Code == ResourceTypeCode.TimeSpan)
 							val = ((TimeSpan)val).Ticks;
@@ -354,8 +350,7 @@ namespace dnSpy.Search {
 			var ns = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 
 			foreach (var type in module.Types) {
-				List<TypeDef> list;
-				if (!ns.TryGetValue(type.Namespace, out list))
+				if (!ns.TryGetValue(type.Namespace, out var list))
 					ns.Add(type.Namespace, list = new List<TypeDef>());
 				list.Add(type);
 			}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,6 +58,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					OnPropertyChanged(nameof(Attributes));
 					OnPropertyChanged(nameof(In));
 					OnPropertyChanged(nameof(Out));
+					OnPropertyChanged(nameof(Lcid));
+					OnPropertyChanged(nameof(Retval));
 					OnPropertyChanged(nameof(Optional));
 					OnPropertyChanged(nameof(HasDefault));
 					OnPropertyChanged(nameof(HasFieldMarshal));
@@ -77,6 +79,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool Out {
 			get { return GetFlagValue(ParamAttributes.Out); }
 			set { SetFlagValue(ParamAttributes.Out, value); }
+		}
+
+		public bool Lcid {
+			get { return GetFlagValue(ParamAttributes.Lcid); }
+			set { SetFlagValue(ParamAttributes.Lcid, value); }
+		}
+
+		public bool Retval {
+			get { return GetFlagValue(ParamAttributes.Retval); }
+			set { SetFlagValue(ParamAttributes.Retval, value); }
 		}
 
 		public bool Optional {
@@ -126,12 +138,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			this.origOptions = options;
-			this.Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
+			origOptions = options;
+			Sequence = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
+			MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType != null ? ownerType : ownerMethod?.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

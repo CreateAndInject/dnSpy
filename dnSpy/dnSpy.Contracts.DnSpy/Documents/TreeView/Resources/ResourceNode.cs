@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -74,8 +74,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		public ulong FileOffset {
 			get {
-				FileOffset fo;
-				GetModuleOffset(out fo);
+				GetModuleOffset(out var fo);
 				return (ulong)fo;
 			}
 		}
@@ -95,8 +94,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		public uint RVA {
 			get {
-				FileOffset fo;
-				var module = GetModuleOffset(out fo);
+				var module = GetModuleOffset(out var fo);
 				if (module == null)
 					return 0;
 
@@ -129,12 +127,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="treeNodeGroup">Treenode group</param>
 		/// <param name="resource">Resource</param>
 		protected ResourceNode(ITreeNodeGroup treeNodeGroup, Resource resource) {
-			if (treeNodeGroup == null)
-				throw new ArgumentNullException(nameof(treeNodeGroup));
-			if (resource == null)
-				throw new ArgumentNullException(nameof(resource));
-			this.treeNodeGroup = treeNodeGroup;
-			this.Resource = resource;
+			this.treeNodeGroup = treeNodeGroup ?? throw new ArgumentNullException(nameof(treeNodeGroup));
+			Resource = resource ?? throw new ArgumentNullException(nameof(resource));
 		}
 
 		/// <summary>
@@ -198,8 +192,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// </summary>
 		/// <returns></returns>
 		protected virtual IEnumerable<ResourceData> GetSerializedData() {
-			var er = Resource as EmbeddedResource;
-			if (er != null)
+			if (Resource is EmbeddedResource er)
 				yield return new ResourceData(Resource.Name, token => new MemoryStream(er.GetResourceData()));
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider;
 
 		[ImportingConstructor]
-		HorizontalScrollBarContainerMarginProvider(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider) {
-			this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
-		}
+		HorizontalScrollBarContainerMarginProvider(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider) => this.wpfTextViewMarginProviderCollectionProvider = wpfTextViewMarginProviderCollectionProvider;
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new HorizontalScrollBarContainerMargin(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost);
@@ -44,8 +42,6 @@ namespace dnSpy.Text.Editor {
 
 	sealed class HorizontalScrollBarContainerMargin : WpfTextViewContainerMargin {
 		public HorizontalScrollBarContainerMargin(IWpfTextViewMarginProviderCollectionProvider wpfTextViewMarginProviderCollectionProvider, IWpfTextViewHost wpfTextViewHost)
-			: base(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.HorizontalScrollBarContainer, true) {
-			VerticalAlignment = VerticalAlignment.Bottom;
-		}
+			: base(wpfTextViewMarginProviderCollectionProvider, wpfTextViewHost, PredefinedMarginNames.HorizontalScrollBarContainer, true) => VerticalAlignment = VerticalAlignment.Bottom;
 	}
 }

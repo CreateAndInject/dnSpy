@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,13 +43,13 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="targetNode">Target node that will be the parent of the new nodes</param>
 		protected AsyncNodeProvider(TreeNodeData targetNode) {
-			this.lockObj = new object();
+			lockObj = new object();
 			this.targetNode = targetNode;
-			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.uiThreadActions = new List<Action>();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.thread = new Thread(ThreadMethodImpl);
+			dispatcher = Dispatcher.CurrentDispatcher;
+			uiThreadActions = new List<Action>();
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			thread = new Thread(ThreadMethodImpl);
 			thread.IsBackground = true;
 		}
 
@@ -96,13 +96,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// Adds a node with a message
 		/// </summary>
 		/// <param name="create">Creates the message node</param>
-		protected void AddMessageNode(Func<TreeNodeData> create) {
-			ExecInUIThread(() => {
-				Debug.Assert(msgNode == null);
-				msgNode = targetNode.TreeNode.TreeView.Create(create());
-				targetNode.TreeNode.AddChild(msgNode);
-			});
-		}
+		protected void AddMessageNode(Func<TreeNodeData> create) => ExecInUIThread(() => {
+			Debug.Assert(msgNode == null);
+			msgNode = targetNode.TreeNode.TreeView.Create(create());
+			targetNode.TreeNode.AddChild(msgNode);
+		});
 
 		void RemoveMessageNode_UI() {
 			if (msgNode != null)

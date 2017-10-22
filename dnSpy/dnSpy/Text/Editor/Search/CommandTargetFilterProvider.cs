@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly Lazy<ISearchServiceProvider> searchServiceProvider;
 
 		[ImportingConstructor]
-		CommandTargetFilterProvider(Lazy<ISearchServiceProvider> searchServiceProvider) {
-			this.searchServiceProvider = searchServiceProvider;
-		}
+		CommandTargetFilterProvider(Lazy<ISearchServiceProvider> searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as IWpfTextView;
@@ -46,9 +44,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly Lazy<ISearchServiceProvider> searchServiceProvider;
 
 		[ImportingConstructor]
-		CommandTargetFilterProviderFocus(Lazy<ISearchServiceProvider> searchServiceProvider) {
-			this.searchServiceProvider = searchServiceProvider;
-		}
+		CommandTargetFilterProviderFocus(Lazy<ISearchServiceProvider> searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as IWpfTextView;

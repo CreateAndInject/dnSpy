@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,15 +23,12 @@ using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class ListVMControl : UserControl {
-		public ListVMControl() {
-			InitializeComponent();
-		}
+		public ListVMControl() => InitializeComponent();
 
 		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
-			var data = DataContext as ListVM;
-			if (data != null)
+			if (DataContext is ListVM data)
 				data.EditItem();
 		}
 	}

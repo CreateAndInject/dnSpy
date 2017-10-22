@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,15 +31,12 @@ namespace dnSpy.Text.Editor {
 	sealed class UriWpfTextViewCreationListener : IWpfTextViewCreationListener {
 		static readonly object textViewKey = new object();
 
-		public void TextViewCreated(IWpfTextView textView) {
-			textView.TextBuffer.Properties.AddProperty(textViewKey, textView);
-		}
+		public void TextViewCreated(IWpfTextView textView) => textView.TextBuffer.Properties.AddProperty(textViewKey, textView);
 
 		public static IWpfTextView TryGetTextView(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			IWpfTextView wpfTextView;
-			if (textBuffer.Properties.TryGetProperty(textViewKey, out wpfTextView))
+			if (textBuffer.Properties.TryGetProperty(textViewKey, out IWpfTextView wpfTextView))
 				return wpfTextView;
 			return null;
 		}

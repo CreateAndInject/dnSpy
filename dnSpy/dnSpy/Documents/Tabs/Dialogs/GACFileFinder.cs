@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -39,7 +39,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 			this.cancellationToken = cancellationToken;
 		}
 
-		void ExecuteInThread(Action action) => dispatcher.BeginInvoke(DispatcherPriority.Background, action);
+		void ExecuteInThread(Action callback) => dispatcher.BeginInvoke(DispatcherPriority.Background, callback);
 
 		public void Find() {
 			foreach (var info in GacInfo.GetAssemblies(4)) {

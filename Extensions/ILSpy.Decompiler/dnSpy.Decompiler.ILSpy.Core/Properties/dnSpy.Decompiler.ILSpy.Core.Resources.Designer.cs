@@ -242,6 +242,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add &apos;private&apos; modifier to type members.
+        /// </summary>
+        public static string DecompilerSettings_MemberAddPrivateModifier {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_MemberAddPrivateModifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Decompile object or collection initializers.
         /// </summary>
         public static string DecompilerSettings_ObjectOrCollectionInitializers {
@@ -251,11 +260,29 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show one custom attribute per line.
+        /// </summary>
+        public static string DecompilerSettings_OneCustomAttributePerLine {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_OneCustomAttributePerLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove empty default constructors.
         /// </summary>
         public static string DecompilerSettings_RemoveEmptyDefaultCtors {
             get {
                 return ResourceManager.GetString("DecompilerSettings_RemoveEmptyDefaultCtors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace &apos;new delegate-class(xxx)&apos; with &apos;xxx&apos;.
+        /// </summary>
+        public static string DecompilerSettings_RemoveNewDelegateClass {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_RemoveNewDelegateClass", resourceCulture);
             }
         }
         
@@ -283,6 +310,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         public static string DecompilerSettings_ShowILInstrBytes {
             get {
                 return ResourceManager.GetString("DecompilerSettings_ShowILInstrBytes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show line numbers and filenames if available.
+        /// </summary>
+        public static string DecompilerSettings_ShowPdbInfo {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_ShowPdbInfo", resourceCulture);
             }
         }
         
@@ -328,6 +364,15 @@ namespace dnSpy.Decompiler.ILSpy.Core.Properties {
         public static string DecompilerSettings_SortSystemFirst {
             get {
                 return ResourceManager.GetString("DecompilerSettings_SortSystemFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add &apos;internal&apos; modifier to types.
+        /// </summary>
+        public static string DecompilerSettings_TypeAddInternalModifier {
+            get {
+                return ResourceManager.GetString("DecompilerSettings_TypeAddInternalModifier", resourceCulture);
             }
         }
         

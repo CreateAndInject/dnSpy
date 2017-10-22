@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,19 +41,13 @@ namespace dnSpy.Contracts.Text {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public StringBuilderTextColorOutput() {
-			this.sb = new StringBuilder();
-		}
+		public StringBuilderTextColorOutput() => sb = new StringBuilder();
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="stringBuilder">String builder</param>
-		public StringBuilderTextColorOutput(StringBuilder stringBuilder) {
-			if (stringBuilder == null)
-				throw new ArgumentNullException(nameof(stringBuilder));
-			this.sb = stringBuilder;
-		}
+		public StringBuilderTextColorOutput(StringBuilder stringBuilder) => sb = stringBuilder ?? throw new ArgumentNullException(nameof(stringBuilder));
 
 		/// <summary>
 		/// Writes text
@@ -68,6 +62,11 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
 		public void Write(TextColor color, string text) => sb.Append(text);
+
+		/// <summary>
+		/// Resets this instance
+		/// </summary>
+		public void Reset() => sb.Clear();
 
 		/// <summary>
 		/// Gets all the text

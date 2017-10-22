@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Text.Editor {
 		[ImportingConstructor]
 		UriClassificationTaggerProvider(IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IThemeClassificationTypeService themeClassificationTypeService) {
 			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.classificationTag = new ClassificationTag(themeClassificationTypeService.GetClassificationType(TextColor.Url));
+			classificationTag = new ClassificationTag(themeClassificationTypeService.GetClassificationType(TextColor.Url));
 		}
 
 		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag =>
@@ -53,15 +53,9 @@ namespace dnSpy.Text.Editor {
 		readonly ITextBuffer textBuffer;
 
 		public UriClassificationTagger(IClassificationTag classificationTag, ITextBuffer textBuffer, ITagAggregator<IUrlTag> tagAggregator) {
-			if (classificationTag == null)
-				throw new ArgumentNullException(nameof(classificationTag));
-			if (tagAggregator == null)
-				throw new ArgumentNullException(nameof(tagAggregator));
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			this.classificationTag = classificationTag;
-			this.tagAggregator = tagAggregator;
-			this.textBuffer = textBuffer;
+			this.classificationTag = classificationTag ?? throw new ArgumentNullException(nameof(classificationTag));
+			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
+			this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			tagAggregator.TagsChanged += TagAggregator_TagsChanged;
 		}
 

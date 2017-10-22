@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,10 +33,6 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="results">Search results</param>
-		public SearchResultEventArgs(ISearchResult[] results) {
-			if (results == null)
-				throw new ArgumentNullException(nameof(results));
-			this.Results = results;
-		}
+		public SearchResultEventArgs(ISearchResult[] results) => Results = results ?? throw new ArgumentNullException(nameof(results));
 	}
 }

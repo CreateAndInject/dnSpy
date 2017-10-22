@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,13 +38,13 @@ namespace dnSpy.Decompiler {
 				langs.AddRange(creator.Create());
 			if (langs.Count == 0)
 				langs.Add(new DummyDecompiler());
-			this.decompilers = langs.OrderBy(a => a.OrderUI).ToArray();
-			this.decompiler = FindOrDefault(decompilerServiceSettings.LanguageGuid);
-			this.decompilerChanged = new WeakEventList<EventArgs>();
+			decompilers = langs.OrderBy(a => a.OrderUI).ToArray();
+			decompiler = FindOrDefault(decompilerServiceSettings.LanguageGuid);
+			decompilerChanged = new WeakEventList<EventArgs>();
 		}
 
 		public IDecompiler Decompiler {
-			get { return decompiler; }
+			get => decompiler;
 			set {
 				if (value == null)
 					throw new ArgumentNullException(nameof(value));
@@ -67,7 +67,7 @@ namespace dnSpy.Decompiler {
 
 		public IEnumerable<IDecompiler> AllDecompilers => decompilers;
 		public IDecompiler Find(Guid guid) =>
-			this.AllDecompilers.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
+			AllDecompilers.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
 		public IDecompiler FindOrDefault(Guid guid) =>
 			Find(guid) ?? AllDecompilers.FirstOrDefault();
 	}

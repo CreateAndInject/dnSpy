@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,11 +32,11 @@ namespace dnSpy.ToolBars {
 		public ImageReference ImageReference { get; }
 
 		public ToolBarButtonVM(ICommand command, IInputElement commandTarget, string header, string toolTip, ImageReference? imageReference) {
-			this.Command = command;
-			this.CommandTarget = commandTarget;
-			this.Header = string.IsNullOrEmpty(header) ? null : header;
-			this.ToolTip = string.IsNullOrEmpty(toolTip) ? null : toolTip;
-			this.ImageReference = imageReference ?? default(ImageReference);
+			Command = command;
+			CommandTarget = commandTarget;
+			Header = string.IsNullOrEmpty(header) ? null : header;
+			ToolTip = string.IsNullOrEmpty(toolTip) ? null : toolTip;
+			ImageReference = imageReference ?? default;
 		}
 	}
 }

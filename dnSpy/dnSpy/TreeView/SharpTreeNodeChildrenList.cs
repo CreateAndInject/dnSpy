@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,9 +27,7 @@ namespace dnSpy.TreeView {
 		public DsSharpTreeNode Node => node;
 		readonly DsSharpTreeNode node;
 
-		public SharpTreeNodeChildrenList(TreeNodeImpl owner) {
-			this.node = new DsSharpTreeNode(owner);
-		}
+		public SharpTreeNodeChildrenList(TreeNodeImpl owner) => node = new DsSharpTreeNode(owner);
 
 		public ITreeNode this[int index] {
 			get { return ((DsSharpTreeNode)node.Children[index]).TreeNodeImpl; }
@@ -40,7 +38,11 @@ namespace dnSpy.TreeView {
 		public bool IsReadOnly => false;
 
 		public void Add(ITreeNode item) => node.Children.Add(GetAndVerifyTreeNodeImpl(item).Node);
-		public void Clear() => node.Children.Clear();
+
+		public void Clear() {
+			if (node.Children.Count != 0)
+				node.Children.Clear();
+		}
 
 		public bool Contains(ITreeNode item) {
 			if (item == null)

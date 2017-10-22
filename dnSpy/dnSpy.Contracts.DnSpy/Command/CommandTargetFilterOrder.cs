@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,6 +46,9 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>Edit Code</summary>
 		public const double EditCode = TextEditor - 3000;
 
+		/// <summary>Document viewer</summary>
+		public const double Bookmarks = TextEditor - 4000;
+
 		/// <summary>Intellisense session stack</summary>
 		public const double IntellisenseSessionStack = TextEditor - 4000;
 
@@ -60,5 +63,20 @@ namespace dnSpy.Contracts.Command {
 
 		/// <summary>Roslyn quick info</summary>
 		public const double IntellisenseRoslynQuickInfo = IntellisenseRoslynSignatureHelp - 1000;
+
+		/// <summary>Hex editor</summary>
+		public const double HexEditor = TextEditor;
+
+		/// <summary>Intellisense session stack</summary>
+		public const double HexIntellisenseSessionStack = HexEditor - 4000;
+
+		/// <summary>Default quick info</summary>
+		public const double HexDefaultIntellisenseQuickInfo = HexIntellisenseSessionStack - 1000;
+
+		/// <summary>Search service when UI is visible</summary>
+		public const double HexViewSearchServiceFocused = HexEditor - 1000000;
+
+		/// <summary>Search service</summary>
+		public const double HexViewSearchService = HexEditor - 1000;
 	}
 }

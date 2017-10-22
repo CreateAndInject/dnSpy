@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,8 +51,8 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		DsLoaderService(ISettingsService settingsService, [ImportMany] IEnumerable<Lazy<IDsLoader, IDsLoaderMetadata>> mefLoaders) {
 			this.settingsService = settingsService;
-			this.loaders = mefLoaders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.windowLoader = new WindowLoader(this, settingsService, loaders);
+			loaders = mefLoaders.OrderBy(a => a.Metadata.Order).ToArray();
+			windowLoader = new WindowLoader(this, settingsService, loaders);
 		}
 
 		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs args) {
@@ -93,9 +93,9 @@ namespace dnSpy.MainApp {
 		public void Initialize(IDsLoaderContentProvider content, Window window, IAppCommandLineArgs appArgs) {
 			this.window = window;
 			this.appArgs = appArgs;
-			this.dsLoaderControl = new DsLoaderControl();
+			dsLoaderControl = new DsLoaderControl();
 			this.content = content;
-			this.content.SetLoadingContent(this.dsLoaderControl);
+			this.content.SetLoadingContent(dsLoaderControl);
 
 			this.window.ContentRendered += Window_ContentRendered;
 			this.window.IsEnabled = false;
@@ -123,6 +123,7 @@ namespace dnSpy.MainApp {
 			var sw = Stopwatch.StartNew();
 			do {
 				if (!loaderEnumerator.MoveNext()) {
+					dsLoaderControl.progressBar.IsIndeterminate = false;
 					LoadAllCodeFinished();
 					return;
 				}
@@ -137,7 +138,7 @@ namespace dnSpy.MainApp {
 			content.RemoveLoadingContent();
 			window.IsEnabled = true;
 			// This is needed if there's nothing shown at startup (no tabs, no TV, etc), otherwise
-			// eg. Ctrl+K won't work.
+			// eg. Ctrl+Shift+K won't work.
 			window.Focus();
 			foreach (var loader in loaders)
 				loader.Value.OnAppLoaded();

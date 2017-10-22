@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,10 +44,6 @@ namespace dnSpy.Contracts.Language.Intellisense.Classification {
 		/// <param name="inputText">Current user input text</param>
 		/// <param name="colorize">true if it should be colorized</param>
 		public CompletionDisplayTextClassifierContext(CompletionSet completionSet, Completion completion, string displayText, string inputText, bool colorize)
-			: base(completionSet, completion, displayText, colorize) {
-			if (inputText == null)
-				throw new ArgumentNullException(nameof(inputText));
-			InputText = inputText;
-		}
+			: base(completionSet, completion, displayText, colorize) => InputText = inputText ?? throw new ArgumentNullException(nameof(inputText));
 	}
 }

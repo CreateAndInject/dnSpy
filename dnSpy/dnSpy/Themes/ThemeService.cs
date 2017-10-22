@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -104,10 +104,10 @@ namespace dnSpy.Themes {
 		[ImportingConstructor]
 		ThemeService(ThemeSettings themeSettings) {
 			this.themeSettings = themeSettings;
-			this.themeChangedHighPriority = new WeakEventList<ThemeChangedEventArgs>();
-			this.themeChanged = new WeakEventList<ThemeChangedEventArgs>();
-			this.themeChangedLowPriority = new WeakEventList<ThemeChangedEventArgs>();
-			this.themes = new Dictionary<Guid, Theme>();
+			themeChangedHighPriority = new WeakEventList<ThemeChangedEventArgs>();
+			themeChanged = new WeakEventList<ThemeChangedEventArgs>();
+			themeChangedLowPriority = new WeakEventList<ThemeChangedEventArgs>();
+			themes = new Dictionary<Guid, Theme>();
 			Load();
 			Debug.Assert(themes.Count != 0);
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
@@ -127,8 +127,7 @@ namespace dnSpy.Themes {
 		static readonly Guid DefaultHighContrastThemeGuid = ThemeConstants.THEME_HIGHCONTRAST_GUID;
 
 		ITheme GetThemeOrDefault(Guid guid) {
-			Theme theme;
-			if (themes.TryGetValue(guid, out theme))
+			if (themes.TryGetValue(guid, out var theme))
 				return theme;
 			if (themes.TryGetValue(DefaultThemeGuid, out theme))
 				return theme;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,10 +42,8 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <param name="span">Span</param>
 		/// <param name="classificationType">Classification type</param>
 		public TextClassificationTag(Span span, IClassificationType classificationType) {
-			if (classificationType == null)
-				throw new ArgumentNullException(nameof(classificationType));
 			Span = span;
-			ClassificationType = classificationType;
+			ClassificationType = classificationType ?? throw new ArgumentNullException(nameof(classificationType));
 		}
 	}
 }

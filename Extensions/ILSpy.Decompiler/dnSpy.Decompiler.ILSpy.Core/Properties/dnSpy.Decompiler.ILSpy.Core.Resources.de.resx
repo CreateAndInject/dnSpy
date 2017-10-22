@@ -177,11 +177,20 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Maximale Anzahl an anzuzeigenden Array-Elementen</value>
   </data>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>Modifizierer 'private' zu Typmembern hinzufügen</value>
+  </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Dekompiliere Objekt oder Auflistung Initialisierungen</value>
   </data>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>Ein Attribut pro Zeile anzeigen</value>
+  </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>Leere Standardkonstruktoren entfernen</value>
+  </data>
+  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
+    <value>'new delegate-class(xxx)' durch 'xxx' ersetzen</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>Versteckte Compiler generierte Typen und Methoden anzeigen</value>
@@ -191,6 +200,9 @@
   </data>
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
     <value>Bytes der IL Instruktion anzeigen</value>
+  </data>
+  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
+    <value>Dateinamen und Zeilennummern bei Verfügbarkeit anzeigen</value>
   </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
     <value>Token, RVAs und Datei-Offsets anzeigen</value>
@@ -206,6 +218,9 @@
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
     <value>"System"-Direktiven beim Sortieren von using-Direktiven zuerst anordnen</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>Modifizierer 'internal' zu Typen hinzufügen</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>Variablennamen von Debugsymbolen verwenden, falls vorhanden</value>

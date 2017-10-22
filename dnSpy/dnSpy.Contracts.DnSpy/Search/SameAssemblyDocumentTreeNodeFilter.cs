@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="filter">Filter</param>
 		public SameAssemblyDocumentTreeNodeFilter(ModuleDef allowedMod, IDocumentTreeNodeFilter filter)
 			: base(filter) {
-			this.allowedAsm = allowedMod.Assembly;
+			allowedAsm = allowedMod.Assembly;
 			this.allowedMod = allowedMod;
 		}
 

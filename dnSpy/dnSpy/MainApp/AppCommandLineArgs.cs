@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,6 +43,7 @@ namespace dnSpy.MainApp {
 		public bool? FullScreen { get; }
 		public string ShowToolWindow { get; }
 		public string HideToolWindow { get; }
+		public bool ShowStartupTime { get; }
 
 		readonly Dictionary<string, string> userArgs = new Dictionary<string, string>();
 		readonly List<string> filenames = new List<string>();
@@ -67,6 +68,7 @@ namespace dnSpy.MainApp {
 			FullScreen = null;
 			ShowToolWindow = string.Empty;
 			HideToolWindow = string.Empty;
+			ShowStartupTime = false;
 
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {
@@ -156,6 +158,10 @@ namespace dnSpy.MainApp {
 						i++;
 						break;
 
+					case "--show-startup-time":
+						ShowStartupTime = true;
+						break;
+
 					default:
 						int sepIndex = arg.IndexOf(ARG_SEP);
 						string argName, argValue;
@@ -189,8 +195,7 @@ namespace dnSpy.MainApp {
 		public bool HasArgument(string argName) => userArgs.ContainsKey(argName);
 
 		public string GetArgumentValue(string argName) {
-			string value;
-			userArgs.TryGetValue(argName, out value);
+			userArgs.TryGetValue(argName, out string value);
 			return value;
 		}
 

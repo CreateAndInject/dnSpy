@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,9 +35,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class XmlDocumentWriter : IDocumentWriter {
 		readonly bool isXaml;
 
-		public XmlDocumentWriter(bool isXaml) {
-			this.isXaml = isXaml;
-		}
+		public XmlDocumentWriter(bool isXaml) => this.isXaml = isXaml;
 
 		public void Write(IDecompilerOutput output, string text) {
 			var parser = new XmlParser(text, isXaml);

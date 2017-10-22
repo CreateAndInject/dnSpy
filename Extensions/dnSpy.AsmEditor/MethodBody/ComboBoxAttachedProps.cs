@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,9 +24,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static readonly DependencyProperty SelectionBoxItemTemplateProperty = DependencyProperty.RegisterAttached(
 			"SelectionBoxItemTemplate", typeof(DataTemplate), typeof(ComboBoxAttachedProps), new UIPropertyMetadata(null));
 
-		public static void SetSelectionBoxItemTemplate(UIElement element, DataTemplate value) {
-			element.SetValue(SelectionBoxItemTemplateProperty, value);
-		}
+		public static void SetSelectionBoxItemTemplate(UIElement element, DataTemplate value) => element.SetValue(SelectionBoxItemTemplateProperty, value);
 
 		public static DataTemplate GetSelectionBoxItemTemplate(UIElement element) => (DataTemplate)element.GetValue(SelectionBoxItemTemplateProperty);
 	}

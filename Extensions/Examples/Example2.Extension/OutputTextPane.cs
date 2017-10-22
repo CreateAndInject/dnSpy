@@ -24,9 +24,7 @@ namespace Example2.Extension {
 			set {
 				if (_instance != null)
 					throw new InvalidOperationException("Can't initialize the logger twice");
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				_instance = value;
+				_instance = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		static IOutputTextPane _instance;
@@ -45,9 +43,7 @@ namespace Example2.Extension {
 	sealed class LogEditorCtxMenuContext {
 		public readonly IOutputTextPane TextPane;
 
-		public LogEditorCtxMenuContext(IOutputTextPane pane) {
-			this.TextPane = pane;
-		}
+		public LogEditorCtxMenuContext(IOutputTextPane pane) => TextPane = pane;
 	}
 
 	abstract class LogEditorCtxMenuCommand : MenuItemBase<LogEditorCtxMenuContext> {

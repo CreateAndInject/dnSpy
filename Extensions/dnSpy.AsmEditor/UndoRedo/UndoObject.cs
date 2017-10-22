@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,8 +18,8 @@
 */
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	//TODO: This object is attached to AsmEdHexDocument and DsDocument. The UndoCommandService should
-	//		internally store this state so this class (and AsmEdHexDocument) can be removed.
+	//TODO: This object is attached to HexBuffer and DsDocument. The UndoCommandService should
+	//		internally store this state so this class (and HexBuffer) can be removed.
 	sealed class UndoObject : IUndoObject {
 		public bool IsDirty { get; set; }
 		public int SavedCommand { get; set; }
@@ -28,8 +28,6 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		public UndoObject() {
 		}
 
-		public UndoObject(object value) {
-			this.Value = value;
-		}
+		public UndoObject(object value) => Value = value;
 	}
 }

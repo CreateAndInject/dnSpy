@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,7 @@ using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
+using dnSpy.Properties;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
@@ -105,6 +106,16 @@ namespace dnSpy.Text.Editor.Search {
 			if (restartSearch && canSearch)
 				RestartSearch();
 		}
+
+		public string ToggleReplaceModeToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_ToggleReplaceModeToolTip, null);
+		public string FindPreviousToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_FindPreviousToolTip, dnSpy_Resources.ShortCutKeyShiftF3);
+		public string FindNextToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_FindNextToolTip, dnSpy_Resources.ShortCutKeyF3);
+		public string CloseToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_CloseToolTip, dnSpy_Resources.ShortCutKeyEsc);
+		public string ReplaceNextToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_ReplaceNextToolTip, dnSpy_Resources.ShortCutKeyAltR);
+		public string ReplaceAllToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_ReplaceAllToolTip, dnSpy_Resources.ShortCutKeyAltA);
+		public string MatchCaseToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_MatchCaseToolTip, dnSpy_Resources.ShortCutKeyAltC);
+		public string MatchWholeWordToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_MatchWholeWordToolTip, dnSpy_Resources.ShortCutKeyAltW);
+		public string UseRegularExpressionsToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Search_UseRegularExpressionsToolTip, dnSpy_Resources.ShortCutKeyAltE);
 
 		public ICommand CloseSearchUICommand => new RelayCommand(a => CloseSearchControl());
 		public ICommand FindNextCommand => new RelayCommand(a => FindNext(true));
@@ -179,30 +190,20 @@ namespace dnSpy.Text.Editor.Search {
 		IReplaceListener[] replaceListeners;
 
 		public SearchService(IWpfTextView wpfTextView, ITextSearchService2 textSearchService2, ISearchSettings searchSettings, IMessageBoxService messageBoxService, ITextStructureNavigator textStructureNavigator, Lazy<IReplaceListenerProvider>[] replaceListenerProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (textSearchService2 == null)
-				throw new ArgumentNullException(nameof(textSearchService2));
-			if (searchSettings == null)
-				throw new ArgumentNullException(nameof(searchSettings));
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
-			if (textStructureNavigator == null)
-				throw new ArgumentNullException(nameof(textStructureNavigator));
-			if (replaceListenerProviders == null)
-				throw new ArgumentNullException(nameof(replaceListenerProviders));
-			this.wpfTextView = wpfTextView;
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
-			this.textSearchService2 = textSearchService2;
-			this.searchSettings = searchSettings;
-			this.messageBoxService = messageBoxService;
-			this.textStructureNavigator = textStructureNavigator;
-			this.replaceListenerProviders = replaceListenerProviders;
-			this.listeners = new List<ITextMarkerListener>();
-			this.searchString = string.Empty;
-			this.replaceString = string.Empty;
-			this.searchKind = SearchKind.None;
-			this.searchControlPosition = SearchControlPosition.Default;
+			if (editorOperationsFactoryService == null)
+				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(wpfTextView);
+			this.textSearchService2 = textSearchService2 ?? throw new ArgumentNullException(nameof(textSearchService2));
+			this.searchSettings = searchSettings ?? throw new ArgumentNullException(nameof(searchSettings));
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
+			this.textStructureNavigator = textStructureNavigator ?? throw new ArgumentNullException(nameof(textStructureNavigator));
+			this.replaceListenerProviders = replaceListenerProviders ?? throw new ArgumentNullException(nameof(replaceListenerProviders));
+			listeners = new List<ITextMarkerListener>();
+			searchString = string.Empty;
+			replaceString = string.Empty;
+			searchKind = SearchKind.None;
+			searchControlPosition = SearchControlPosition.Default;
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Find, (s, e) => ShowFind()));
 			wpfTextView.VisualElement.CommandBindings.Add(new CommandBinding(ApplicationCommands.Replace, (s, e) => ShowReplace()));
 			wpfTextView.Closed += WpfTextView_Closed;
@@ -460,23 +461,23 @@ namespace dnSpy.Text.Editor.Search {
 		}
 
 		void FocusSearchStringTextBox() {
-			Action action = null;
+			Action callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.searchStringTextBox.Text.Length == 0 && SearchString.Length != 0)
-				action = () => searchControl.searchStringTextBox.SelectAll();
+				callback = () => searchControl.searchStringTextBox.SelectAll();
 			else
 				searchControl.searchStringTextBox.SelectAll();
-			UIUtilities.Focus(searchControl.searchStringTextBox, action);
+			UIUtilities.Focus(searchControl.searchStringTextBox, callback);
 		}
 
 		void FocusReplaceStringTextBox() {
-			Action action = null;
+			Action callback = null;
 			// If it hasn't been loaded yet, it has no binding and we must select it in its Loaded event
 			if (searchControl.replaceStringTextBox.Text.Length == 0 && ReplaceString.Length != 0)
-				action = () => searchControl.replaceStringTextBox.SelectAll();
+				callback = () => searchControl.replaceStringTextBox.SelectAll();
 			else
 				searchControl.replaceStringTextBox.SelectAll();
-			UIUtilities.Focus(searchControl.replaceStringTextBox, action);
+			UIUtilities.Focus(searchControl.replaceStringTextBox, callback);
 		}
 
 		void RepositionControl(bool recalcSize = false) {
@@ -709,8 +710,7 @@ namespace dnSpy.Text.Editor.Search {
 			if (!CanReplaceNext)
 				return;
 
-			string expandedReplacePattern;
-			var res = ReplaceFindNextCore(out expandedReplacePattern);
+			var res = ReplaceFindNextCore(out string expandedReplacePattern);
 			if (res == null)
 				return;
 
@@ -811,9 +811,9 @@ namespace dnSpy.Text.Editor.Search {
 			try {
 				using (var ed = wpfTextView.TextBuffer.CreateEdit()) {
 					foreach (var res in GetAllResultsForReplaceAll()) {
-						if (CanReplaceSpan(res.Item1, res.Item2)) {
+						if (CanReplaceSpan(res.span, res.expandedReplacePattern)) {
 							// Ignore errors due to read-only regions
-							ed.Replace(res.Item1.Span, res.Item2);
+							ed.Replace(res.span.Span, res.expandedReplacePattern);
 						}
 					}
 					ed.Apply();
@@ -834,7 +834,7 @@ namespace dnSpy.Text.Editor.Search {
 		// eg. if SearchString is aaa and text is aaaaaaaa, it returns two results, starting
 		// at offsets 0 and 3. The last two aa's aren't touched. Normal FindNext finds matches
 		// at offsets 0, 1, 2, 3, 4, 5.
-		IEnumerable<Tuple<SnapshotSpan, string>> GetAllResultsForReplaceAll() {
+		IEnumerable<(SnapshotSpan span, string expandedReplacePattern)> GetAllResultsForReplaceAll() {
 			var snapshot = wpfTextView.TextSnapshot;
 			var options = GetFindOptions(SearchKind.Replace, true) & ~FindOptions.Wrap;
 			var startingPosition = new SnapshotPoint(snapshot, 0);
@@ -853,7 +853,7 @@ namespace dnSpy.Text.Editor.Search {
 				}
 				if (res == null)
 					break;
-				yield return Tuple.Create(res.Value, expandedReplacePattern);
+				yield return (res.Value, expandedReplacePattern);
 				if (startingPosition.Position == snapshot.Length)
 					break;
 				if (res.Value.Length != 0)

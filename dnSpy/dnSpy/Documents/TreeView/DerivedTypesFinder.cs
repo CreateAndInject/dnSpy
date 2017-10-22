@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,9 +35,9 @@ namespace dnSpy.Documents.TreeView {
 
 		public DerivedTypesFinder(DocumentTreeNodeData targetNode, TypeDef type)
 			: base(targetNode) {
-			this.msgNodeGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MessageTreeNodeGroupDerivedTypes);
-			this.derivedTypesGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.DerivedTypeTreeNodeGroupDerivedTypes);
-			this.weakModules = targetNode.Context.DocumentTreeView.DocumentService.GetDocuments().Where(a => a.ModuleDef != null).SelectMany(a => a.AssemblyDef != null ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef }).Select(a => new WeakReference(a)).ToArray();
+			msgNodeGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.MessageTreeNodeGroupDerivedTypes);
+			derivedTypesGroup = targetNode.Context.DocumentTreeView.DocumentTreeNodeGroups.GetGroup(DocumentTreeNodeGroupType.DerivedTypeTreeNodeGroupDerivedTypes);
+			weakModules = targetNode.Context.DocumentTreeView.DocumentService.GetDocuments().Where(a => a.ModuleDef != null).SelectMany(a => a.AssemblyDef != null ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef }).Select(a => new WeakReference(a)).ToArray();
 			this.type = type;
 			Start();
 		}

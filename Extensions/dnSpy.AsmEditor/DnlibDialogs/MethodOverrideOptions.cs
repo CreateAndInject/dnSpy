@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public MethodOverrideOptions(MethodOverride mo) {
-			this.MethodBody = mo.MethodBody;
-			this.MethodDeclaration = mo.MethodDeclaration;
+			MethodBody = mo.MethodBody;
+			MethodDeclaration = mo.MethodDeclaration;
 		}
 
 		public MethodOverride Create() => new MethodOverride(MethodBody, MethodDeclaration);

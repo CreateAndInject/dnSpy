@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,8 +25,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public SaveHexOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as SaveHexOptionsVM;
-				if (data != null)
+				if (DataContext is SaveHexOptionsVM data)
 					data.PickSaveFilename = new PickSaveFilename();
 			};
 		}

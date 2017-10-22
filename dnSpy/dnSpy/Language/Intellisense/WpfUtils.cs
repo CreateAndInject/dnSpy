@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,8 +48,7 @@ namespace dnSpy.Language.Intellisense {
 			int childrenCount = VisualTreeHelper.GetChildrenCount(obj);
 			for (int i = 0; i < childrenCount; i++) {
 				var child = VisualTreeHelper.GetChild(obj, i);
-				var res = child as T;
-				if (res != null)
+				if (child is T res)
 					return res;
 
 				res = FindVisualChild<T>(child);

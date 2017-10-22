@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.Controls {
 	sealed class WpfCommandService : IWpfCommandService {
 		readonly Dictionary<Guid, WpfCommands> toWpfCommands;
 
-		WpfCommandService() {
-			this.toWpfCommands = new Dictionary<Guid, WpfCommands>();
-		}
+		WpfCommandService() => toWpfCommands = new Dictionary<Guid, WpfCommands>();
 
 		public void Add(Guid guid, UIElement elem) {
 			if (elem == null)
@@ -47,8 +45,7 @@ namespace dnSpy.Controls {
 		IWpfCommands IWpfCommandService.GetCommands(Guid guid) => GetCommands(guid);
 
 		WpfCommands GetCommands(Guid guid) {
-			WpfCommands c;
-			if (!toWpfCommands.TryGetValue(guid, out c))
+			if (!toWpfCommands.TryGetValue(guid, out var c))
 				toWpfCommands.Add(guid, c = new WpfCommands(guid));
 			return c;
 		}

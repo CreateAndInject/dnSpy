@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,7 +24,7 @@ using System.Threading;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.MSBuild {
-	public sealed class ProjectCreatorOptions {
+	sealed class ProjectCreatorOptions {
 		/// <summary>
 		/// The logger or null
 		/// </summary>
@@ -83,13 +83,11 @@ namespace dnSpy.Decompiler.MSBuild {
 		/// <param name="directory">Base directory</param>
 		/// <param name="cancellationToken">Cancellation token</param>
 		public ProjectCreatorOptions(string directory, CancellationToken cancellationToken) {
-			if (directory == null)
-				throw new ArgumentNullException(nameof(directory));
-			this.Directory = directory;
-			this.CancellationToken = cancellationToken;
-			this.ProjectModules = new List<ProjectModuleOptions>();
-			this.UserGACPaths = new List<string>();
-			this.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter);
+			Directory = directory ?? throw new ArgumentNullException(nameof(directory));
+			CancellationToken = cancellationToken;
+			ProjectModules = new List<ProjectModuleOptions>();
+			UserGACPaths = new List<string>();
+			CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter);
 		}
 	}
 }

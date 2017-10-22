@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
-			this.coll = ((SwitchOperandVM)dataContext).InstructionsListVM;
+			coll = ((SwitchOperandVM)dataContext).InstructionsListVM;
 			AddStandardMenuHandlers();
 		}
 	}

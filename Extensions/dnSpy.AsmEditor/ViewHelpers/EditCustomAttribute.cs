@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditCustomAttribute(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditCustomAttribute(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public CustomAttributeVM Edit(string title, CustomAttributeVM ca) {
 			var win = new CustomAttributeDlg();

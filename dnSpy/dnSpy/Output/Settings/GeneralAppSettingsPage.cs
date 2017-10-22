@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,7 @@ namespace dnSpy.Output.Settings {
 		public override double Order => AppSettingsConstants.ORDER_OUTPUT_DEFAULT_GENERAL;
 
 		public bool ShowTimestamps {
-			get { return showTimestamps; }
+			get => showTimestamps;
 			set {
 				if (showTimestamps != value) {
 					showTimestamps = value;
@@ -38,16 +38,29 @@ namespace dnSpy.Output.Settings {
 		}
 		bool showTimestamps;
 
+		public string TimestampDateTimeFormat {
+			get => timestampDateTimeFormat;
+			set {
+				if (timestampDateTimeFormat != value) {
+					timestampDateTimeFormat = value;
+					OnPropertyChanged(nameof(TimestampDateTimeFormat));
+				}
+			}
+		}
+		string timestampDateTimeFormat;
+
 		readonly IOutputWindowOptions options;
 
 		public GeneralAppSettingsPage(IOutputWindowOptions options)
 			: base(options) {
 			this.options = options;
 			ShowTimestamps = options.ShowTimestamps;
+			TimestampDateTimeFormat = options.TimestampDateTimeFormat;
 		}
 
 		public override void OnApply() {
 			options.ShowTimestamps = ShowTimestamps;
+			options.TimestampDateTimeFormat = TimestampDateTimeFormat;
 			base.OnApply();
 		}
 	}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,28 +21,26 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnlib.DotNet;
-using dnlib.DotNet.MD;
-using dnlib.PE;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PENode : DocumentTreeNodeData, IDecompileSelf {
-		readonly IHexDocumentService hexDocMgr;
-		readonly IPEImage peImage;
-		readonly ModuleDefMD module;
+		readonly Func<HexBufferFile> createBufferFile;
+		readonly PEStructureProviderFactory peStructureProviderFactory;
 
-		public PENode(IHexDocumentService hexDocMgr, IPEImage peImage, ModuleDefMD module) {
-			this.hexDocMgr = hexDocMgr;
-			this.peImage = peImage;
-			this.module = module;
+		public PENode(Func<HexBufferFile> createBufferFile, PEStructureProviderFactory peStructureProviderFactory) {
+			this.createBufferFile = createBufferFile ?? throw new ArgumentNullException(nameof(createBufferFile));
+			this.peStructureProviderFactory = peStructureProviderFactory ?? throw new ArgumentNullException(nameof(peStructureProviderFactory));
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -54,44 +52,34 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if (weakDocListener != null)
 				yield break;
 
-			var doc = hexDocMgr.GetOrCreate(peImage);
-			if (doc == null)
+			var file = createBufferFile();
+			if (file == null)
+				yield break;
+			var peStructureProvider = peStructureProviderFactory.TryGetProvider(file);
+			if (peStructureProvider == null)
 				yield break;
 
-			weakDocListener = new WeakDocumentListener(this, doc);
+			weakDocListener = new WeakDocumentListener(this, file.Buffer);
 
-			yield return new ImageDosHeaderNode(doc, peImage.ImageDosHeader);
-			yield return new ImageFileHeaderNode(doc, peImage.ImageNTHeaders.FileHeader);
-			if (peImage.ImageNTHeaders.OptionalHeader is ImageOptionalHeader32)
-				yield return new ImageOptionalHeader32Node(doc, (ImageOptionalHeader32)peImage.ImageNTHeaders.OptionalHeader);
+			yield return new ImageDosHeaderNode(peStructureProvider.ImageDosHeader);
+			yield return new ImageFileHeaderNode(peStructureProvider.ImageFileHeader);
+			if (peStructureProvider.ImageOptionalHeader is ImageOptionalHeader32VM)
+				yield return new ImageOptionalHeader32Node((ImageOptionalHeader32VM)peStructureProvider.ImageOptionalHeader);
 			else
-				yield return new ImageOptionalHeader64Node(doc, (ImageOptionalHeader64)peImage.ImageNTHeaders.OptionalHeader);
-			for (int i = 0; i < peImage.ImageSectionHeaders.Count; i++)
-				yield return new ImageSectionHeaderNode(doc, peImage.ImageSectionHeaders[i], i);
-			var cor20Hdr = ImageCor20HeaderNode.Create(doc, peImage);
+				yield return new ImageOptionalHeader64Node((ImageOptionalHeader64VM)peStructureProvider.ImageOptionalHeader);
+			for (int i = 0; i < peStructureProvider.Sections.Length; i++)
+				yield return new ImageSectionHeaderNode(peStructureProvider.Sections[i], i);
+			var cor20Hdr = ImageCor20HeaderNode.Create(peStructureProvider.ImageCor20Header);
 			if (cor20Hdr != null)
 				yield return cor20Hdr;
-			if (module != null) {
-				var md = module.MetaData;
-				yield return new StorageSignatureNode(doc, md.MetaDataHeader);
-				yield return new StorageHeaderNode(doc, md.MetaDataHeader);
-				var knownStreams = new List<DotNetStream> {
-					md.StringsStream,
-					md.USStream,
-					md.BlobStream,
-					md.GuidStream,
-					md.TablesStream,
-				};
-				if (md.IsCompressed) {
-					foreach (var stream in md.AllStreams) {
-						if (stream.Name == "#!")
-							knownStreams.Add(stream);
-					}
-				}
-				for (int i = 0; i < md.MetaDataHeader.StreamHeaders.Count; i++) {
-					var sh = md.MetaDataHeader.StreamHeaders[i];
-					var knownStream = knownStreams.FirstOrDefault(a => a.StreamHeader == sh);
-					yield return new StorageStreamNode(doc, sh, i, knownStream, md);
+			if (cor20Hdr != null && peStructureProvider.StorageSignature != null) {
+				yield return new StorageSignatureNode(peStructureProvider.StorageSignature);
+				yield return new StorageHeaderNode(peStructureProvider.StorageHeader);
+				foreach (var storageStream in peStructureProvider.StorageStreams) {
+					if (storageStream.HeapKind == DotNetHeapKind.Tables)
+						yield return new TablesStorageStreamNode(storageStream, peStructureProvider.TablesStream);
+					else
+						yield return new StorageStreamNode(storageStream);
 				}
 			}
 		}
@@ -100,28 +88,28 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		sealed class WeakDocumentListener {
 			readonly WeakReference nodeWeakRef;
 
-			public WeakDocumentListener(PENode node, HexDocument doc) {
-				this.nodeWeakRef = new WeakReference(node);
-				doc.OnDocumentModified += HexDocument_OnDocumentModified;
+			public WeakDocumentListener(PENode node, HexBuffer buffer) {
+				nodeWeakRef = new WeakReference(node);
+				buffer.Changed += Buffer_Changed;
 			}
 
-			void HexDocument_OnDocumentModified(object sender, HexDocumentModifiedEventArgs e) {
+			void Buffer_Changed(object sender, HexContentChangedEventArgs e) {
 				var node = (PENode)nodeWeakRef.Target;
 				if (node != null)
-					node.HexDocument_OnDocumentModified(sender, e);
+					node.Buffer_Changed(sender, e);
 				else {
-					var doc = (HexDocument)sender;
-					doc.OnDocumentModified -= HexDocument_OnDocumentModified;
+					var buffer = (HexBuffer)sender;
+					buffer.Changed -= Buffer_Changed;
 				}
 			}
 		}
 
-		void HexDocument_OnDocumentModified(object sender, HexDocumentModifiedEventArgs e) {
+		void Buffer_Changed(object sender, HexContentChangedEventArgs e) {
 			// Descendants() shouldn't be used since some of the nodes could have thousands of
 			// children and it's better if the parent can quickly check whether any of its children
 			// need to get notified.
 			foreach (HexNode node in TreeNode.DataChildren)
-				node.OnDocumentModified(e.StartOffset, e.EndOffset);
+				node.OnBufferChanged(e.Changes);
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
@@ -143,8 +131,21 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			if ((token & 0x00FFFFFF) == 0)
 				return null;
 			TreeNode.EnsureChildrenLoaded();
-			var stgStreamNode = (StorageStreamNode)TreeNode.DataChildren.FirstOrDefault(a => a is StorageStreamNode && ((StorageStreamNode)a).StorageStreamType == StorageStreamType.Tables);
+			var stgStreamNode = (StorageStreamNode)TreeNode.DataChildren.FirstOrDefault(a => a is StorageStreamNode && ((StorageStreamNode)a).HeapKind == DotNetHeapKind.Tables);
 			return stgStreamNode?.FindTokenNode(token);
+		}
+
+		public HexNode FindNode(HexVM structure, HexField field) {
+			if (structure is MetaDataTableRecordVM mdTblRecord)
+				return FindTokenNode(mdTblRecord.Token.Raw);
+
+			TreeNode.EnsureChildrenLoaded();
+			foreach (var child in TreeNode.DataChildren.OfType<HexNode>()) {
+				var node = child.FindNode(structure, field);
+				if (node != null)
+					return node;
+			}
+			return null;
 		}
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
@@ -157,9 +158,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PETreeNodeGroup : ITreeNodeGroup {
 		public static readonly PETreeNodeGroup Instance = new PETreeNodeGroup(DocumentTreeViewConstants.ORDER_MODULE_PE);
 
-		public PETreeNodeGroup(double order) {
-			this.Order = order;
-		}
+		public PETreeNodeGroup(double order) => Order = order;
 
 		public double Order { get; }
 

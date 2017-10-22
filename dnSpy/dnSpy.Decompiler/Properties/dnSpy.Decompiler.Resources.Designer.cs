@@ -19,7 +19,7 @@ namespace dnSpy.Decompiler.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class dnSpy_Decompiler_Resources {
@@ -57,6 +57,33 @@ namespace dnSpy.Decompiler.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to awaitable.
+        /// </summary>
+        internal static string CSharp_Awaitable_Method {
+            get {
+                return ResourceManager.GetString("CSharp_Awaitable_Method", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to deprecated.
+        /// </summary>
+        internal static string CSharp_Deprecated_Member {
+            get {
+                return ResourceManager.GetString("CSharp_Deprecated_Member", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to extension.
+        /// </summary>
+        internal static string CSharp_Extension_Method {
+            get {
+                return ResourceManager.GetString("CSharp_Extension_Method", resourceCulture);
             }
         }
         
@@ -142,7 +169,7 @@ namespace dnSpy.Decompiler.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timestamp: {0:X8} ({1}).
+        ///   Looks up a localized string similar to Timestamp:.
         /// </summary>
         internal static string Decompile_Timestamp {
             get {
@@ -399,6 +426,42 @@ namespace dnSpy.Decompiler.Properties {
         internal static string ToolTip_Parameter {
             get {
                 return ResourceManager.GetString("ToolTip_Parameter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Unknown&gt;.
+        /// </summary>
+        internal static string UnknownValue {
+            get {
+                return ResourceManager.GetString("UnknownValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Awaitable.
+        /// </summary>
+        internal static string VisualBasic_Awaitable_Method {
+            get {
+                return ResourceManager.GetString("VisualBasic_Awaitable_Method", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deprecated.
+        /// </summary>
+        internal static string VisualBasic_Deprecated_Member {
+            get {
+                return ResourceManager.GetString("VisualBasic_Deprecated_Member", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension.
+        /// </summary>
+        internal static string VisualBasic_Extension_Method {
+            get {
+                return ResourceManager.GetString("VisualBasic_Extension_Method", resourceCulture);
             }
         }
     }

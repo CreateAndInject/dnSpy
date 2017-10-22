@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,8 +38,8 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <param name="filterType">Filter type</param>
 		/// <param name="isMatch">True if it was a match</param>
 		public DocumentTreeNodeFilterResult(FilterType filterType, bool isMatch) {
-			this.FilterType = filterType;
-			this.IsMatch = isMatch;
+			FilterType = filterType;
+			IsMatch = isMatch;
 		}
 	}
 }

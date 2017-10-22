@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,11 +70,9 @@ namespace dnSpy.Contracts.TreeView {
 		public ITreeNode TreeNode {
 			get { return treeNode; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
 				if (treeNode != null)
 					throw new InvalidOperationException();
-				treeNode = value;
+				treeNode = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		ITreeNode treeNode;
@@ -159,9 +157,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="nodes">Nodes</param>
 		/// <returns></returns>
-		public virtual IDataObject Copy(TreeNodeData[] nodes) {
-			throw new NotSupportedException();
-		}
+		public virtual IDataObject Copy(TreeNodeData[] nodes) => throw new NotSupportedException();
 
 		/// <summary>
 		/// Returns true if drop can execute
@@ -176,9 +172,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="e">Event args</param>
 		/// <param name="index">Index</param>
-		public virtual void Drop(DragEventArgs e, int index) {
-			throw new NotSupportedException();
-		}
+		public virtual void Drop(DragEventArgs e, int index) => throw new NotSupportedException();
 	}
 
 	/// <summary>
@@ -207,8 +201,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <returns></returns>
 		public static T GetAncestorOrSelf<T>(this TreeNodeData self) where T : TreeNodeData {
 			while (self != null) {
-				var found = self as T;
-				if (found != null)
+				if (self is T found)
 					return found;
 				var parent = self.TreeNode.Parent;
 				if (parent == null)

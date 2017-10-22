@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,8 +42,8 @@ namespace dnSpy.Contracts.Utilities {
 		public string Path { get; }
 
 		internal GacFileInfo(IAssembly asm, string path) {
-			this.Assembly = asm;
-			this.Path = path;
+			Assembly = asm;
+			Path = path;
 		}
 	}
 
@@ -73,10 +73,10 @@ namespace dnSpy.Contracts.Utilities {
 			public readonly IList<string> SubDirs;
 
 			public GacDirInfo(int version, string prefix, string path, IList<string> subDirs) {
-				this.Version = version;
-				this.Prefix = prefix;
-				this.Path = path;
-				this.SubDirs = subDirs;
+				Version = version;
+				Prefix = prefix;
+				Path = path;
+				SubDirs = subDirs;
 			}
 		}
 		static readonly GacDirInfo[] gacDirInfos;
@@ -303,9 +303,16 @@ namespace dnSpy.Contracts.Utilities {
 			var asmSimpleName = UTF8String.ToSystemStringOrEmpty(assembly.Name);
 			foreach (var subDir in gacInfo.SubDirs) {
 				var baseDir = Path.Combine(gacInfo.Path, subDir);
-				baseDir = Path.Combine(baseDir, asmSimpleName);
-				baseDir = Path.Combine(baseDir, $"{gacInfo.Prefix}{verString}_{cultureString}_{pktString}");
-				var pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
+				string pathName;
+				try {
+					baseDir = Path.Combine(baseDir, asmSimpleName);
+					baseDir = Path.Combine(baseDir, $"{gacInfo.Prefix}{verString}_{cultureString}_{pktString}");
+					pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
+				}
+				catch (ArgumentException) {
+					// Invalid char(s) in asmSimpleName, cultureString
+					yield break;
+				}
 				if (File.Exists(pathName))
 					yield return pathName;
 			}

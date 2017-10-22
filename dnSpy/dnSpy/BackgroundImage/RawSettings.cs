@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -48,9 +49,7 @@ namespace dnSpy.BackgroundImage {
 		public string[] Images {
 			get { return images; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				images = value;
+				images = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		string[] images;
@@ -77,14 +76,12 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public RawSettings(RawSettings other) {
-			this.Id = other.Id;
+			Id = other.Id;
 			CopyFrom(other);
 		}
 
 		public RawSettings(string id, DefaultImageSettings defaultSettings) {
-			if (id == null)
-				throw new ArgumentNullException(nameof(id));
-			this.Id = id;
+			Id = id ?? throw new ArgumentNullException(nameof(id));
 			Images = defaultSettings.Images ?? Array.Empty<string>();
 			Stretch = defaultSettings.Stretch ?? DefaultRawSettings.DefaultStretch;
 			StretchDirection = defaultSettings.StretchDirection ?? DefaultRawSettings.DefaultStretchDirection;
@@ -105,19 +102,13 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public RawSettings(string id)
-			: this() {
-			if (id == null)
-				throw new ArgumentNullException(nameof(id));
-			Id = id;
-		}
+			: this() => Id = id ?? throw new ArgumentNullException(nameof(id));
 
-		public RawSettings(ISettingsSection section) {
-			ReadSettings(section);
-		}
+		public RawSettings(ISettingsSection section) => ReadSettings(section);
 
 		void ReadSettings(ISettingsSection section) {
 			Id = section.Attribute<string>(nameof(Id));
-			Images = DeserializeImages(section.Attribute<string>(nameof(Images))) ?? Array.Empty<string>();
+			Images = FilterOutImages(DeserializeImages(section.Attribute<string>(nameof(Images))) ?? Array.Empty<string>()).ToArray();
 			Stretch = section.Attribute<Stretch?>(nameof(Stretch)) ?? DefaultRawSettings.DefaultStretch;
 			StretchDirection = section.Attribute<StretchDirection?>(nameof(StretchDirection)) ?? DefaultRawSettings.DefaultStretchDirection;
 			Opacity = section.Attribute<double?>(nameof(Opacity)) ?? DefaultRawSettings.Opacity;
@@ -135,6 +126,13 @@ namespace dnSpy.BackgroundImage {
 			IsEnabled = section.Attribute<bool?>(nameof(IsEnabled)) ?? DefaultRawSettings.IsEnabled;
 			Interval = section.Attribute<TimeSpan?>(nameof(Interval)) ?? DefaultRawSettings.Interval;
 		}
+
+		static IEnumerable<string> FilterOutImages(string[] images) =>
+			images.Where(a => !IsBetaImage(a));
+
+		static bool IsBetaImage(string image) =>
+			image.EndsWith("pack://application:,,,/dnSpy;component/Images/DefaultWatermarkLight.png", StringComparison.CurrentCultureIgnoreCase) ||
+			image.EndsWith("pack://application:,,,/dnSpy;component/Images/DefaultWatermarkDark.png", StringComparison.CurrentCultureIgnoreCase);
 
 		const string SEP_STRING = "<{[]}>";
 		static string SerializeImages(string[] s) => string.Join(SEP_STRING, s);
@@ -166,23 +164,23 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public void CopyFrom(RawSettings other) {
-			this.Images = other.Images;
-			this.Stretch = other.Stretch;
-			this.StretchDirection = other.StretchDirection;
-			this.Opacity = other.Opacity;
-			this.HorizontalOffset = other.HorizontalOffset;
-			this.VerticalOffset = other.VerticalOffset;
-			this.LeftMarginWidthPercent = other.LeftMarginWidthPercent;
-			this.RightMarginWidthPercent = other.RightMarginWidthPercent;
-			this.TopMarginHeightPercent = other.TopMarginHeightPercent;
-			this.BottomMarginHeightPercent = other.BottomMarginHeightPercent;
-			this.MaxHeight = other.MaxHeight;
-			this.MaxWidth = other.MaxWidth;
-			this.Zoom = other.Zoom;
-			this.ImagePlacement = other.ImagePlacement;
-			this.IsRandom = other.IsRandom;
-			this.IsEnabled = other.IsEnabled;
-			this.Interval = other.Interval;
+			Images = other.Images;
+			Stretch = other.Stretch;
+			StretchDirection = other.StretchDirection;
+			Opacity = other.Opacity;
+			HorizontalOffset = other.HorizontalOffset;
+			VerticalOffset = other.VerticalOffset;
+			LeftMarginWidthPercent = other.LeftMarginWidthPercent;
+			RightMarginWidthPercent = other.RightMarginWidthPercent;
+			TopMarginHeightPercent = other.TopMarginHeightPercent;
+			BottomMarginHeightPercent = other.BottomMarginHeightPercent;
+			MaxHeight = other.MaxHeight;
+			MaxWidth = other.MaxWidth;
+			Zoom = other.Zoom;
+			ImagePlacement = other.ImagePlacement;
+			IsRandom = other.IsRandom;
+			IsEnabled = other.IsEnabled;
+			Interval = other.Interval;
 		}
 
 		public RawSettings Clone() => new RawSettings(this);

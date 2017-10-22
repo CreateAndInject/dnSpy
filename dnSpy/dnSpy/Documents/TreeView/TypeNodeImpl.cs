@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,9 +35,7 @@ namespace dnSpy.Documents.TreeView {
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public TypeNodeImpl(ITreeNodeGroup treeNodeGroup, TypeDef type)
-			: base(type) {
-			this.TreeNodeGroup = treeNodeGroup;
-		}
+			: base(type) => TreeNodeGroup = treeNodeGroup;
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
 

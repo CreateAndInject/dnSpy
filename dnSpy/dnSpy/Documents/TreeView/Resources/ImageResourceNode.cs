@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -128,8 +128,8 @@ namespace dnSpy.Documents.TreeView.Resources {
 
 		public ImageResourceNodeImpl(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
-			this.imageData = resource.GetResourceData();
-			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
+			imageData = resource.GetResourceData();
+			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
@@ -164,18 +164,15 @@ namespace dnSpy.Documents.TreeView.Resources {
 		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public ImageResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
-			: base(treeNodeGroup, resourceElement) {
-			InitializeImageData();
-		}
+			: base(treeNodeGroup, resourceElement) => InitializeImageData();
 
 		void InitializeImageData() {
-			this.imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-			this.imageSource = ImageResourceUtilities.CreateImageSource(this.imageData);
+			imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
+			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
-			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (output is IDocumentViewerOutput documentViewerOutput) {
 				decompiler.WriteCommentBegin(output, true);
 				output.WriteOffsetComment(this, showOffset);
 				documentViewerOutput.AddUIElement(() => {

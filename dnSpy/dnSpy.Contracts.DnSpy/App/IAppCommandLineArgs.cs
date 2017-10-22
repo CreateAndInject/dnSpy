@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,6 +75,9 @@ namespace dnSpy.Contracts.App {
 
 		/// <summary>Tool windows to hide</summary>
 		string HideToolWindow { get; }
+
+		/// <summary>Show start up time</summary>
+		bool ShowStartupTime { get; }
 
 		/// <summary>
 		/// Returns true if the argument is present

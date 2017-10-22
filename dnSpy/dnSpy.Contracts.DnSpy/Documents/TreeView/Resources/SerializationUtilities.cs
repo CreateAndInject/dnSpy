@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -122,8 +122,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			try {
 				var typeConverter = TypeDescriptor.GetConverter(objType);
 				if (typeConverter.CanConvertTo(null, typeof(string))) {
-					var s = typeConverter.ConvertTo(null, CultureInfo.InvariantCulture, obj, typeof(string)) as string;
-					if (s != null)
+					if (typeConverter.ConvertTo(null, CultureInfo.InvariantCulture, obj, typeof(string)) is string s)
 						return s;
 				}
 			}

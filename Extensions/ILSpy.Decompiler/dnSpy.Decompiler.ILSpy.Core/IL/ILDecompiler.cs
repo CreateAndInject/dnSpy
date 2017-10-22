@@ -41,9 +41,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
 			Debug.Assert(decompilerSettingsService != null);
-			if (decompilerSettingsService == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsService));
-			this.decompilerSettingsService = decompilerSettingsService;
+			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
 		public IEnumerable<IDecompiler> Create() {
@@ -85,7 +83,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			CreateReflectionDisassembler(output, ctx, member.Module);
 
 		ReflectionDisassembler CreateReflectionDisassembler(IDecompilerOutput output, DecompilationContext ctx, ModuleDef ownerModule) {
-			var disOpts = new DisassemblerOptions(ctx.CancellationToken, ownerModule);
+			var disOpts = new DisassemblerOptions(langSettings.Settings.SettingsVersion, ctx.CancellationToken, ownerModule);
 			if (langSettings.Settings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
 			var sb = new StringBuilder();
@@ -95,6 +93,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.IL {
 			disOpts.ShowTokenAndRvaComments = langSettings.Settings.ShowTokenAndRvaComments;
 			disOpts.ShowILBytes = langSettings.Settings.ShowILBytes;
 			disOpts.SortMembers = langSettings.Settings.SortMembers;
+			disOpts.ShowPdbInfo = langSettings.Settings.ShowPdbInfo;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 

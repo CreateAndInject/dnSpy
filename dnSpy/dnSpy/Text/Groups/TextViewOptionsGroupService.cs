@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,19 +57,18 @@ namespace dnSpy.Text.Groups {
 
 		[ImportingConstructor]
 		TextViewOptionsGroupService(ISettingsService settingsService, IContentTypeRegistryService contentTypeRegistryService, [ImportMany] IEnumerable<Lazy<ITextViewOptionsGroupNameProvider, ITextViewOptionsGroupNameProviderMetadata>> textViewOptionsGroupNameProviders, [ImportMany] IEnumerable<Lazy<IContentTypeOptionDefinitionProvider, IContentTypeOptionDefinitionProviderMetadata>> contentTypeOptionDefinitionProviders) {
-			this.nameToGroup = new Dictionary<string, TextViewOptionsGroup>(StringComparer.Ordinal);
+			nameToGroup = new Dictionary<string, TextViewOptionsGroup>(StringComparer.Ordinal);
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textViewOptionsGroupNameProviders = textViewOptionsGroupNameProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.contentTypeOptionDefinitionProviders = contentTypeOptionDefinitionProviders.OrderBy(a => a.Metadata.Order).ToArray();
-			this.optionsStorage = new OptionsStorage(settingsService);
+			optionsStorage = new OptionsStorage(settingsService);
 		}
 
 		ITextViewOptionsGroup ITextViewOptionsGroupService.GetGroup(string name) => GetGroup(name);
 		TextViewOptionsGroup GetGroup(string name) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
-			TextViewOptionsGroup group;
-			if (!nameToGroup.TryGetValue(name, out group)) {
+			if (!nameToGroup.TryGetValue(name, out var group)) {
 				var defaultOptions = GetDefaultOptions(name);
 				nameToGroup.Add(name, group = new TextViewOptionsGroup(name, contentTypeRegistryService, defaultOptions, optionsStorage));
 			}

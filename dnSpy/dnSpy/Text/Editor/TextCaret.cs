@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -62,26 +62,24 @@ namespace dnSpy.Text.Editor {
 		double preferredXCoordinate;
 
 		public TextCaret(IWpfTextView textView, IAdornmentLayer caretLayer, ISmartIndentationService smartIndentationService, IClassificationFormatMap classificationFormatMap) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
 			if (caretLayer == null)
 				throw new ArgumentNullException(nameof(caretLayer));
-			if (smartIndentationService == null)
-				throw new ArgumentNullException(nameof(smartIndentationService));
-			this.textView = textView;
-			this.imeState = new ImeState();
-			this.smartIndentationService = smartIndentationService;
-			this.preferredXCoordinate = 0;
-			this.__preferredYCoordinate = 0;
+			if (classificationFormatMap == null)
+				throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			imeState = new ImeState();
+			this.smartIndentationService = smartIndentationService ?? throw new ArgumentNullException(nameof(smartIndentationService));
+			preferredXCoordinate = 0;
+			__preferredYCoordinate = 0;
 			Affinity = PositionAffinity.Successor;
-			this.currentPosition = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
+			currentPosition = new VirtualSnapshotPoint(textView.TextSnapshot, 0);
 			textView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			textView.TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			textView.Options.OptionChanged += Options_OptionChanged;
 			textView.VisualElement.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_GotKeyboardFocus), true);
 			textView.VisualElement.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_LostKeyboardFocus), true);
 			textView.LayoutChanged += TextView_LayoutChanged;
-			this.textCaretLayer = new TextCaretLayer(this, caretLayer, classificationFormatMap);
+			textCaretLayer = new TextCaretLayer(this, caretLayer, classificationFormatMap);
 			InputMethod.SetIsInputMethodSuspended(textView.VisualElement, true);
 		}
 
@@ -300,10 +298,9 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) {
+		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) =>
 			// The value is cached, make sure it uses the latest snapshot
 			OnImplicitCaretPositionChanged();
-		}
 
 		void TextBuffer_ChangedHighPriority(object sender, TextContentChangedEventArgs e) {
 			// The value is cached, make sure it uses the latest snapshot
@@ -328,21 +325,26 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void OnImplicitCaretPositionChanged() => SetPositionCore(currentPosition.TranslateTo(textView.TextSnapshot));
-		void SetPositionCore(VirtualSnapshotPoint bufferPosition) => currentPosition = bufferPosition;
+
+		void SetPositionCore(VirtualSnapshotPoint bufferPosition) {
+			if (currentPosition != bufferPosition) {
+				currentPosition = bufferPosition;
+				textCaretLayer.CaretPositionChanged();
+				if (imeState.CompositionStarted)
+					MoveImeCompositionWindow();
+			}
+		}
 
 		void SetExplicitPosition(VirtualSnapshotPoint bufferPosition) {
 			var oldPos = Position;
 			SetPositionCore(bufferPosition);
 			var newPos = Position;
-			if (oldPos != newPos) {
-				if (imeState.CompositionStarted)
-					MoveImeCompositionWindow();
+			if (oldPos != newPos)
 				PositionChanged?.Invoke(this, new CaretPositionChangedEventArgs(textView, oldPos, newPos));
-			}
 		}
 
 		public void EnsureVisible() {
-			var line = this.ContainingTextViewLine;
+			var line = ContainingTextViewLine;
 			if (line.VisibilityState != VisibilityState.FullyVisible) {
 				ViewRelativePosition relativeTo;
 				var firstVisibleLine = textView.TextViewLines?.FirstVisibleLine;
@@ -408,8 +410,7 @@ namespace dnSpy.Text.Editor {
 			bool filterPos = true;
 			// Don't auto indent if it's at column 0
 			if (canAutoIndent && CanAutoIndent(textLine) && xCoordinate > textLine.TextRight) {
-				var wpfView = textView as IWpfTextView;
-				if (wpfView != null) {
+				if (textView is IWpfTextView wpfView) {
 					int indentation = IndentHelper.GetDesiredIndentation(textView, smartIndentationService, textLine.Start.GetContainingLine()) ?? 0;
 					var textBounds = textLine.GetExtendedCharacterBounds(new VirtualSnapshotPoint(textLine.Start, indentation));
 					xCoordinate = textBounds.Leading;
@@ -501,9 +502,7 @@ namespace dnSpy.Text.Editor {
 			return MoveTo(newPos);
 		}
 
-		double PreferredYCoordinate {
-			get { return Math.Min(__preferredYCoordinate, textView.ViewportHeight) + textView.ViewportTop; }
-		}
+		double PreferredYCoordinate => Math.Min(__preferredYCoordinate, textView.ViewportHeight) + textView.ViewportTop;
 		double __preferredYCoordinate;
 
 		ITextViewLine GetVisibleCaretLine() {

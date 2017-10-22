@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,31 +36,29 @@ namespace dnSpy.MainApp {
 		readonly TextBlock textBlock;
 
 		public AppStatusBar() {
-			this.statusBar = new StatusBar { Visibility = Visibility.Collapsed };
-			this.textBlock = new TextBlock();
-			this.statusBar.Items.Add(new StatusBarItem { Content = textBlock });
+			statusBar = new StatusBar { Visibility = Visibility.Collapsed };
+			textBlock = new TextBlock();
+			statusBar.Items.Add(new StatusBarItem { Content = textBlock });
 		}
 
 		public void Close() {
 			Debug.Assert(openCounter > 0);
 			openCounter--;
 			if (openCounter == 0)
-				this.statusBar.Visibility = Visibility.Collapsed;
+				statusBar.Visibility = Visibility.Collapsed;
 		}
 
 		public void Open() {
 			openCounter++;
 			if (openCounter == 1) {
-				this.textBlock.Text = string.Empty;
-				this.statusBar.Visibility = Visibility.Visible;
+				textBlock.Text = string.Empty;
+				statusBar.Visibility = Visibility.Visible;
 			}
 		}
 
 		public void Show(string text) {
 			Debug.Assert(openCounter > 0);
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			this.textBlock.Text = text;
+			textBlock.Text = text ?? throw new ArgumentNullException(nameof(text));
 		}
 	}
 }

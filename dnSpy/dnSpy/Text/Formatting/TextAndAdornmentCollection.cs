@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,11 +26,7 @@ namespace dnSpy.Text.Formatting {
 	sealed class TextAndAdornmentCollection : ReadOnlyCollection<ISequenceElement>, ITextAndAdornmentCollection {
 		public ITextAndAdornmentSequencer Sequencer { get; }
 
-		public TextAndAdornmentCollection(ITextAndAdornmentSequencer textAndAdornmentSequencer, List<ISequenceElement> list)
-			: base(list) {
-			if (textAndAdornmentSequencer == null)
-				throw new ArgumentNullException(nameof(textAndAdornmentSequencer));
-			Sequencer = textAndAdornmentSequencer;
-		}
+		public TextAndAdornmentCollection(ITextAndAdornmentSequencer textAndAdornmentSequencer, IList<ISequenceElement> list)
+			: base(list) => Sequencer = textAndAdornmentSequencer ?? throw new ArgumentNullException(nameof(textAndAdornmentSequencer));
 	}
 }

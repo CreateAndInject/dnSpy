@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,11 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -48,15 +49,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override bool SingleClickExpandsChildren => false;
 
 		public TableInfo TableInfo { get; }
-		internal HexDocument Document { get; }
+		internal HexBuffer Buffer => MetaDataTableVM.Buffer;
 
-		public MetaDataTableNode(HexDocument doc, MDTable mdTable, IMetaData md)
-			: base((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset - 1) {
-			this.Document = doc;
-			this.TableInfo = mdTable.TableInfo;
-			this.MetaDataTableVM = MetaDataTableVM.Create(this, doc, StartOffset, mdTable);
-			this.MetaDataTableVM.FindMetaDataTable = FindMetaDataTable;
-			this.MetaDataTableVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1, (ulong)md.GuidStream.StartOffset, (ulong)md.GuidStream.EndOffset - 1);
+		public MetaDataTableNode(MetaDataTableVM mdTable)
+			: base(mdTable.Span) {
+			TableInfo = mdTable.TableInfo;
+			MetaDataTableVM = mdTable;
+			MetaDataTableVM.Owner = this;
 		}
 
 		public override void Initialize() => TreeNode.LazyLoading = true;
@@ -124,32 +123,34 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public override IEnumerable<TreeNodeData> CreateChildren() {
 			Debug.Assert(TreeNode.Children.Count == 0);
 
-			ulong offs = StartOffset;
+			var pos = Span.Start;
 			ulong rowSize = (ulong)MetaDataTableVM.TableInfo.RowSize;
 			for (uint i = 0; i < MetaDataTableVM.Rows; i++) {
-				yield return new MetaDataTableRecordNode(TableInfo, (int)i, offs, offs + rowSize - 1);
-				offs += rowSize;
+				yield return new MetaDataTableRecordNode(TableInfo, (int)i, pos, pos + rowSize);
+				pos += rowSize;
 			}
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
 
 			if (TreeNode.Children.Count == 0)
 				return;
 
-			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))
-				return;
+			foreach (var change in changes) {
+				if (!changes.OverlapsWith(Span))
+					continue;
 
-			ulong start = Math.Max(StartOffset, modifiedStart);
-			ulong end = Math.Min(EndOffset, modifiedEnd);
-			int i = (int)((start - StartOffset) / (ulong)TableInfo.RowSize);
-			int endi = (int)((end - StartOffset) / (ulong)TableInfo.RowSize);
-			Debug.Assert(0 <= i && i <= endi && endi < TreeNode.Children.Count);
-			while (i <= endi) {
-				var obj = (MetaDataTableRecordNode)TreeNode.Children[i].Data;
-				obj.OnDocumentModified(modifiedStart, modifiedEnd);
-				i++;
+				var start = HexPosition.Max(Span.Start, change.OldSpan.Start);
+				var end = HexPosition.Min(Span.End, change.OldSpan.End);
+				int i = (int)((start - Span.Start).ToUInt64() / (ulong)TableInfo.RowSize);
+				int endi = (int)((end - 1 - Span.Start).ToUInt64() / (ulong)TableInfo.RowSize);
+				Debug.Assert(0 <= i && i <= endi && endi < TreeNode.Children.Count);
+				while (i <= endi) {
+					var obj = (MetaDataTableRecordNode)TreeNode.Children[i].Data;
+					obj.OnBufferChanged(changes);
+					i++;
+				}
 			}
 		}
 
@@ -160,7 +161,5 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			TreeNode.EnsureChildrenLoaded();
 			return (MetaDataTableRecordNode)TreeNode.Children[(int)rid - 1].Data;
 		}
-
-		MetaDataTableVM FindMetaDataTable(Table table) => ((TablesStreamNode)TreeNode.Parent.Data).FindMetaDataTable(table);
 	}
 }

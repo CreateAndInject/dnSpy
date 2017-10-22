@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,9 +53,7 @@ namespace dnSpy.Events {
 
 			readonly EventHandler<TEventArgs> handler;
 
-			public HardRefInfo(EventHandler<TEventArgs> handler) {
-				this.handler = handler;
-			}
+			public HardRefInfo(EventHandler<TEventArgs> handler) => this.handler = handler;
 		}
 
 		sealed class InstanceInfo : Info {
@@ -76,14 +74,12 @@ namespace dnSpy.Events {
 			public InstanceInfo(EventHandler<TEventArgs> handler) {
 				Debug.Assert(handler.Target != null);
 				Debug.Assert(handler.GetInvocationList().Length == 1);
-				this.target = new WeakReference(handler.Target);
-				this.methodInfo = handler.Method;
+				target = new WeakReference(handler.Target);
+				methodInfo = handler.Method;
 			}
 		}
 
-		public WeakEventList() {
-			this.handlers = new List<Info>();
-		}
+		public WeakEventList() => handlers = new List<Info>();
 
 		public void Add(EventHandler<TEventArgs> h) {
 			if (h == null)

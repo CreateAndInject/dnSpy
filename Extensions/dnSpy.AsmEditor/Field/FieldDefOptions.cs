@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,28 +38,28 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		public FieldDefOptions(FieldDef field) {
-			this.Attributes = field.Attributes;
-			this.Name = field.Name;
-			this.FieldSig = field.FieldSig;
-			this.FieldOffset = field.FieldOffset;
-			this.MarshalType = field.MarshalType;
-			this.RVA = field.RVA;
-			this.InitialValue = field.InitialValue;
-			this.ImplMap = field.ImplMap;
-			this.Constant = field.Constant;
-			this.CustomAttributes.AddRange(field.CustomAttributes);
+			Attributes = field.Attributes;
+			Name = field.Name;
+			FieldSig = field.FieldSig;
+			FieldOffset = field.FieldOffset;
+			MarshalType = field.MarshalType;
+			RVA = field.RVA;
+			InitialValue = field.InitialValue;
+			ImplMap = field.ImplMap;
+			Constant = field.Constant;
+			CustomAttributes.AddRange(field.CustomAttributes);
 		}
 
 		public FieldDef CopyTo(FieldDef field) {
-			field.Attributes = this.Attributes;
-			field.Name = this.Name ?? UTF8String.Empty;
-			field.FieldSig = this.FieldSig;
-			field.FieldOffset = this.FieldOffset;
-			field.MarshalType = this.MarshalType;
-			field.RVA = this.RVA;
-			field.InitialValue = this.InitialValue;
-			field.ImplMap = this.ImplMap;
-			field.Constant = this.Constant;
+			field.Attributes = Attributes;
+			field.Name = Name ?? UTF8String.Empty;
+			field.FieldSig = FieldSig;
+			field.FieldOffset = FieldOffset;
+			field.MarshalType = MarshalType;
+			field.RVA = RVA;
+			field.InitialValue = InitialValue;
+			field.ImplMap = ImplMap;
+			field.Constant = Constant;
 			field.CustomAttributes.Clear();
 			field.CustomAttributes.AddRange(CustomAttributes);
 			return field;
@@ -67,18 +67,16 @@ namespace dnSpy.AsmEditor.Field {
 
 		public FieldDef CreateFieldDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new FieldDefUser()));
 
-		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig) {
-			return new FieldDefOptions {
-				Attributes = FieldAttributes.Public,
-				Name = name,
-				FieldSig = fieldSig,
-				FieldOffset = null,
-				MarshalType = null,
-				RVA = 0,
-				InitialValue = null,
-				ImplMap = null,
-				Constant = null,
-			};
-		}
+		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig) => new FieldDefOptions {
+			Attributes = FieldAttributes.Public,
+			Name = name,
+			FieldSig = fieldSig,
+			FieldOffset = null,
+			MarshalType = null,
+			RVA = 0,
+			InitialValue = null,
+			ImplMap = null,
+			Constant = null,
+		};
 	}
 }

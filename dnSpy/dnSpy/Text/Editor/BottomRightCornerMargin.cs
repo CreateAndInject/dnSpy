@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,9 +48,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewHost wpfTextViewHost;
 
 		public BottomRightCornerMargin(IWpfTextViewHost wpfTextViewHost) {
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			SetResourceReference(BackgroundProperty, "EnvironmentScrollBarBackground");
 			UpdateVisibility();

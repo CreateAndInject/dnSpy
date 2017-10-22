@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,9 +30,7 @@ namespace dnSpy.Text.Classification {
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
 		public ClassifierTagger(IClassifier[] classifiers) {
-			if (classifiers == null)
-				throw new ArgumentNullException(nameof(classifiers));
-			this.classifiers = classifiers;
+			this.classifiers = classifiers ?? throw new ArgumentNullException(nameof(classifiers));
 			foreach (var c in classifiers)
 				c.ClassificationChanged += Classifier_ClassificationChanged;
 		}

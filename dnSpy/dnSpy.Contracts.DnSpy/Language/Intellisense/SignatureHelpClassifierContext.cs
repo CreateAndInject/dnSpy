@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,12 +43,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="type">Context type, eg. <see cref="SignatureHelpClassifierContextTypes.ParameterDocumentation"/></param>
 		/// <param name="session">Signature help session</param>
 		protected internal SignatureHelpClassifierContext(string type, ISignatureHelpSession session) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			Type = type;
-			Session = session;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
+			Session = session ?? throw new ArgumentNullException(nameof(session));
 		}
 	}
 
@@ -67,11 +63,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="session">Signature help session</param>
 		/// <param name="signature">Signature to classify</param>
 		public SignatureDocumentationSignatureHelpClassifierContext(ISignatureHelpSession session, ISignature signature)
-			: base(SignatureHelpClassifierContextTypes.SignatureDocumentation, session) {
-			if (signature == null)
-				throw new ArgumentNullException(nameof(signature));
-			Signature = signature;
-		}
+			: base(SignatureHelpClassifierContextTypes.SignatureDocumentation, session) => Signature = signature ?? throw new ArgumentNullException(nameof(signature));
 	}
 
 	/// <summary>
@@ -96,11 +88,9 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="nameOffset">Offset of <see cref="IParameter.Name"/> in the text buffer</param>
 		public ParameterNameSignatureHelpClassifierContext(ISignatureHelpSession session, IParameter parameter, int nameOffset)
 			: base(SignatureHelpClassifierContextTypes.ParameterName, session) {
-			if (parameter == null)
-				throw new ArgumentNullException(nameof(parameter));
 			if (nameOffset < 0)
 				throw new ArgumentOutOfRangeException(nameof(nameOffset));
-			Parameter = parameter;
+			Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 			NameOffset = nameOffset;
 		}
 	}
@@ -120,11 +110,7 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// <param name="session">Signature help session</param>
 		/// <param name="parameter">Parameter to classify</param>
 		public ParameterDocumentationSignatureHelpClassifierContext(ISignatureHelpSession session, IParameter parameter)
-			: base(SignatureHelpClassifierContextTypes.ParameterDocumentation, session) {
-			if (parameter == null)
-				throw new ArgumentNullException(nameof(parameter));
-			Parameter = parameter;
-		}
+			: base(SignatureHelpClassifierContextTypes.ParameterDocumentation, session) => Parameter = parameter ?? throw new ArgumentNullException(nameof(parameter));
 	}
 
 	/// <summary>

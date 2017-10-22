@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -90,20 +90,20 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		}
 
 		public CSharpDecompilerSettingsPage(DecompilerSettings decompilerSettings) {
-			this._global_decompilerSettings = decompilerSettings;
+			_global_decompilerSettings = decompilerSettings;
 			this.decompilerSettings = decompilerSettings.Clone();
 
 			var defObjs = typeof(DecompilationObject).GetEnumValues().Cast<DecompilationObject>().ToArray();
-			this.decompilationObjectVMs = new DecompilationObjectVM[defObjs.Length];
+			decompilationObjectVMs = new DecompilationObjectVM[defObjs.Length];
 			for (int i = 0; i < defObjs.Length; i++)
-				this.decompilationObjectVMs[i] = new DecompilationObjectVM(defObjs[i], ToString(defObjs[i]));
-			this.decompilationObjectVMs2 = this.decompilationObjectVMs.ToArray();
+				decompilationObjectVMs[i] = new DecompilationObjectVM(defObjs[i], ToString(defObjs[i]));
+			decompilationObjectVMs2 = decompilationObjectVMs.ToArray();
 
-			this.DecompilationObject0 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject0);
-			this.DecompilationObject1 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject1);
-			this.DecompilationObject2 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject2);
-			this.DecompilationObject3 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject3);
-			this.DecompilationObject4 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject4);
+			DecompilationObject0 = decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject0);
+			DecompilationObject1 = decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject1);
+			DecompilationObject2 = decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject2);
+			DecompilationObject3 = decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject3);
+			DecompilationObject4 = decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject4);
 		}
 
 		static string ToString(DecompilationObject o) {
@@ -128,8 +128,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			DecompileAll		= ILAst | CSharp | VB,
 		}
 
-		public override void OnApply() { throw new InvalidOperationException(); }
-
+		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			RefreshFlags flags = 0;
 			var g = _global_decompilerSettings;
@@ -175,6 +174,9 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			if (g.SortCustomAttributes != d.SortCustomAttributes) flags |= RefreshFlags.CSharp;
 			if (g.UseSourceCodeOrder != d.UseSourceCodeOrder) flags |= RefreshFlags.CSharp;
 			if (g.AllowFieldInitializers != d.AllowFieldInitializers) flags |= RefreshFlags.CSharp;
+			if (g.OneCustomAttributePerLine != d.OneCustomAttributePerLine) flags |= RefreshFlags.CSharp;
+			if (g.TypeAddInternalModifier != d.TypeAddInternalModifier) flags |= RefreshFlags.CSharp;
+			if (g.MemberAddPrivateModifier != d.MemberAddPrivateModifier) flags |= RefreshFlags.CSharp;
 
 			if ((flags & RefreshFlags.ShowMember) != 0)
 				appRefreshSettings.Add(AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER);
@@ -196,8 +198,8 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		public string Text { get; }
 
 		public DecompilationObjectVM(DecompilationObject decompilationObject, string text) {
-			this.Object = decompilationObject;
-			this.Text = text;
+			Object = decompilationObject;
+			Text = text;
 		}
 	}
 }

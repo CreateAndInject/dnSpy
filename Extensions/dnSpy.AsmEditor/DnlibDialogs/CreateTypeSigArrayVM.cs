@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -94,10 +94,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CreateTypeSigArrayVM(TypeSigCreatorOptions options, int? requiredCount) {
-			this.title = options.Title;
-			this.TypeSigCreator = new TypeSigCreatorVM(options);
-			this.RequiredCount = requiredCount;
-			this.TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
+			title = options.Title;
+			TypeSigCreator = new TypeSigCreatorVM(options);
+			RequiredCount = requiredCount;
+			TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
 		}
 
 		void UpdateNumberLeftProperties() {
@@ -118,11 +118,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			TypeSigCreator.TypeSig = null;
 		}
 
-		bool AddCurrentCanExecute() {
-			return IsEnabled &&
-				(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
-				TypeSigCreator.TypeSig != null;
-		}
+		bool AddCurrentCanExecute() =>
+			IsEnabled &&
+			(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
+			TypeSigCreator.TypeSig != null;
 
 		public override bool HasError => !IsUnlimitedCount && NumberOfTypesLeft > 0;
 	}

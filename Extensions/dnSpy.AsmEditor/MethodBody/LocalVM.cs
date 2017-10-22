@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -117,7 +117,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateLocalType);
 			this.typeSigCreatorOptions.IsLocal = true;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
-			this.origOptions = options;
+			origOptions = options;
 
 			Reinitialize();
 		}
@@ -126,8 +126,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
-			bool canceled;
-			var newType = typeSigCreator.Create(typeSigCreatorOptions, Type, out canceled);
+			var newType = typeSigCreator.Create(typeSigCreatorOptions, Type, out bool canceled);
 			if (canceled)
 				return;
 
@@ -138,15 +137,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public LocalOptions CreateLocalOptions() => CopyTo(new LocalOptions());
 
 		public void InitializeFrom(LocalOptions options) {
-			this.Type = options.Type;
-			this.Name = options.Name;
-			this.PdbAttributes = options.PdbAttributes;
+			Type = options.Type;
+			Name = options.Name;
+			PdbAttributes = options.PdbAttributes;
 		}
 
 		public LocalOptions CopyTo(LocalOptions options) {
-			options.Type = this.Type;
-			options.Name = this.Name;
-			options.PdbAttributes = this.PdbAttributes;
+			options.Type = Type;
+			options.Name = Name;
+			options.PdbAttributes = PdbAttributes;
 			return options;
 		}
 

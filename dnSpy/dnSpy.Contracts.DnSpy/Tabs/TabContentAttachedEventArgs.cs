@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Tabs {
 		/// <param name="attached">true if attached, false if detached</param>
 		/// <param name="tabContent">Tab content</param>
 		public TabContentAttachedEventArgs(bool attached, ITabContent tabContent) {
-			this.Attached = attached;
-			this.TabContent = tabContent;
+			Attached = attached;
+			TabContent = tabContent;
 		}
 	}
 }

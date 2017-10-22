@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,9 +32,9 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		public object Value { get; }
 
 		public DeserializedDataInfo(Type objectType, string name, object value) {
-			this.ObjectType = objectType;
-			this.Name = name;
-			this.Value = value;
+			ObjectType = objectType;
+			Name = name;
+			Value = value;
 		}
 	}
 
@@ -48,8 +48,8 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			readonly ITypeDefOrRef type;
 
 			public MyBinder(string asmName, string typeName) {
-				this.module = new ModuleDefUser();
-				this.type = TypeNameParser.ParseReflection(module, $"{typeName}, {asmName}", null);
+				module = new ModuleDefUser();
+				type = TypeNameParser.ParseReflection(module, $"{typeName}, {asmName}", null);
 			}
 
 			public override Type BindToType(string assemblyName, string typeName) {
@@ -75,9 +75,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 					DeserializedDataInfos[c.Name] = new DeserializedDataInfo(c.ObjectType, c.Name, c.Value);
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context) {
-				throw new NotImplementedException();
-			}
+			public void GetObjectData(SerializationInfo info, StreamingContext context) => throw new NotImplementedException();
 		}
 
 		[Serializable]
@@ -85,9 +83,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 			public DontDeserializeType(SerializationInfo info, StreamingContext context) {
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context) {
-				throw new NotImplementedException();
-			}
+			public void GetObjectData(SerializationInfo info, StreamingContext context) => throw new NotImplementedException();
 		}
 
 		public static Dictionary<string, DeserializedDataInfo> Deserialize(string asmName, string typeName, byte[] data) {

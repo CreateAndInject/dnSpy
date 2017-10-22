@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,8 +50,7 @@ namespace dnSpy.Text.CodeEditor {
 
 			if (md.Guid == null)
 				return null;
-			Guid guid;
-			if (!Guid.TryParse(md.Guid, out guid))
+			if (!Guid.TryParse(md.Guid, out var guid))
 				return null;
 
 			if (md.LanguageName == null)

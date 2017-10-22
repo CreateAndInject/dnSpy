@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,14 +28,13 @@ namespace dnSpy.Commands {
 		readonly Dictionary<KeyShortcut, List<ProviderAndCommand>> dict;
 
 		public KeyShortcutCollection() {
-			this.twoKeyCombos = new HashSet<KeyInput>();
-			this.dict = new Dictionary<KeyShortcut, List<ProviderAndCommand>>();
+			twoKeyCombos = new HashSet<KeyInput>();
+			dict = new Dictionary<KeyShortcut, List<ProviderAndCommand>>();
 		}
 
 		public void Add(ICommandInfoProvider provider, object target) {
 			foreach (var t in provider.GetCommandShortcuts(target)) {
-				List<ProviderAndCommand> list;
-				if (!dict.TryGetValue(t.KeyShortcut, out list))
+				if (!dict.TryGetValue(t.KeyShortcut, out var list))
 					dict.Add(t.KeyShortcut, list = new List<ProviderAndCommand>());
 				list.Add(new ProviderAndCommand(provider, t.CommandInfo));
 				if (t.KeyShortcut.HasTwoKeyInputs)
@@ -45,8 +44,7 @@ namespace dnSpy.Commands {
 
 		public IEnumerable<ProviderAndCommand> GetTwoKeyShortcuts(KeyShortcut keyShortcut) {
 			Debug.Assert(keyShortcut.HasTwoKeyInputs);
-			List<ProviderAndCommand> list;
-			if (dict.TryGetValue(keyShortcut, out list))
+			if (dict.TryGetValue(keyShortcut, out var list))
 				return list;
 			return Array.Empty<ProviderAndCommand>();
 		}
@@ -55,8 +53,7 @@ namespace dnSpy.Commands {
 
 		public IEnumerable<ProviderAndCommand> GetOneKeyShortcuts(KeyInput keyInput) {
 			var keyShortcut = new KeyShortcut(keyInput, KeyInput.Default);
-			List<ProviderAndCommand> list;
-			if (dict.TryGetValue(keyShortcut, out list))
+			if (dict.TryGetValue(keyShortcut, out var list))
 				return list;
 			return Array.Empty<ProviderAndCommand>();
 		}

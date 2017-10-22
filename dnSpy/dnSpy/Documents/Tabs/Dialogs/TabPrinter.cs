@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class TabPrinter {
 		readonly ITextColorWriter output;
 
-		public TabPrinter(ITextColorWriter output) {
-			this.output = output;
-		}
+		public TabPrinter(ITextColorWriter output) => this.output = output;
 
 		public void WriteName(TabVM vm) => output.Write(BoxedTextColor.Text, vm.Name);
 		public void WriteModule(TabVM vm) => output.WriteModule(vm.Module);

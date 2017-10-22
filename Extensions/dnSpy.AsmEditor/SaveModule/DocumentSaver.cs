@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,13 +23,13 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Threading;
-using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Documents;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	interface IDocumentSaver {
@@ -67,6 +67,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			var msg = modifiedDocs.Length == 1 ? dnSpy_AsmEditor_Resources.AskSaveFile : dnSpy_AsmEditor_Resources.AskSaveFiles;
 			var res = MsgBox.Instance.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
+			if (res == MsgBoxButton.None)
+				return false;
 			if (res == MsgBoxButton.No)
 				return true;
 			return Save(modifiedDocs);
@@ -80,8 +82,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (objsAry.Length == 1) {
 				SaveOptionsVM options;
 
-				var document = objsAry[0] as IDsDocument;
-				if (document != null) {
+				if (objsAry[0] is IDsDocument document) {
 					var optsData = new SaveModuleOptionsVM(document);
 					var optsWin = new SaveModuleOptionsDlg();
 					optsWin.Owner = appWindow.MainWindow;
@@ -92,9 +93,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 					options = optsData;
 				}
 				else {
-					var doc = objsAry[0] as AsmEdHexDocument;
-					Debug.Assert(doc != null);
-					var optsData = new SaveHexOptionsVM(doc);
+					var buffer = objsAry[0] as HexBuffer;
+					Debug.Assert(buffer != null);
+					var optsData = new SaveHexOptionsVM(buffer);
 					var optsWin = new SaveHexOptionsDlg();
 					optsWin.Owner = appWindow.MainWindow;
 					optsWin.DataContext = optsData;
@@ -129,8 +130,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					allSaved = false;
 				else {
 					undoCommandService.Value.MarkAsSaved(undoCommandService.Value.GetUndoObject(doc));
-					var document = doc as IDsDocument;
-					if (document != null && string.IsNullOrEmpty(document.Filename)) {
+					if (doc is IDsDocument document && string.IsNullOrEmpty(document.Filename)) {
 						var filename = vm.GetSavedFileName(doc);
 						if (!string.IsNullOrWhiteSpace(filename) && document.ModuleDef != null) {
 							document.ModuleDef.Location = filename;

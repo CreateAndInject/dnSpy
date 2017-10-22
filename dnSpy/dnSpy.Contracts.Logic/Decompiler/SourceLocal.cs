@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,35 +18,48 @@
 */
 
 using System;
+using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>
-	/// A local used in the decompiled code
+	/// A local present in decompiled code
 	/// </summary>
-	public struct SourceLocal {
+	public sealed class SourceLocal : ISourceVariable {
 		/// <summary>
-		/// The local
+		/// The local or null if it's a decompiler generated local (see <see cref="IsDecompilerGenerated"/>)
 		/// </summary>
 		public Local Local { get; }
 
+		IVariable ISourceVariable.Variable => Local;
+		bool ISourceVariable.IsLocal => true;
+		bool ISourceVariable.IsParameter => false;
+
 		/// <summary>
-		/// Gets the name of the local that's used in the decompiled code
+		/// Gets the name of the local the decompiler used. It could be different from the real name if the decompiler renamed it.
 		/// </summary>
 		public string Name { get; }
 
 		/// <summary>
+		/// Gets the type of the local
+		/// </summary>
+		public TypeSig Type { get; }
+
+		/// <summary>
+		/// true if this is a decompiler generated local
+		/// </summary>
+		public bool IsDecompilerGenerated => Local == null;
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="local">Local</param>
+		/// <param name="local">Local or null if it's a decompiler generated local</param>
 		/// <param name="name">Name used by the decompiler</param>
-		public SourceLocal(Local local, string name) {
-			if (local == null)
-				throw new ArgumentNullException(nameof(local));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
+		/// <param name="type">Type of local</param>
+		public SourceLocal(Local local, string name, TypeSig type) {
 			Local = local;
-			Name = name;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 		}
 	}
 }

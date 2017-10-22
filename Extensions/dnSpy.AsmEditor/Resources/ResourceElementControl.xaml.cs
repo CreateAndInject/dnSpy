@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,8 +27,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ResourceElementControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ResourceElementVM;
-				if (data != null) {
+				if (DataContext is ResourceElementVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.OpenFile = new OpenFile(ownerWindow);
 					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);

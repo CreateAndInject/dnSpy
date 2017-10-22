@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,6 +27,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Documents.Tabs;
 using dnSpy.Contracts.Documents.TreeView;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
@@ -116,18 +117,20 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabUIContextLocator documentTabUIContextLocator;
 		readonly Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders;
 		readonly Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders;
+		readonly Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers;
 		readonly TabElementZoomer elementZoomer;
 
-		public TabContentImpl(DocumentTabService documentTabService, IDocumentTabUIContextLocator documentTabUIContextLocator, Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders, Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders) {
-			this.elementZoomer = new TabElementZoomer();
-			this.tabHistory = new TabHistory();
-			this.tabHistory.SetCurrent(new NullDocumentTabContent(), false);
+		public TabContentImpl(DocumentTabService documentTabService, IDocumentTabUIContextLocator documentTabUIContextLocator, Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders, Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders, Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers) {
+			elementZoomer = new TabElementZoomer();
+			tabHistory = new TabHistory();
+			tabHistory.SetCurrent(new NullDocumentTabContent(), false);
 			this.documentTabService = documentTabService;
 			this.documentTabUIContextLocator = documentTabUIContextLocator;
 			this.referenceDocumentTabContentProviders = referenceDocumentTabContentProviders;
 			this.defaultDocumentTabContentProviders = defaultDocumentTabContentProviders;
-			this.uiContext = new NullDocumentTabUIContext();
-			this.uiObject = this.uiContext.UIObject;
+			this.referenceHandlers = referenceHandlers;
+			uiContext = new NullDocumentTabUIContext();
+			uiObject = uiContext.UIObject;
 		}
 
 #if DEBUG
@@ -160,6 +163,7 @@ namespace dnSpy.Documents.Tabs {
 #endif
 
 			if (visEvent == TabContentVisibilityEvent.Removed) {
+				Debug.Assert(!removed);
 				CancelAsyncWorker();
 				elementZoomer.Dispose();
 				var id = documentTabUIContextLocator as IDisposable;
@@ -167,10 +171,44 @@ namespace dnSpy.Documents.Tabs {
 				if (id != null)
 					id.Dispose();
 				documentTabService.OnRemoved(this);
+				removed = true;
+			}
+		}
+		bool removed;
+
+		sealed class ReferenceHandlerContext : IReferenceHandlerContext {
+			public object Reference { get; }
+			public DocumentTabContent Content { get; }
+			public DocumentTabContent SourceContent { get; }
+			public ReferenceHandlerContext(object @ref, DocumentTabContent content, DocumentTabContent sourceContent) {
+				Reference = @ref;
+				Content = content;
+				SourceContent = sourceContent;
 			}
 		}
 
+		bool NotifyReferenceHandlers(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
+			var context = new ReferenceHandlerContext(@ref, Content, sourceContent);
+			foreach (var lz in referenceHandlers) {
+				if (lz.Value.OnFollowReference(context)) {
+					onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.ReferenceHandler, this));
+					return true;
+				}
+			}
+			return false;
+		}
+
 		public void FollowReference(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
+			if (NotifyReferenceHandlers(@ref, Content, onShown))
+				return;
+			FollowReferenceCore(@ref, sourceContent, onShown);
+		}
+
+		void FollowReferenceCore(object @ref, DocumentTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null) {
 				Show(result.DocumentTabContent, result.UIState, e => {
@@ -185,21 +223,31 @@ namespace dnSpy.Documents.Tabs {
 				var defaultContent = TryCreateDefaultContent();
 				if (defaultContent != null) {
 					Show(defaultContent, null, e => {
-						onShown?.Invoke(new ShowTabContentEventArgs(false, this));
+						onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
 					});
 				}
 				else
-					onShown?.Invoke(new ShowTabContentEventArgs(false, this));
+					onShown?.Invoke(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
 			}
 		}
 
 		public void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown) {
-			var tab = DocumentTabService.OpenEmptyTab();
-			tab.FollowReference(@ref, Content, onShown);
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
+			if (NotifyReferenceHandlers(@ref, Content, onShown))
+				return;
+			var tab = (TabContentImpl)DocumentTabService.OpenEmptyTab();
+			tab.FollowReferenceCore(@ref, Content, onShown);
 			DocumentTabService.SetFocus(tab);
 		}
 
 		public void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
 			if (newTab)
 				FollowReferenceNewTab(@ref, onShown);
 			else
@@ -225,6 +273,10 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Show(DocumentTabContent tabContent, object uiState, Action<ShowTabContentEventArgs> onShown) {
+			if (removed) {
+				onShown(new ShowTabContentEventArgs(ShowTabContentResult.Failed, this));
+				return;
+			}
 			if (tabContent == null)
 				throw new ArgumentNullException(nameof(tabContent));
 			Debug.Assert(tabContent.DocumentTab == null || tabContent.DocumentTab == this);
@@ -244,8 +296,8 @@ namespace dnSpy.Documents.Tabs {
 			public object Tag { get; set; }
 			public Action<ShowTabContentEventArgs> OnShown { get; set; }
 			public ShowContext(DocumentTabUIContext uiCtx, bool isRefresh) {
-				this.UIContext = uiCtx;
-				this.IsRefresh = isRefresh;
+				UIContext = uiCtx;
+				IsRefresh = isRefresh;
 			}
 		}
 
@@ -279,11 +331,11 @@ namespace dnSpy.Documents.Tabs {
 			Debug.Assert(tabContent.DocumentTab == this);
 
 			UpdateTitleAndToolTip();
+			DnSpyEventSource.Log.ShowDocumentTabContentStart();
 			var showCtx = new ShowContext(cachedUIContext, isRefresh);
 			tabContent.OnShow(showCtx);
 			bool asyncShow = false;
-			var asyncTabContent = tabContent as AsyncDocumentTabContent;
-			if (asyncTabContent != null) {
+			if (tabContent is AsyncDocumentTabContent asyncTabContent) {
 				if (asyncTabContent.NeedAsyncWork(showCtx)) {
 					asyncShow = true;
 					var ctx = new AsyncWorkerContext();
@@ -299,14 +351,14 @@ namespace dnSpy.Documents.Tabs {
 						ctx.Dispose();
 						asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult(t, canShowAsyncOutput));
 						bool success = !t.IsFaulted && !t.IsCanceled;
-						OnShown(uiState, onShownHandler, showCtx, success);
+						OnShown(uiState, onShownHandler, showCtx, success ? ShowTabContentResult.ShowedContent : ShowTabContentResult.Failed);
 					}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 				}
 				else
 					asyncTabContent.OnShowAsync(showCtx, new AsyncShowResult());
 			}
 			if (!asyncShow)
-				OnShown(uiState, onShownHandler, showCtx, true);
+				OnShown(uiState, onShownHandler, showCtx, ShowTabContentResult.ShowedContent);
 			documentTabService.OnNewTabContentShown(this);
 		}
 
@@ -316,8 +368,8 @@ namespace dnSpy.Documents.Tabs {
 			bool disposed;
 
 			public AsyncWorkerContext() {
-				this.CancellationTokenSource = new CancellationTokenSource();
-				this.CancellationToken = CancellationTokenSource.Token;
+				CancellationTokenSource = new CancellationTokenSource();
+				CancellationToken = CancellationTokenSource.Token;
 			}
 
 			public void Cancel() {
@@ -356,14 +408,15 @@ namespace dnSpy.Documents.Tabs {
 			asyncWorkerContext = null;
 		}
 
-		void OnShown(object uiState, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, bool success) {
+		void OnShown(object uiState, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, ShowTabContentResult result) {
 			if (uiState != null)
 				RestoreUIState(uiState);
 			if (onShownHandler != null || showCtx.OnShown != null) {
-				var e = new ShowTabContentEventArgs(success, this);
+				var e = new ShowTabContentEventArgs(result, this);
 				onShownHandler?.Invoke(e);
 				showCtx.OnShown?.Invoke(e);
 			}
+			DnSpyEventSource.Log.ShowDocumentTabContentStop();
 		}
 
 		void RestoreUIState(object uiState) {
@@ -391,7 +444,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 
 			void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-				this.uiel.IsVisibleChanged -= UIElement_IsVisibleChanged;
+				uiel.IsVisibleChanged -= UIElement_IsVisibleChanged;
 				exec();
 			}
 		}
@@ -401,8 +454,8 @@ namespace dnSpy.Documents.Tabs {
 			ToolTip = Content.ToolTip;
 		}
 
-		public bool CanNavigateBackward => tabHistory.CanNavigateBackward;
-		public bool CanNavigateForward => tabHistory.CanNavigateForward;
+		public bool CanNavigateBackward => !removed && tabHistory.CanNavigateBackward;
+		public bool CanNavigateForward => !removed && tabHistory.CanNavigateForward;
 
 		public void NavigateBackward() {
 			if (!CanNavigateBackward)
@@ -421,12 +474,16 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Refresh() {
+			if (removed)
+				return;
 			// Pretend it gets hidden and then shown again. Will also cancel any async output threads
 			HideCurrentContent();
 			ShowInternal(Content, UIContext.CreateUIState(), null, true);
 		}
 
 		public void TrySetFocus() {
+			if (removed)
+				return;
 			if (IsActiveTab)
 				DocumentTabService.SetFocus(this);
 		}
@@ -435,10 +492,9 @@ namespace dnSpy.Documents.Tabs {
 		public void OnSelected() => Content.OnSelected();
 		public void OnUnselected() => Content.OnUnselected();
 
-		internal void OnTabsLoaded() {
+		internal void OnTabsLoaded() =>
 			// Make sure that the tab initializes eg. Language to the language it's using.
 			OnSelected();
-		}
 
 		const string ZOOM_ATTR = "zoom";
 

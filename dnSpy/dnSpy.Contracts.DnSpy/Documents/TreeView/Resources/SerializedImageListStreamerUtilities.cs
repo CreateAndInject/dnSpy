@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -103,8 +103,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <returns></returns>
 		public static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem) {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			if (!GetImageData(module, binData.TypeName, binData.Data, out imageData))
+			if (!GetImageData(module, binData.TypeName, binData.Data, out var imageData))
 				return dnSpy_Contracts_DnSpy_Resources.NewDataNotImageList;
 
 			try {

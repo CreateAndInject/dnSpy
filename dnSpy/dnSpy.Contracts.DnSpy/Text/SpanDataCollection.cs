@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -244,13 +244,9 @@ namespace dnSpy.Contracts.Text {
 		/// <returns></returns>
 		public static SpanDataCollectionBuilder<TData> CreateBuilder(int capacity) => new SpanDataCollectionBuilder<TData>(capacity);
 
-		SpanDataCollectionBuilder(bool unused) {
-			this.list = new List<SpanData<TData>>();
-		}
+		SpanDataCollectionBuilder(bool unused) => list = new List<SpanData<TData>>();
 
-		SpanDataCollectionBuilder(int capacity) {
-			this.list = new List<SpanData<TData>>(capacity);
-		}
+		SpanDataCollectionBuilder(int capacity) => list = new List<SpanData<TData>>(capacity);
 
 		/// <summary>
 		/// Clears the created list

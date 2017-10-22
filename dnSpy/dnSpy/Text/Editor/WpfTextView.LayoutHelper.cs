@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,6 @@ namespace dnSpy.Text.Editor {
 			readonly IFormattedLineSource formattedLineSource;
 			readonly ITextViewModel textViewModel;
 			readonly ITextSnapshot visualSnapshot;
-			readonly ITextSnapshot editSnapshot;
 			readonly Dictionary<IFormattedLine, PhysicalLine> toPhysicalLine;
 			readonly HashSet<ITextViewLine> oldVisibleLines;
 
@@ -48,13 +47,12 @@ namespace dnSpy.Text.Editor {
 
 			public LayoutHelper(ILineTransformProvider lineTransformProvider, double newViewportTop, HashSet<ITextViewLine> oldVisibleLines, List<PhysicalLine> oldLines, IFormattedLineSource formattedLineSource, ITextViewModel textViewModel, ITextSnapshot visualSnapshot, ITextSnapshot editSnapshot) {
 				this.lineTransformProvider = lineTransformProvider;
-				this.requestedViewportTop = newViewportTop;
+				requestedViewportTop = newViewportTop;
 				this.oldLines = oldLines;
 				this.formattedLineSource = formattedLineSource;
 				this.textViewModel = textViewModel;
 				this.visualSnapshot = visualSnapshot;
-				this.editSnapshot = editSnapshot;
-				this.toPhysicalLine = new Dictionary<IFormattedLine, PhysicalLine>();
+				toPhysicalLine = new Dictionary<IFormattedLine, PhysicalLine>();
 				this.oldVisibleLines = oldVisibleLines;
 
 				Debug.Assert(oldLines.All(a => a.BufferSpan.Snapshot == editSnapshot));

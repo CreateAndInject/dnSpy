@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,10 +27,8 @@ namespace dnSpy.Text.Editor {
 		int lineIndex;
 
 		public UriFinder(string line) {
-			if (line == null)
-				throw new ArgumentNullException(nameof(line));
-			this.line = line;
-			this.lineIndex = 0;
+			this.line = line ?? throw new ArgumentNullException(nameof(line));
+			lineIndex = 0;
 		}
 
 		public Span? GetNext() {

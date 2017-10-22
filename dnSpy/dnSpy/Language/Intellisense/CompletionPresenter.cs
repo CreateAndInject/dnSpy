@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -92,27 +92,19 @@ namespace dnSpy.Language.Intellisense {
 		const double toolTipDelayMilliSeconds = 250;
 
 		public CompletionPresenter(IImageMonikerService imageMonikerService, ICompletionSession session, ICompletionTextElementProvider completionTextElementProvider, Lazy<IUIElementProvider<Completion, ICompletionSession>, IOrderableContentTypeMetadata>[] completionUIElementProviders) {
-			if (imageMonikerService == null)
-				throw new ArgumentNullException(nameof(imageMonikerService));
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			if (completionTextElementProvider == null)
-				throw new ArgumentNullException(nameof(completionTextElementProvider));
-			if (completionUIElementProviders == null)
-				throw new ArgumentNullException(nameof(completionUIElementProviders));
-			this.imageMonikerService = imageMonikerService;
-			this.session = session;
-			this.completionTextElementProvider = completionTextElementProvider;
-			this.completionUIElementProviders = completionUIElementProviders;
-			this.control = new CompletionPresenterControl { DataContext = this };
-			this.filters = new List<FilterVM>();
-			this.control.MinWidth = defaultMinWidth;
-			this.control.completionsListBox.MaxHeight = defaultMaxHeight;
+			this.imageMonikerService = imageMonikerService ?? throw new ArgumentNullException(nameof(imageMonikerService));
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
+			this.completionTextElementProvider = completionTextElementProvider ?? throw new ArgumentNullException(nameof(completionTextElementProvider));
+			this.completionUIElementProviders = completionUIElementProviders ?? throw new ArgumentNullException(nameof(completionUIElementProviders));
+			control = new CompletionPresenterControl { DataContext = this };
+			filters = new List<FilterVM>();
+			control.MinWidth = defaultMinWidth;
+			control.completionsListBox.MaxHeight = defaultMaxHeight;
 			session.SelectedCompletionSetChanged += CompletionSession_SelectedCompletionSetChanged;
 			session.Dismissed += CompletionSession_Dismissed;
 			session.TextView.LostAggregateFocus += TextView_LostAggregateFocus;
 			session.TextView.TextBuffer.ChangedLowPriority += TextBuffer_ChangedLowPriority;
-			this.wpfTextView = session.TextView as IWpfTextView;
+			wpfTextView = session.TextView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
 			if (wpfTextView != null)
 				wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,12 +31,14 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 		readonly HashSet<TypeDef> partialTypes;
 		readonly bool showDefinitions;
 		readonly bool makeEverythingPublic;
+		readonly bool showAll;
 
-		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool makeEverythingPublic) {
-			this.defsToShow = new HashSet<IMemberDef>();
-			this.partialTypes = new HashSet<TypeDef>();
+		public DecompileTypeMethodsTransform(HashSet<MethodDef> methods, bool showDefinitions, bool makeEverythingPublic, bool showAll) {
+			defsToShow = new HashSet<IMemberDef>();
+			partialTypes = new HashSet<TypeDef>();
 			this.showDefinitions = showDefinitions;
 			this.makeEverythingPublic = makeEverythingPublic;
+			this.showAll = showAll;
 
 			foreach (var method in methods) {
 				// If it's part of a property or event, include the property or event since there are no partial props/events
@@ -81,23 +83,6 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 				if (def == null)
 					continue;
 
-				// The decompiler doesn't remove IteratorStateMachineAttributes/AsyncStateMachineAttribute.
-				// These attributes usually contain the name of a type with invalid characters in its name
-				// and will prevent the user from compiling the code.
-				if (en.SymbolKind == SymbolKind.Method) {
-					foreach (var sect in en.Attributes) {
-						foreach (var attr in sect.Attributes) {
-							var ca = attr.Annotation<CustomAttribute>();
-							var fn = ca?.TypeFullName;
-							if (fn == "System.Runtime.CompilerServices.IteratorStateMachineAttribute" ||
-								fn == "System.Runtime.CompilerServices.AsyncStateMachineAttribute")
-								attr.Remove();
-						}
-						if (!sect.Attributes.Any())
-							sect.Remove();
-					}
-				}
-
 				if (makeEverythingPublic) {
 					const Modifiers accessFlags = Modifiers.Private | Modifiers.Internal | Modifiers.Protected | Modifiers.Public;
 					en.Modifiers = (en.Modifiers & ~accessFlags) | Modifiers.Public;
@@ -116,24 +101,28 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 						clearModifiers = true;
 					else if (en.SymbolKind == SymbolKind.Constructor && en.HasModifier(Modifiers.Static))
 						clearModifiers = true;
-					else if (en is MethodDeclaration) {
-						var md = (MethodDeclaration)en;
+					else if (en is MethodDeclaration md) {
 						if (!md.PrivateImplementationType.IsNull || (md.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
 							clearModifiers = true;
 					}
-					else if (en is CustomEventDeclaration) {
-						var ed = (CustomEventDeclaration)en;
+					else if (en is CustomEventDeclaration ed) {
 						if (!ed.PrivateImplementationType.IsNull || (ed.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
 							clearModifiers = true;
 					}
-					else if (en is PropertyDeclaration) {
-						var pd = (PropertyDeclaration)en;
+					else if (en is PropertyDeclaration pd) {
 						if (!pd.PrivateImplementationType.IsNull || (pd.Parent as TypeDeclaration)?.ClassType == ClassType.Interface)
 							clearModifiers = true;
 					}
 
 					if (clearModifiers)
 						en.Modifiers &= ~accessFlags;
+
+					// Make sure the comments are still shown before the method and its modifiers
+					var comments = en.GetChildrenByRole(Roles.Comment).Reverse().ToArray();
+					foreach (var c in comments) {
+						c.Remove();
+						en.InsertChildAfter(null, c, Roles.Comment);
+					}
 				}
 
 				if (partialTypes.Contains(def)) {
@@ -148,25 +137,18 @@ namespace dnSpy.Decompiler.ILSpy.Core.CSharp {
 					}
 				}
 				else {
-					// The decompiler doesn't support Roslyn yet so remove this since
-					// it will break compilation
-					if (def is TypeDef && def.Name == "<>c")
-						en.Remove();
-
 					if (showDefinitions) {
-						if (!defsToShow.Contains(def))
+						if (!showAll && !defsToShow.Contains(def))
 							en.Remove();
 					}
 					else {
-						if (defsToShow.Contains(def))
+						if (showAll || defsToShow.Contains(def))
 							en.Remove();
-						else if (en is CustomEventDeclaration) {
+						else if (en is CustomEventDeclaration ced) {
 							// Convert this hidden event to an event without accessor bodies.
 							// AstBuilder doesn't write empty bodies to it if it's a hidden event because
 							// then it can't be optimized to an auto event. We want real auto events to
 							// become auto events and custom events to stay custom, but without bodies.
-
-							var ced = (CustomEventDeclaration)en;
 							if (!ced.AddAccessor.IsNull)
 								ced.AddAccessor.Body = new BlockStatement();
 							if (!ced.RemoveAccessor.IsNull)

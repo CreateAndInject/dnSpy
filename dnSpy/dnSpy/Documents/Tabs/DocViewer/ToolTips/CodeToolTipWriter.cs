@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,15 +42,11 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		public bool IsEmpty => sb.Length == 0;
 
 		public CodeToolTipWriter(IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.syntaxHighlight = syntaxHighlight;
-			this.result = new List<ColorAndText>();
-			this.sb = new StringBuilder();
+			result = new List<ColorAndText>();
+			sb = new StringBuilder();
 		}
 
 		public UIElement Create() {
@@ -148,8 +144,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
 					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextColor.Text);
-				else if (elem is XElement) {
-					var xelem = (XElement)elem;
+				else if (elem is XElement xelem) {
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");

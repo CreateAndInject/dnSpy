@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Search {
 		/// <summary>
 		/// Default number of results to return
 		/// </summary>
-		public static readonly int DEFAULT_MAX_RESULTS = 1000;
+		public static readonly int DEFAULT_MAX_RESULTS = 10000;
 
 		/// <summary>
 		/// Max results to return
@@ -53,8 +53,8 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		public DocumentSearcherOptions() {
-			this.MaxResults = DEFAULT_MAX_RESULTS;
-			this.SearchDecompiledData = true;
+			MaxResults = DEFAULT_MAX_RESULTS;
+			SearchDecompiledData = true;
 		}
 
 		/// <summary>

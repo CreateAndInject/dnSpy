@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -16,6 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+using System;
 
 namespace dnSpy.Controls {
 	static class ZoomSelector {
@@ -65,6 +67,7 @@ namespace dnSpy.Controls {
 		public static double ZoomIn(double zoomLevel) => zoomLevels[GetNextZoomInIndex(zoomLevel)];
 
 		static int GetNextZoomInIndex(double zoomLevel) {
+			zoomLevel = Math.Round(zoomLevel);
 			if (zoomLevel < MinZoomLevel)
 				return 0;
 			for (int i = 1; i < zoomLevels.Length; i++) {
@@ -82,6 +85,7 @@ namespace dnSpy.Controls {
 		public static double ZoomOut(double zoomLevel) => zoomLevels[GetNextZoomOutIndex(zoomLevel)];
 
 		static int GetNextZoomOutIndex(double zoomLevel) {
+			zoomLevel = Math.Round(zoomLevel);
 			if (zoomLevel > MaxZoomLevel)
 				return zoomLevels.Length - 1;
 			for (int i = zoomLevels.Length - 2; i >= 0; i--) {

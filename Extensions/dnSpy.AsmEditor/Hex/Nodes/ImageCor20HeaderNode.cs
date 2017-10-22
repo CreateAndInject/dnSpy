@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,10 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.PE;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -38,17 +37,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 		readonly ImageCor20HeaderVM imageCor20HeaderVM;
 
-		public static ImageCor20HeaderNode Create(HexDocument doc, IPEImage peImage) {
-			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			if (dnDir.VirtualAddress != 0 && dnDir.Size >= 0x48)
-				return new ImageCor20HeaderNode(doc, (ulong)peImage.ToFileOffset(dnDir.VirtualAddress));
+		public static ImageCor20HeaderNode Create(ImageCor20HeaderVM cor20) {
+			if (cor20 != null)
+				return new ImageCor20HeaderNode(cor20);
 			return null;
 		}
 
-		public ImageCor20HeaderNode(HexDocument doc, ulong startOffset)
-			: base(startOffset, startOffset + 0x48 - 1) {
-			this.imageCor20HeaderVM = new ImageCor20HeaderVM(this, doc, StartOffset);
-		}
+		public ImageCor20HeaderNode(ImageCor20HeaderVM cor20)
+			: base(cor20.Span) => imageCor20HeaderVM = cor20;
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexCor20Header, dnSpy_AsmEditor_Resources.HexNode_Cor20_Header);

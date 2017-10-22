@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,7 @@ namespace dnSpy.Contracts.MVVM.Converters {
 
 		object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
 			var s = (string)value;
-			double v;
-			if (double.TryParse(s, out v))
+			if (double.TryParse(s, out double v))
 				return v * (96.0 / 72.0);
 			return FontUtilities.DEFAULT_FONT_SIZE;
 		}

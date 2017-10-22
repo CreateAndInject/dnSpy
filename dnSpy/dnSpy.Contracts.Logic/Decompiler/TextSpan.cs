@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,7 +55,7 @@ namespace dnSpy.Contracts.Decompiler {
 			if (start < 0)
 				throw new ArgumentOutOfRangeException(nameof(start));
 			this.start = start;
-			this.end = start + length;
+			end = start + length;
 			if (end < start)
 				throw new ArgumentOutOfRangeException(nameof(length));
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -93,12 +93,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		TypeSig storageType;
 
 		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType) {
-			this.module = options.OwnerModule;
-			this.originalArg = arg.Clone();
-			this.ConstantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
+			module = options.OwnerModule;
+			originalArg = arg.Clone();
+			ConstantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
 			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 			InitializeFrom(arg, storageType);
-			this.modified = false;
+			modified = false;
 		}
 
 		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -331,8 +331,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (value is TypeSig)
 				return new CAArgument(new ClassSig(module.CorLibTypes.GetTypeRef("System", "Type")), value);
 
-			if (value is EnumInfo) {
-				var enumInfo = (EnumInfo)value;
+			if (value is EnumInfo enumInfo) {
 				var enumSig = enumInfo.EnumType.ToTypeSig();
 				if (!enumInfo.IsArray)
 					return new CAArgument(enumSig, enumInfo.Value);

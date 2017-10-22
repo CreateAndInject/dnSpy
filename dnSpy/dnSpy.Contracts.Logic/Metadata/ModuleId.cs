@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -87,13 +87,13 @@ namespace dnSpy.Contracts.Metadata {
 			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
 			this.moduleName = moduleName ?? string.Empty;
-			this.flags = 0;
+			flags = 0;
 			if (isDynamic)
-				this.flags |= Flags.IsDynamic;
+				flags |= Flags.IsDynamic;
 			if (isInMemory)
-				this.flags |= Flags.IsInMemory;
+				flags |= Flags.IsInMemory;
 			if (nameOnly)
-				this.flags |= Flags.NameOnly;
+				flags |= Flags.NameOnly;
 		}
 
 		/// <summary>
@@ -150,7 +150,7 @@ namespace dnSpy.Contracts.Metadata {
 		/// <param name="moduleNameOnly">true if <paramref name="asmFullName"/> is ignored</param>
 		/// <returns></returns>
 		public static ModuleId Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory, bool moduleNameOnly) =>
-			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, false);
+			new ModuleId(asmFullName, moduleName, isDynamic, isInMemory, moduleNameOnly);
 
 		/// <summary>
 		/// operator==()
@@ -173,32 +173,25 @@ namespace dnSpy.Contracts.Metadata {
 		/// </summary>
 		/// <param name="other">Other instance</param>
 		/// <returns></returns>
-		public bool Equals(ModuleId other) {
-			return (ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
-					ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
-					(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
-		}
+		public bool Equals(ModuleId other) =>
+			(ModuleNameOnly || other.ModuleNameOnly || AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName)) &&
+			ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
+			(flags & Flags.CompareMask) == (other.flags & Flags.CompareMask);
 
 		/// <summary>
 		/// Equals()
 		/// </summary>
 		/// <param name="obj">Other instance</param>
 		/// <returns></returns>
-		public override bool Equals(object obj) {
-			var other = obj as ModuleId?;
-			if (other != null)
-				return Equals(other.Value);
-			return false;
-		}
+		public override bool Equals(object obj) => obj is ModuleId other && Equals(other);
 
 		/// <summary>
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() {
+		public override int GetHashCode() =>
 			// We can't use AssemblyFullName since it's not used if ModuleNameOnly is true
-			return ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
-		}
+			ModuleNameComparer.GetHashCode(ModuleName) ^ ((int)(flags & Flags.CompareMask) << 16);
 
 		/// <summary>
 		/// ToString()

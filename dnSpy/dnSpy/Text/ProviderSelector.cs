@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,10 +31,8 @@ namespace dnSpy.Text {
 		readonly Lazy<TProvider, TProviderMetadata>[] providers;
 
 		public ProviderSelector(IContentTypeRegistryService contentTypeRegistryService, IEnumerable<Lazy<TProvider, TProviderMetadata>> providers) {
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
-			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.dict = new Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]>();
+			this.contentTypeRegistryService = contentTypeRegistryService ?? throw new ArgumentNullException(nameof(contentTypeRegistryService));
+			dict = new Dictionary<IContentType, Lazy<TProvider, TProviderMetadata>[]>();
 			this.providers = providers.ToArray();
 		}
 
@@ -42,14 +40,13 @@ namespace dnSpy.Text {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 
-			Lazy<TProvider, TProviderMetadata>[] result;
-			if (!dict.TryGetValue(contentType, out result))
+			if (!dict.TryGetValue(contentType, out var result))
 				dict[contentType] = result = CreateProviderList(contentType);
 			return result;
 		}
 
 		Lazy<TProvider, TProviderMetadata>[] CreateProviderList(IContentType contentType) {
-			List<KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>> list = null;
+			List<(Lazy<TProvider, TProviderMetadata> lz, int dist)> list = null;
 
 			// We only allow a provider to match if its supported content type equals the
 			// requested content type or if it's a child of the requested content type.
@@ -66,15 +63,15 @@ namespace dnSpy.Text {
 					if (dist < 0)
 						continue;
 					if (list == null)
-						list = new List<KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>>();
-					list.Add(new KeyValuePair<Lazy<TProvider, TProviderMetadata>, int>(provider, dist));
+						list = new List<(Lazy<TProvider, TProviderMetadata>, int)>();
+					list.Add((provider, dist));
 				}
 			}
 
 			if (list == null)
 				return Array.Empty<Lazy<TProvider, TProviderMetadata>>();
-			list.Sort((a, b) => a.Value - b.Value);
-			return list.Select(a => a.Key).ToArray();
+			list.Sort((a, b) => a.dist - b.dist);
+			return list.Select(a => a.lz).ToArray();
 		}
 
 		int GetDistance(IContentType baseType, IContentType other) {

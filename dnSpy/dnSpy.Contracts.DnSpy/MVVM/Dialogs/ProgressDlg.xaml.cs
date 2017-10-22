@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,6 +42,12 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 		}
 
 		/// <inheritdoc/>
+		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
+			base.OnClosed(e);
+		}
+
+		/// <inheritdoc/>
 		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing(e);
 
@@ -57,7 +63,7 @@ namespace dnSpy.Contracts.MVVM.Dialogs {
 
 		void OnCompleted() {
 			var data = DataContext as ProgressVM;
-			this.DialogResult = data != null && !data.WasCanceled;
+			DialogResult = data != null && !data.WasCanceled;
 			Close();
 		}
 

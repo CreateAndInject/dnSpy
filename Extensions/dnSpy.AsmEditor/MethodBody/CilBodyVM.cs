@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -82,9 +82,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			readonly CilBodyVM owner;
 
 			public LocalsIndexObservableCollection(CilBodyVM owner, Func<LocalVM> createNewItem)
-				: base(createNewItem) {
-				this.owner = owner;
-			}
+				: base(createNewItem) => this.owner = owner;
 
 			protected override void ClearItems() {
 				var old_disable_UpdateLocalOperands = owner.disable_UpdateLocalOperands;
@@ -113,9 +111,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly MethodDef ownerMethod;
 
 		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
-			this.OwnerModule = ownerModule;
+			OwnerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
-			this.origOptions = options;
+			origOptions = options;
 
 			TypeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				CanAddGenericTypeVar = ownerType.HasGenericParameters,
@@ -124,22 +122,22 @@ namespace dnSpy.AsmEditor.MethodBody {
 				OwnerMethod = ownerMethod,
 			};
 
-			this.LocalsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
-			this.InstructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
-			this.ExceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(TypeSigCreatorOptions, new ExceptionHandlerOptions()));
-			this.LocalsListVM.UpdateIndexesDelegate = LocalsUpdateIndexes;
-			this.InstructionsListVM.UpdateIndexesDelegate = InstructionsUpdateIndexes;
-			this.ExceptionHandlersListVM.UpdateIndexesDelegate = ExceptionHandlersUpdateIndexes;
-			this.InstructionsListVM.CollectionChanged += InstructionsListVM_CollectionChanged;
-			this.LocalsListVM.CollectionChanged += LocalsListVM_CollectionChanged;
-			this.ExceptionHandlersListVM.CollectionChanged += ExceptionHandlersListVM_CollectionChanged;
-			this.MaxStack = new UInt16VM(a => CallHasErrorUpdated());
-			this.LocalVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
-			this.HeaderSize = new ByteVM(a => CallHasErrorUpdated());
-			this.HeaderRVA = new UInt32VM(a => CallHasErrorUpdated());
-			this.HeaderFileOffset = new UInt64VM(a => CallHasErrorUpdated());
-			this.RVA = new UInt32VM(a => CallHasErrorUpdated());
-			this.FileOffset = new UInt64VM(a => CallHasErrorUpdated());
+			LocalsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
+			InstructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
+			ExceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(TypeSigCreatorOptions, new ExceptionHandlerOptions()));
+			LocalsListVM.UpdateIndexesDelegate = LocalsUpdateIndexes;
+			InstructionsListVM.UpdateIndexesDelegate = InstructionsUpdateIndexes;
+			ExceptionHandlersListVM.UpdateIndexesDelegate = ExceptionHandlersUpdateIndexes;
+			InstructionsListVM.CollectionChanged += InstructionsListVM_CollectionChanged;
+			LocalsListVM.CollectionChanged += LocalsListVM_CollectionChanged;
+			ExceptionHandlersListVM.CollectionChanged += ExceptionHandlersListVM_CollectionChanged;
+			MaxStack = new UInt16VM(a => CallHasErrorUpdated());
+			LocalVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
+			HeaderSize = new ByteVM(a => CallHasErrorUpdated());
+			HeaderRVA = new UInt32VM(a => CallHasErrorUpdated());
+			HeaderFileOffset = new UInt64VM(a => CallHasErrorUpdated());
+			RVA = new UInt32VM(a => CallHasErrorUpdated());
+			FileOffset = new UInt64VM(a => CallHasErrorUpdated());
 
 			if (initialize)
 				Reinitialize();
@@ -153,8 +151,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var dict = InstructionsListVM.ToDictionary(a => a.Offset);
 			var instrs = offsets.Select(a => {
-				InstructionVM instr;
-				dict.TryGetValue(a, out instr);
+				dict.TryGetValue(a, out var instr);
 				return instr;
 			}).Where(a => a != null).Distinct().ToArray();
 			if (instrs.Length == 0)
@@ -444,15 +441,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 			public readonly TypeSig PushType;
 
 			public InstructionPushPopInfo(int pops) {
-				this.PopCount = pops;
-				this.Pushes = false;
-				this.PushType = null;
+				PopCount = pops;
+				Pushes = false;
+				PushType = null;
 			}
 
 			public InstructionPushPopInfo(int pops, TypeSig pushType) {
-				this.PopCount = pops;
-				this.Pushes = true;
-				this.PushType = pushType;
+				PopCount = pops;
+				Pushes = true;
+				PushType = pushType;
 			}
 		}
 
@@ -460,8 +457,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var code = instr.Code;
 			if (code == Code.Pop || code == Code.Nop)
 				return null;
-			int pushes, pops;
-			instr.CalculateStackUsage(out pushes, out pops);
+			instr.CalculateStackUsage(out int pushes, out int pops);
 			if (pops < 0)
 				return null;
 			if (pushes == 1 && (code == Code.Call || code == Code.Callvirt || code == Code.Calli))
@@ -534,7 +530,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case ElementType.Var:
 			case ElementType.MVar:
 				var local = new LocalVM(TypeSigCreatorOptions, new LocalOptions(new Local(pushType)));
-				this.LocalsListVM.Add(local);
+				LocalsListVM.Add(local);
 
 				var newInstr = CreateInstructionVM(Code.Ldloca);
 				newInstr.InstructionOperandVM.OperandListItem = local;
@@ -576,22 +572,18 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static MethodSig GetMethodSig(object operand) {
-			var msig = operand as MethodSig;
-			if (msig != null)
+			if (operand is MethodSig msig)
 				return msig;
 
-			var md = operand as MethodDef;
-			if (md != null)
+			if (operand is MethodDef md)
 				return md.MethodSig;
 
-			var mr = operand as MemberRef;
-			if (mr != null) {
+			if (operand is MemberRef mr) {
 				var type = mr.DeclaringType;
 				return GetMethodSig(type, mr.MethodSig, null);
 			}
 
-			var ms = operand as MethodSpec;
-			if (ms != null) {
+			if (operand is MethodSpec ms) {
 				var type = ms.DeclaringType;
 				var genMeth = ms.GenericInstMethodSig;
 				var meth = ms.Method;
@@ -603,8 +595,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		static MethodSig GetMethodSig(ITypeDefOrRef type, MethodSig msig, IList<TypeSig> methodGenArgs) {
 			IList<TypeSig> typeGenArgs = null;
-			var ts = type as TypeSpec;
-			if (ts != null) {
+			if (type is TypeSpec ts) {
 				var genSig = ts.TypeSig.ToGenericInstSig();
 				if (genSig != null)
 					typeGenArgs = genSig.GenericArguments;

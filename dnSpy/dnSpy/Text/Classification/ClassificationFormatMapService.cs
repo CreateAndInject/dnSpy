@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,21 +25,38 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.Text.Classification {
-	[Export(typeof(IClassificationFormatMapService))]
-	sealed class ClassificationFormatMapService : IClassificationFormatMapService {
+	abstract class ClassificationFormatMapService {
 		readonly IThemeService themeService;
 		readonly IEditorFormatMapService editorFormatMapService;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly IClassificationTypeRegistryService classificationTypeRegistryService;
 		readonly Dictionary<IEditorFormatMap, IClassificationFormatMap> toCategoryMap;
 
-		[ImportingConstructor]
-		ClassificationFormatMapService(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
+		protected ClassificationFormatMapService(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
 			this.themeService = themeService;
 			this.editorFormatMapService = editorFormatMapService;
 			this.editorFormatDefinitionService = editorFormatDefinitionService;
 			this.classificationTypeRegistryService = classificationTypeRegistryService;
-			this.toCategoryMap = new Dictionary<IEditorFormatMap, IClassificationFormatMap>();
+			toCategoryMap = new Dictionary<IEditorFormatMap, IClassificationFormatMap>();
+		}
+
+		public IClassificationFormatMap GetClassificationFormatMap(string category) {
+			if (category == null)
+				throw new ArgumentNullException(nameof(category));
+			var editorFormatMap = editorFormatMapService.GetEditorFormatMap(category);
+			if (toCategoryMap.TryGetValue(editorFormatMap, out var map))
+				return map;
+			map = new CategoryClassificationFormatMap(themeService, editorFormatMap, editorFormatDefinitionService, classificationTypeRegistryService);
+			toCategoryMap.Add(editorFormatMap, map);
+			return map;
+		}
+	}
+
+	[Export(typeof(IClassificationFormatMapService))]
+	sealed class ClassificationFormatMapServiceImpl : ClassificationFormatMapService, IClassificationFormatMapService {
+		[ImportingConstructor]
+		ClassificationFormatMapServiceImpl(IThemeService themeService, IEditorFormatMapService editorFormatMapService, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService)
+			: base(themeService, editorFormatMapService, editorFormatDefinitionService, classificationTypeRegistryService) {
 		}
 
 		public IClassificationFormatMap GetClassificationFormatMap(ITextView textView) {
@@ -50,7 +67,7 @@ namespace dnSpy.Text.Classification {
 
 		ViewClassificationFormatMap CreateViewClassificationFormatMap(ITextView textView) {
 			textView.Closed += TextView_Closed;
-			return new ViewClassificationFormatMap(this, textView);
+			return new TextViewClassificationFormatMap(this, textView);
 		}
 
 		static void TextView_Closed(object sender, EventArgs e) {
@@ -59,18 +76,6 @@ namespace dnSpy.Text.Classification {
 			var map = (ViewClassificationFormatMap)textView.Properties[typeof(ViewClassificationFormatMap)];
 			textView.Properties.RemoveProperty(typeof(ViewClassificationFormatMap));
 			map.Dispose();
-		}
-
-		public IClassificationFormatMap GetClassificationFormatMap(string category) {
-			if (category == null)
-				throw new ArgumentNullException(nameof(category));
-			var editorFormatMap = editorFormatMapService.GetEditorFormatMap(category);
-			IClassificationFormatMap map;
-			if (toCategoryMap.TryGetValue(editorFormatMap, out map))
-				return map;
-			map = new CategoryClassificationFormatMap(themeService, editorFormatMap, editorFormatDefinitionService, classificationTypeRegistryService);
-			toCategoryMap.Add(editorFormatMap, map);
-			return map;
 		}
 	}
 }

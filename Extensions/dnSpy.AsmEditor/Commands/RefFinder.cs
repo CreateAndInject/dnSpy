@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,7 @@ namespace dnSpy.AsmEditor.Commands {
 				yield break;
 
 			foreach (var tr in FindTypeRefsToThisModule(module)) {
-				var asmRef = tr.ResolutionScope as AssemblyRef;
-				if (asmRef != null && asmRef.Name == asm.Name)
+				if (tr.ResolutionScope is AssemblyRef asmRef && asmRef.Name == asm.Name)
 					yield return asmRef;
 			}
 		}

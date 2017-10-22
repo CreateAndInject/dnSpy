@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,29 +22,41 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.Hex;
 
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IUndoableDocumentsProvider))]
-	sealed class HexUndoableDocumentsProvider : IUndoableDocumentsProvider {
-		readonly Lazy<IHexDocumentService> hexDocumentService;
+	[Export(typeof(IHexBufferServiceListener))]
+	sealed class HexUndoableDocumentsProvider : IUndoableDocumentsProvider, IHexBufferServiceListener {
+		static readonly object undoObjectKey = new object();
+		readonly Lazy<IHexBufferService> hexBufferService;
 
 		[ImportingConstructor]
-		HexUndoableDocumentsProvider(Lazy<IHexDocumentService> hexDocumentService) {
-			this.hexDocumentService = hexDocumentService;
-		}
+		HexUndoableDocumentsProvider(Lazy<IHexBufferService> hexBufferService) => this.hexBufferService = hexBufferService;
 
-		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexDocumentService.Value.GetDocuments().Select(a => GetUndoObject(a));
+		IEnumerable<IUndoObject> IUndoableDocumentsProvider.GetObjects() => hexBufferService.Value.GetBuffers().Select(a => TryGetUndoObject(a)).Where(a => a != null);
 
 		IUndoObject IUndoableDocumentsProvider.GetUndoObject(object obj) {
-			var doc = obj as AsmEdHexDocument;
-			if (doc != null)
-				return GetUndoObject(doc);
+			if (obj is HexBuffer buffer)
+				return TryGetUndoObject(buffer);
 			return null;
 		}
 
-		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => TryGetAsmEdHexDocument(obj) != null;
-		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetAsmEdHexDocument(obj);
-		static IUndoObject GetUndoObject(AsmEdHexDocument file) => file.UndoObject;
-		internal static AsmEdHexDocument TryGetAsmEdHexDocument(IUndoObject iuo) => (iuo as UndoObject)?.Value as AsmEdHexDocument;
+		bool IUndoableDocumentsProvider.OnExecutedOneCommand(IUndoObject obj) => TryGetHexBuffer(obj) != null;
+		object IUndoableDocumentsProvider.GetDocument(IUndoObject obj) => TryGetHexBuffer(obj);
+		internal static HexBuffer TryGetHexBuffer(IUndoObject iuo) => (iuo as UndoObject)?.Value as HexBuffer;
+
+		static IUndoObject TryGetUndoObject(HexBuffer buffer) {
+			buffer.Properties.TryGetProperty(undoObjectKey, out IUndoObject undoObject);
+			return undoObject;
+		}
+
+		void IHexBufferServiceListener.BufferCreated(HexBuffer buffer) =>
+			buffer.Properties.AddProperty(undoObjectKey, new UndoObject(buffer));
+
+		void IHexBufferServiceListener.BuffersCleared(IEnumerable<HexBuffer> buffers) {
+			foreach (var buffer in buffers)
+				buffer.Properties.RemoveProperty(undoObjectKey);
+		}
 	}
 }

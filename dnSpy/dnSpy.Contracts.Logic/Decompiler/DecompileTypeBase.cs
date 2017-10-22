@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,12 +40,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
 		protected DecompileTypeBase(IDecompilerOutput output, DecompilationContext ctx) {
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			if (ctx == null)
-				throw new ArgumentNullException(nameof(ctx));
-			this.Output = output;
-			this.Context = ctx;
+			Output = output ?? throw new ArgumentNullException(nameof(output));
+			Context = ctx ?? throw new ArgumentNullException(nameof(ctx));
 		}
 	}
 }

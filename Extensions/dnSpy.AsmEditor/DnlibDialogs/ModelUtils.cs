@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,13 +28,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public const int COMPRESSED_INT32_MIN	=-0x10000000;
 		public const int COMPRESSED_INT32_MAX	= 0x0FFFFFFF;
 
-		public static bool IsSystemType(this ITypeDefOrRef tdr) {
-			return tdr != null &&
-				tdr.DeclaringType == null &&
-				tdr.Namespace == "System" &&
-				tdr.Name == "Type" &&
-				tdr.DefinitionAssembly.IsCorLib();
-		}
+		public static bool IsSystemType(this ITypeDefOrRef tdr) =>
+			tdr != null &&
+			tdr.DeclaringType == null &&
+			tdr.Namespace == "System" &&
+			tdr.Name == "Type" &&
+			tdr.DefinitionAssembly.IsCorLib();
 
 		public static ElementType GetElementType(Type type) {
 			var tc = type == null ? TypeCode.Empty : Type.GetTypeCode(type);

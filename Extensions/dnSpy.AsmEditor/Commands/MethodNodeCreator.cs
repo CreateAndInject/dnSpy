@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public MethodNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, MethodDef method) {
 			this.ownerNode = ownerNode;
-			this.methodNode = modNode.Context.DocumentTreeView.Create(method);
+			methodNode = modNode.Context.DocumentTreeView.Create(method);
 		}
 
 		public void Add() {

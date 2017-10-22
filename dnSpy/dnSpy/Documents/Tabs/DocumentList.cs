@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,13 +34,13 @@ namespace dnSpy.Documents.Tabs {
 		public List<DsDocumentInfo> Documents { get; }
 
 		public DocumentList(string name) {
-			this.Documents = new List<DsDocumentInfo>();
-			this.Name = name;
+			Documents = new List<DsDocumentInfo>();
+			Name = name;
 		}
 
 		public DocumentList(DefaultDocumentList defaultList) {
-			this.Documents = new List<DsDocumentInfo>(defaultList.Documents);
-			this.Name = defaultList.Name;
+			Documents = new List<DsDocumentInfo>(defaultList.Documents);
+			Name = defaultList.Name;
 		}
 
 		public static DocumentList Create(ISettingsSection section) {
@@ -60,13 +60,13 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		public void Update(IEnumerable<IDsDocument> documents) {
-			this.Documents.Clear();
+			Documents.Clear();
 			foreach (var d in documents) {
 				if (d.IsAutoLoaded)
 					continue;
 				var info = d.SerializedDocument;
 				if (info != null)
-					this.Documents.Add(info.Value);
+					Documents.Add(info.Value);
 			}
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,9 +42,9 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		public const string BracePair = "BracePair-Content";
 
 		/// <summary>
-		/// Structure visualizer data
+		/// Block structure data
 		/// </summary>
-		public const string StructureVisualizer = "StructureVisualizer-Content";
+		public const string BlockStructure = "BlockStructure-Content";
 
 		/// <summary>
 		/// <see cref="Decompiler.LineSeparator"/> data

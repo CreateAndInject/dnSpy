@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,7 @@ namespace dnSpy.Contracts.Menus {
 		/// Constructor
 		/// </summary>
 		/// <param name="realCommand">The real command that gets executed</param>
-		protected MenuItemCommand(ICommand realCommand) {
-			this.realCommand = realCommand;
-		}
+		protected MenuItemCommand(ICommand realCommand) => this.realCommand = realCommand;
 
 		/// <inheritdoc/>
 		public override void Execute(IMenuItemContext context) => realCommand.Execute(context);
@@ -60,9 +58,7 @@ namespace dnSpy.Contracts.Menus {
 		/// Constructor
 		/// </summary>
 		/// <param name="realCommand">The real command that gets executed</param>
-		protected MenuItemCommand(ICommand realCommand) {
-			this.realCommand = realCommand;
-		}
+		protected MenuItemCommand(ICommand realCommand) => this.realCommand = realCommand;
 
 		/// <inheritdoc/>
 		public sealed override void Execute(TContext context) {

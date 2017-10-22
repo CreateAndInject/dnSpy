@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,8 +51,8 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Constructor
 		/// </summary>
 		public DecompilationContext() {
-			this.CancellationToken = CancellationToken.None;
-			this.IsBodyModified = m => false;
+			CancellationToken = CancellationToken.None;
+			IsBodyModified = m => false;
 		}
 
 		/// <summary />
@@ -65,8 +65,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public T GetOrCreate<T>() where T : class, new() {
 			lock (lockObj) {
-				object obj;
-				if (cachedObjs.TryGetValue(typeof(T), out obj))
+				if (cachedObjs.TryGetValue(typeof(T), out object obj))
 					return (T)obj;
 				T res = new T();
 				cachedObjs.Add(typeof(T), res);
@@ -84,8 +83,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <returns></returns>
 		public T GetOrCreate<T>(Func<T> creator) where T : class {
 			lock (lockObj) {
-				object obj;
-				if (cachedObjs.TryGetValue(typeof(T), out obj))
+				if (cachedObjs.TryGetValue(typeof(T), out object obj))
 					return (T)obj;
 				T res = creator();
 				cachedObjs.Add(typeof(T), res);

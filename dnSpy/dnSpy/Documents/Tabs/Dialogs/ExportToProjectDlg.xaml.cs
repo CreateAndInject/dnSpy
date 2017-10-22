@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,15 +22,13 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed partial class ExportToProjectDlg : WindowBase {
-		public ExportToProjectDlg() {
-			InitializeComponent();
-		}
+		public ExportToProjectDlg() => InitializeComponent();
 
 		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
 			base.OnClosed(e);
 
-			var vm = DataContext as ExportToProjectVM;
-			if (vm != null)
+			if (DataContext is ExportToProjectVM vm)
 				vm.Cancel();
 		}
 	}

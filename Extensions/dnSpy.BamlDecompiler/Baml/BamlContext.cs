@@ -52,23 +52,19 @@ namespace dnSpy.BamlDecompiler.Baml {
 			foreach (var record in document) {
 				token.ThrowIfCancellationRequested();
 
-				if (record is AssemblyInfoRecord) {
-					var assemblyInfo = (AssemblyInfoRecord)record;
+				if (record is AssemblyInfoRecord assemblyInfo) {
 					if (assemblyInfo.AssemblyId == ctx.AssemblyIdMap.Count)
 						ctx.AssemblyIdMap.Add(assemblyInfo.AssemblyId, assemblyInfo);
 				}
-				else if (record is AttributeInfoRecord) {
-					var attrInfo = (AttributeInfoRecord)record;
+				else if (record is AttributeInfoRecord attrInfo) {
 					if (attrInfo.AttributeId == ctx.AttributeIdMap.Count)
 						ctx.AttributeIdMap.Add(attrInfo.AttributeId, attrInfo);
 				}
-				else if (record is StringInfoRecord) {
-					var strInfo = (StringInfoRecord)record;
+				else if (record is StringInfoRecord strInfo) {
 					if (strInfo.StringId == ctx.StringIdMap.Count)
 						ctx.StringIdMap.Add(strInfo.StringId, strInfo);
 				}
-				else if (record is TypeInfoRecord) {
-					var typeInfo = (TypeInfoRecord)record;
+				else if (record is TypeInfoRecord typeInfo) {
 					if (typeInfo.TypeId == ctx.TypeIdMap.Count)
 						ctx.TypeIdMap.Add(typeInfo.TypeId, typeInfo);
 				}
@@ -79,10 +75,8 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		public IAssembly ResolveAssembly(ushort id) {
 			id &= 0xfff;
-			IAssembly assembly;
-			if (!assemblyMap.TryGetValue(id, out assembly)) {
-				AssemblyInfoRecord assemblyRec;
-				if (AssemblyIdMap.TryGetValue(id, out assemblyRec)) {
+			if (!assemblyMap.TryGetValue(id, out var assembly)) {
+				if (AssemblyIdMap.TryGetValue(id, out var assemblyRec)) {
 					var assemblyName = new AssemblyNameInfo(assemblyRec.AssemblyFullName);
 
 					if (assemblyName.Name == Module.Assembly.Name)

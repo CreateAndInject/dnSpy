@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,8 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows.Controls;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Output;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
@@ -56,6 +58,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Guid of app menu: Help</summary>
 		public const string APP_MENU_HELP_GUID = "52504C1B-7C35-464A-A35D-6D9F59E035D9";
+
+		/// <summary>Guid of app menu: Debug \ Windows</summary>
+		public const string APP_MENU_DEBUG_WINDOWS_GUID = "7F95892B-975D-4217-A497-2EB0504489F4";
+
+		/// <summary>Guid of app menu: View \ Bookmarks</summary>
+		public const string APP_MENU_VIEW_BOOKMARKS_GUID = "69DBE925-ED20-43D5-B1EF-EBAB0BAE9E9A";
 
 		/// <summary>Guid of glyph margin</summary>
 		public const string GLYPHMARGIN_GUID = "53F9F2FF-5AF8-4FC6-B849-74AB88EFB367";
@@ -120,8 +128,18 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="TextEditorPosition"/></summary>
 		public static readonly string GUIDOBJ_TEXTEDITORPOSITION_GUID = "F093458D-C95B-4745-8388-047DE348B500";
 
-		/// <summary><c>HexBox</c></summary>
+		/// <summary><see cref="HexCaretPosition"/></summary>
+		public static readonly string GUIDOBJ_HEXEDITORPOSITION_GUID = "DF87FB1F-D902-4365-BA52-655A7B27C94A";
+
+		/// <summary>Asm editor's hex view</summary>
+		public static readonly string GUIDOBJ_ASMEDITOR_HEXVIEW_GUID = "95F0CEE5-44D0-468A-B214-69F91B76A84C";
+
+		/// <summary><c>HexBox</c>, it's now obsolete</summary>
+		[Obsolete("Use eg. " + nameof(GUIDOBJ_ASMEDITOR_HEXVIEW_GUID) + " instead of this guid", true)]
 		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
+
+		/// <summary>Debugger's memory hex view</summary>
+		public static readonly string GUIDOBJ_DEBUGGER_MEMORY_HEXVIEW_GUID = "8AD6778E-015E-4520-8B77-A6A2E23FFCFF";
 
 		/// <summary>Glyph margin</summary>
 		public static readonly string GUIDOBJ_GLYPHMARGIN_GUID = "60A3ECC3-3714-418E-8C26-D33F00EA31B4";
@@ -141,7 +159,16 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="IWpfTextViewMargin"/></summary>
 		public static readonly string GUIDOBJ_WPF_TEXTVIEW_MARGIN_GUID = "36C94DC4-05AA-4F2B-A6C4-02EFE187AAA3";
 
-		/// <summary>Point of mouse relative to <see cref="IWpfTextViewMargin"/></summary>
+		/// <summary><see cref="WpfHexViewHost"/></summary>
+		public static readonly string GUIDOBJ_WPF_HEXVIEW_HOST_GUID = "D63537FA-9D09-44E0-A345-41B7457CFD69";
+
+		/// <summary><see cref="WpfHexView"/></summary>
+		public static readonly string GUIDOBJ_WPF_HEXVIEW_GUID = "2A57190E-B129-4083-8427-EC2DC6C53D55";
+
+		/// <summary><see cref="WpfHexViewMargin"/></summary>
+		public static readonly string GUIDOBJ_WPF_HEXVIEW_MARGIN_GUID = "9CFD1794-C39A-4529-89BF-03C0C6E1714F";
+
+		/// <summary>Point of mouse relative to a <see cref="IWpfTextViewMargin"/> or a <see cref="WpfHexViewMargin"/></summary>
 		public static readonly string GUIDOBJ_MARGIN_POINT_GUID = "FEAC116C-FA91-42D9-A646-BD8F3A6A6EFD";
 
 		/// <summary>Log text editor control</summary>
@@ -161,6 +188,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Breakpoint</summary>
 		public static readonly string GUIDOBJ_BREAKPOINT_GUID = "A229BFE6-0445-4B5C-9D4B-E590995B9D93";
+
+		/// <summary>Bookmark</summary>
+		public static readonly string GUIDOBJ_BOOKMARK_GUID = "71BD1A39-50A8-43C2-B88A-8986D0C674B4";
+
+		/// <summary>Variables window treeview (autos, locals, watch)</summary>
+		public static readonly string GUIDOBJ_VARIABLES_WINDOW_TREEVIEW_GUID = "6415325D-11CC-48C7-9E7B-15D363B7D18E";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";
@@ -210,14 +243,32 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: App Menu: View, Group: Options dlg</summary>
 		public const string GROUP_APP_MENU_VIEW_OPTSDLG = "1000000,AAA7FF98-47CD-4ABF-8824-EE20A283EEB3";
 
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Windows</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_WINDOWS = "0,73401CB5-1573-4868-96C9-6141EF39F44F";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands #1</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS1 = "1000,F6008A3C-8EBF-459F-8446-6D96D02060DC";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands #2</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS2 = "2000,10E117AF-68CF-47ED-AEA9-80CDDEDA3C16";
+
+		/// <summary>Group: App Menu: View \ Bookmarks, Group: Commands #3</summary>
+		public const string GROUP_APP_MENU_BOOKMARKS_COMMANDS3 = "3000,2E6C9563-FF9F-433B-B03A-A5CFA4228A78";
+
 		/// <summary>Group: App Menu: Themes, Group: Themes</summary>
 		public const string GROUP_APP_MENU_THEMES_THEMES = "0,AAE0CE90-DB6E-4E8D-9E1B-9BF7ABBDBB32";
+
+		/// <summary>Group: App Menu: Debug, Group: Windows</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS = "-1000,B4D89733-91AC-4C2F-8808-3AEBD2A686C9";
 
 		/// <summary>Group: App Menu: Debug, Group: Start</summary>
 		public const string GROUP_APP_MENU_DEBUG_START = "0,118A7201-7560-443E-B2F6-7F6369A253A2";
 
 		/// <summary>Group: App Menu: Debug, Group: Continue/Stop/etc commands</summary>
 		public const string GROUP_APP_MENU_DEBUG_CONTINUE = "1000,E9AEB324-1425-4CBF-8998-B1796A16AA06";
+
+		/// <summary>Group: App Menu: Debug, Group: Step (Current Process) commands</summary>
+		public const string GROUP_APP_MENU_DEBUG_STEP_CURRENTPROCESS = "1999,D7C0F536-DD76-428C-8E87-A9D27D4C19A9";
 
 		/// <summary>Group: App Menu: Debug, Group: Step commands</summary>
 		public const string GROUP_APP_MENU_DEBUG_STEP = "2000,5667E48E-5E33-46E9-9661-98B979D65F5D";
@@ -226,7 +277,29 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_APP_MENU_DEBUG_BREAKPOINTS = "3000,2684EC1B-45A7-4412-BCBF-81345845FF54";
 
 		/// <summary>Group: App Menu: Debug, Group: Show Debug Windows</summary>
+		[Obsolete("Move debug tool windows to Debug -> Windows", true)]
 		public const string GROUP_APP_MENU_DEBUG_SHOW = "4000,26D43C29-2EDF-4094-8993-10B7CECEAACA";
+
+		/// <summary>Group: App Menu: Debug, Group: Options</summary>
+		public const string GROUP_APP_MENU_DEBUG_OPTIONS = "1000000,F3B4A871-C8D8-40CA-A881-7BEF2328145C";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Settings</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_SETTINGS = "0,37136731-930E-4D87-8144-03DB3217668D";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Values</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_VALUES = "3000,BC7F81CF-49A1-4F59-B789-56EEDAA375BE";
+
+		/// <summary>Group: App Menu: Debug \ Windows \ Watch, Group: Watch N</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_WATCH_SUB = "0,2248FFD3-0377-4434-B293-378DDD605DF3";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Info</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_INFO = "6000,2721D995-74E5-4AA8-9E32-FBB2EDCE768F";
+
+		/// <summary>Group: App Menu: Debug \ Windows, Group: Memory</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY = "7000,246D698C-04F2-4998-88FB-46853D62E290";
+
+		/// <summary>Group: App Menu: Debug \ Windows \ Memory, Group: Memory N</summary>
+		public const string GROUP_APP_MENU_DEBUG_WINDOWS_MEMORY_SUB = "0,3B088B70-F2D6-4388-8B5D-397372CEAC9F";
 
 		/// <summary>Group: App Menu: Window, Group: Window</summary>
 		public const string GROUP_APP_MENU_WINDOW_WINDOW = "0,27A8834B-D6BF-4267-803D-15DECAFAEA05";
@@ -291,16 +364,38 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Document Viewer, Group: Editor</summary>
 		public const string GROUP_CTX_DOCVIEWER_EDITOR = "15000,FD52ABD1-6DB2-48C3-A5DB-809ECE5EBBB2";
 
+		/// <summary>Group: Context Menu, Type: HexView, Group: Show commands</summary>
+		public const string GROUP_CTX_HEXVIEW_SHOW = "0,261BB98C-6C43-4258-9C4E-7A3702298DE0";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Edit</summary>
+		public const string GROUP_CTX_HEXVIEW_EDIT = "1000,63AE7AC9-B507-4474-9BB3-9B64B2036D34";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Misc</summary>
+		public const string GROUP_CTX_HEXVIEW_MISC = "10000,73D6E16B-6AF4-4F6D-8515-6D63ECDBFA3F";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Copy</summary>
+		public const string GROUP_CTX_HEXVIEW_COPY = "99000,34DCFAE6-7D6A-428A-8E71-5151616A08A3";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Options</summary>
+		public const string GROUP_CTX_HEXVIEW_OPTS = "100000,0794156A-1EDE-45EC-9C41-48E27DE14085";
+
+		/// <summary>Group: Context Menu, Type: HexView, Group: Find</summary>
+		public const string GROUP_CTX_HEXVIEW_FIND = "101000,8BD504DA-A927-4CBC-9E77-C873560C530F";
+
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Show commands</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_SHOW), true)]
 		public const string GROUP_CTX_HEXBOX_SHOW = "0,D49C0D59-BAC6-476C-B5C7-66E8CE6CBD83";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Edit</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_EDIT), true)]
 		public const string GROUP_CTX_HEXBOX_EDIT = "1000,05719F94-21C1-4C73-8931-929E6A9B6A69";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_OPTS), true)]
 		public const string GROUP_CTX_HEXBOX_OPTS = "2000,DFE105B4-78B1-4227-8A91-A7C8D4B00495";
 
 		/// <summary>Group: Context Menu, Type: HexBox, Group: Copy</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_HEXVIEW_COPY), true)]
 		public const string GROUP_CTX_HEXBOX_COPY = "3000,CD7D55BB-5ED8-4E8D-B588-AD19AB771105";
 
 		/// <summary>Group: Context Menu, Type: Tabs, Group: Close/New commands</summary>
@@ -390,20 +485,74 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Document, Group: Other</summary>
 		public const string GROUP_CTX_DOCUMENTS_OTHER = "11000,15776535-8A1D-4255-8C3D-331163324C7C";
 
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Copy</summary>
+		public const string GROUP_CTX_BOOKMARKS_COPY = "0,1633C2A1-5A65-41FF-B83D-E6B0E1B565EC";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Code</summary>
+		public const string GROUP_CTX_BOOKMARKS_CODE = "1000,3932F616-AD0B-4310-A4DE-678AF7E9C149";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Settings</summary>
+		public const string GROUP_CTX_BOOKMARKS_SETTINGS = "2000,12AFA15C-7D72-41FB-A65C-92367D8091A2";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Commands</summary>
+		public const string GROUP_CTX_BOOKMARKS_CMDS1 = "3000,4287B6E2-256F-4A8A-9041-EA7BE393C18A";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Export</summary>
+		public const string GROUP_CTX_BOOKMARKS_EXPORT = "5000,565EDE0D-4139-486E-A486-CD6B3657E5FF";
+
+		/// <summary>Group: Context Menu, Type: Bookmarks, Group: Options</summary>
+		public const string GROUP_CTX_BOOKMARKS_OPTS = "10000,1D7EEE8F-CD29-4F4E-A4A8-6906680B0601";
+
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_COPY), true)]
 		public const string GROUP_CTX_DBG_BPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_CODE), true)]
 		public const string GROUP_CTX_DBG_BPS_CODE = "1000,5918522A-B51A-430D-8351-561FF0618AB3";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_CODEBPS_OPTS), true)]
 		public const string GROUP_CTX_DBG_BPS_OPTS = "10000,E326374F-8D4F-4CC4-B454-BB3F2C585299";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_COPY = "0,FB604477-5E55-4B55-91A4-0E06762FED83";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Code</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_CODE = "1000,5918522A-B51A-430D-8351-561FF0618AB3";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Settings</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_SETTINGS = "1500,466C6110-9CD4-4D64-B532-8DCFC61C01EC";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Commands</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_CMDS1 = "2000,3F86C3D0-9FCF-4DF8-93D7-2C1D202DC22D";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Export</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_EXPORT = "4000,51A2286D-423B-447D-82B7-4A8AAE9D1203";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Breakpoints, Group: Options</summary>
+		public const string GROUP_CTX_DBG_CODEBPS_OPTS = "10000,E326374F-8D4F-4CC4-B454-BB3F2C585299";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_COPY = "0,648E5B4C-BADE-4226-9B18-EE983438728E";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Commands</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_CMDS1 = "1000,F07E3763-5827-4DE1-95A3-EEBD224B711A";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Commands</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_CMDS2 = "2000,2AE615AA-3786-424A-8C90-B028032DFD6C";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Module Breakpoints, Group: Export</summary>
+		public const string GROUP_CTX_DBG_MODULEBPS_EXPORT = "4000,B6A97E72-7CAD-4C36-951A-A8BF1F9BCFBA";
 
 		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Copy</summary>
 		public const string GROUP_CTX_DBG_CALLSTACK_COPY = "0,FA7DD7BA-CC6B-46F4-8838-F8015B586911";
 
 		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Frame</summary>
 		public const string GROUP_CTX_DBG_CALLSTACK_FRAME = "1000,5F24F714-41CB-4111-89C1-BCA9734115B0";
+
+		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Breakpoints</summary>
+		public const string GROUP_CTX_DBG_CALLSTACK_BPS = "1500,C3FC3901-808B-472F-BB71-9AC7E75F1413";
 
 		/// <summary>Group: Context Menu, Type: Debugger/CallStack, Group: Hex Options</summary>
 		public const string GROUP_CTX_DBG_CALLSTACK_HEXOPTS = "2000,66C60524-E129-491D-A8A8-7939B567BC3A";
@@ -417,19 +566,42 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Debugger/Exceptions, Group: Add</summary>
 		public const string GROUP_CTX_DBG_EXCEPTIONS_ADD = "1000,27050687-6367-48C4-A036-E6E368965BB4";
 
+		/// <summary>Group: Context Menu, Type: Debugger/Exceptions, Group: Options</summary>
+		public const string GROUP_CTX_DBG_EXCEPTIONS_OPTIONS = "5000,64A4FCD8-64BD-4435-84E3-5FD0F78BFFCF";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_COPY = "0,5DE1C544-8079-4C4E-ABB1-7CE34BDF6A94";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Values</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES = "1000,1A0FDB51-7DCC-4B18-A4BA-0A6A45A8B14A";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Hex Options</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS = "2000,72E9B097-DD72-411E-B9FC-B01AE30EF24F";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Tree</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_TREE = "3000,877A4CC7-3074-4EFF-9C6B-96D1203F55F5";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Variables window, Group: Options</summary>
+		public const string GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS = "4000,93573019-549D-40EC-8B3C-D515DACB3C47";
+
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Copy</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_COPY), true)]
 		public const string GROUP_CTX_DBG_LOCALS_COPY = "0,28D5E753-B1D0-415A-A8C8-7D8F1AC27592";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Values</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_VALUES), true)]
 		public const string GROUP_CTX_DBG_LOCALS_VALUES = "1000,33D69C4B-ACB2-4131-8154-CB413EF9D8BA";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Hex Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_HEXOPTS), true)]
 		public const string GROUP_CTX_DBG_LOCALS_HEXOPTS = "2000,C8143511-5CEA-47A8-B334-0A83D7C85108";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Tree</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_TREE), true)]
 		public const string GROUP_CTX_DBG_LOCALS_TREE = "3000,A3E4126C-A23C-4902-9033-723C52374ECF";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Locals, Group: Options</summary>
+		[Obsolete("Use " + nameof(GROUP_CTX_DBG_VARIABLES_WINDOW_OPTS), true)]
 		public const string GROUP_CTX_DBG_LOCALS_OPTS = "4000,A599080F-6572-4CB1-B97B-63763D2E2F56";
 
 		/// <summary>Group: Context Menu, Type: Debugger/Modules, Group: Copy</summary>
@@ -455,6 +627,21 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Debugger/Threads, Group: Commands</summary>
 		public const string GROUP_CTX_DBG_THREADS_CMDS = "2000,B7B20F2D-6FE1-4415-BC4A-D92B31EE9342";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Copy</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_COPY = "0,CC3C28D9-E9F7-448B-9299-31038143439F";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Continue/Break</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_CONTINUE = "1000,3F9F65B7-A18C-4657-AED7-CBB521196C34";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Detach/Terminate</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_TERMINATE = "2000,276A37FE-50C8-4B56-BF56-4A0F414207DF";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Options</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_OPTIONS = "3000,09039E26-03A2-453C-B164-F43DF8154D3F";
+
+		/// <summary>Group: Context Menu, Type: Debugger/Processes, Group: Attach</summary>
+		public const string GROUP_CTX_DBG_PROCESSES_ATTACH = "4000,1F9D28D0-282B-46BB-9E2D-59703E28A5FF";
 
 		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Reset</summary>
 		public const string GROUP_CTX_REPL_RESET = "0,407111D9-B090-4151-83FF-2C01C3816DF3";
@@ -490,6 +677,16 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_CTX_CODEEDITOR_FIND= "6000,CDE742E8-31DA-4D96-A641-73A36CCF0DC0";
 
 		/// <summary>Group: Glyph margin, Type: Debugger, Group: Breakpoints</summary>
+		[Obsolete("Use " + nameof(GROUP_GLYPHMARGIN_DEBUG_CODEBPS_SETTINGS), true)]
 		public const string GROUP_GLYPHMARGIN_DEBUG_BPS = "10000,423F4513-1EAF-43FD-BD46-FDCFB6DFAA04";
+
+		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Settings</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_SETTINGS = "0,FB70F59F-7507-43C1-AD7B-BCBDD60375F6";
+
+		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Edit</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_EDIT = "5000,B31BDBFD-3C44-4D14-92E8-85141167696F";
+
+		/// <summary>Group: Glyph margin, Type: Debugger/Breakpoints, Group: Breakpoints</summary>
+		public const string GROUP_GLYPHMARGIN_DEBUG_CODEBPS_EXPORT = "10000,EEC8041B-DC23-4E50-BEBC-BB71AB36631D";
 	}
 }

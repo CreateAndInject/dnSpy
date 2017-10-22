@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,6 +44,7 @@ namespace dnSpy.Contracts.Text {
 		Enum,
 		Interface,
 		ValueType,
+		Module,
 		TypeGenericParameter,
 		MethodGenericParameter,
 		InstanceMethod,
@@ -113,7 +114,7 @@ namespace dnSpy.Contracts.Text {
 		XmlDocToolTipHeader,
 		Assembly,
 		AssemblyExe,
-		Module,
+		AssemblyModule,
 		DirectoryPart,
 		FileNameNoExtension,
 		FileExtension,
@@ -199,33 +200,35 @@ namespace dnSpy.Contracts.Text {
 		BraceMatching,
 		LineSeparator,
 		FindMatchHighlightMarker,
-		StructureVisualizerNamespace,
-		StructureVisualizerType,
-		StructureVisualizerModule,
-		StructureVisualizerValueType,
-		StructureVisualizerInterface,
-		StructureVisualizerMethod,
-		StructureVisualizerAccessor,
-		StructureVisualizerAnonymousMethod,
-		StructureVisualizerConstructor,
-		StructureVisualizerDestructor,
-		StructureVisualizerOperator,
-		StructureVisualizerConditional,
-		StructureVisualizerLoop,
-		StructureVisualizerProperty,
-		StructureVisualizerEvent,
-		StructureVisualizerTry,
-		StructureVisualizerCatch,
-		StructureVisualizerFilter,
-		StructureVisualizerFinally,
-		StructureVisualizerFault,
-		StructureVisualizerLock,
-		StructureVisualizerUsing,
-		StructureVisualizerFixed,
-		StructureVisualizerSwitch,
-		StructureVisualizerCase,
-		StructureVisualizerLocalFunction,
-		StructureVisualizerOther,
+		BlockStructureNamespace,
+		BlockStructureType,
+		BlockStructureModule,
+		BlockStructureValueType,
+		BlockStructureInterface,
+		BlockStructureMethod,
+		BlockStructureAccessor,
+		BlockStructureAnonymousMethod,
+		BlockStructureConstructor,
+		BlockStructureDestructor,
+		BlockStructureOperator,
+		BlockStructureConditional,
+		BlockStructureLoop,
+		BlockStructureProperty,
+		BlockStructureEvent,
+		BlockStructureTry,
+		BlockStructureCatch,
+		BlockStructureFilter,
+		BlockStructureFinally,
+		BlockStructureFault,
+		BlockStructureLock,
+		BlockStructureUsing,
+		BlockStructureFixed,
+		BlockStructureSwitch,
+		BlockStructureCase,
+		BlockStructureLocalFunction,
+		BlockStructureOther,
+		BlockStructureXml,
+		BlockStructureXaml,
 		CompletionMatchHighlight,
 		CompletionSuffix,
 		SignatureHelpDocumentation,
@@ -251,6 +254,78 @@ namespace dnSpy.Contracts.Text {
 		GacMatchHighlight,
 		AppSettingsTreeViewNodeMatchHighlight,
 		AppSettingsTextMatchHighlight,
+		HexCurrentLine,
+		HexCurrentLineNoFocus,
+		HexInactiveSelectedText,
+		HexColumnLine0,
+		HexColumnLine1,
+		HexColumnLineGroup0,
+		HexColumnLineGroup1,
+		HexHighlightedValuesColumn,
+		HexHighlightedAsciiColumn,
+		HexGlyphMargin,
+		HexCurrentValueCell,
+		HexCurrentAsciiCell,
+		OutputWindowText,
+		HexFindMatchHighlightMarker,
+		HexToolTipServiceField0,
+		HexToolTipServiceField1,
+		HexToolTipServiceCurrentField,
+		ListFindMatchHighlight,
+		AdvancedBreakpointStatement,
+		AdvancedBreakpointStatementMarker,
+		SelectedAdvancedBreakpointStatementMarker,
+		DisabledAdvancedBreakpointStatement,
+		DisabledAdvancedBreakpointStatementMarker,
+		SelectedDisabledAdvancedBreakpointStatementMarker,
+		BreakpointWarningStatement,
+		BreakpointWarningStatementMarker,
+		SelectedBreakpointWarningStatementMarker,
+		BreakpointErrorStatement,
+		BreakpointErrorStatementMarker,
+		SelectedBreakpointErrorStatementMarker,
+		AdvancedBreakpointWarningStatement,
+		AdvancedBreakpointWarningStatementMarker,
+		SelectedAdvancedBreakpointWarningStatementMarker,
+		AdvancedBreakpointErrorStatement,
+		AdvancedBreakpointErrorStatementMarker,
+		SelectedAdvancedBreakpointErrorStatementMarker,
+		TracepointStatement,
+		TracepointStatementMarker,
+		SelectedTracepointStatementMarker,
+		DisabledTracepointStatement,
+		DisabledTracepointStatementMarker,
+		SelectedDisabledTracepointStatementMarker,
+		AdvancedTracepointStatement,
+		AdvancedTracepointStatementMarker,
+		SelectedAdvancedTracepointStatementMarker,
+		DisabledAdvancedTracepointStatement,
+		DisabledAdvancedTracepointStatementMarker,
+		SelectedDisabledAdvancedTracepointStatementMarker,
+		TracepointWarningStatement,
+		TracepointWarningStatementMarker,
+		SelectedTracepointWarningStatementMarker,
+		TracepointErrorStatement,
+		TracepointErrorStatementMarker,
+		SelectedTracepointErrorStatementMarker,
+		AdvancedTracepointWarningStatement,
+		AdvancedTracepointWarningStatementMarker,
+		SelectedAdvancedTracepointWarningStatementMarker,
+		AdvancedTracepointErrorStatement,
+		AdvancedTracepointErrorStatementMarker,
+		SelectedAdvancedTracepointErrorStatementMarker,
+		BookmarkName,
+		ActiveBookmarkName,
+		DebugLogTrace,
+		DebugLogExtensionMessage,
+		DebuggerValueChangedHighlight,
+		DebugExceptionName,
+		DebugStowedExceptionName,
+		DebugReturnValueName,
+		DebugVariableName,
+		DebugObjectIdName,
+		DebuggerDisplayAttributeEval,
+		DebuggerNoStringQuotesEval,
 
 		/// <summary>
 		/// Must be last
@@ -281,6 +356,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object Enum = TextColor.Enum;
 		public static readonly object Interface = TextColor.Interface;
 		public static readonly object ValueType = TextColor.ValueType;
+		public static readonly object Module = TextColor.Module;
 		public static readonly object TypeGenericParameter = TextColor.TypeGenericParameter;
 		public static readonly object MethodGenericParameter = TextColor.MethodGenericParameter;
 		public static readonly object InstanceMethod = TextColor.InstanceMethod;
@@ -350,7 +426,7 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object XmlDocToolTipHeader = TextColor.XmlDocToolTipHeader;
 		public static readonly object Assembly = TextColor.Assembly;
 		public static readonly object AssemblyExe = TextColor.AssemblyExe;
-		public static readonly object Module = TextColor.Module;
+		public static readonly object AssemblyModule = TextColor.AssemblyModule;
 		public static readonly object DirectoryPart = TextColor.DirectoryPart;
 		public static readonly object FileNameNoExtension = TextColor.FileNameNoExtension;
 		public static readonly object FileExtension = TextColor.FileExtension;
@@ -436,33 +512,35 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object BraceMatching = TextColor.BraceMatching;
 		public static readonly object LineSeparator = TextColor.LineSeparator;
 		public static readonly object FindMatchHighlightMarker = TextColor.FindMatchHighlightMarker;
-		public static readonly object StructureVisualizerNamespace = TextColor.StructureVisualizerNamespace;
-		public static readonly object StructureVisualizerType = TextColor.StructureVisualizerType;
-		public static readonly object StructureVisualizerModule = TextColor.StructureVisualizerModule;
-		public static readonly object StructureVisualizerValueType = TextColor.StructureVisualizerValueType;
-		public static readonly object StructureVisualizerInterface = TextColor.StructureVisualizerInterface;
-		public static readonly object StructureVisualizerMethod = TextColor.StructureVisualizerMethod;
-		public static readonly object StructureVisualizerAccessor = TextColor.StructureVisualizerAccessor;
-		public static readonly object StructureVisualizerAnonymousMethod = TextColor.StructureVisualizerAnonymousMethod;
-		public static readonly object StructureVisualizerConstructor = TextColor.StructureVisualizerConstructor;
-		public static readonly object StructureVisualizerDestructor = TextColor.StructureVisualizerDestructor;
-		public static readonly object StructureVisualizerOperator = TextColor.StructureVisualizerOperator;
-		public static readonly object StructureVisualizerConditional = TextColor.StructureVisualizerConditional;
-		public static readonly object StructureVisualizerLoop = TextColor.StructureVisualizerLoop;
-		public static readonly object StructureVisualizerProperty = TextColor.StructureVisualizerProperty;
-		public static readonly object StructureVisualizerEvent = TextColor.StructureVisualizerEvent;
-		public static readonly object StructureVisualizerTry = TextColor.StructureVisualizerTry;
-		public static readonly object StructureVisualizerCatch = TextColor.StructureVisualizerCatch;
-		public static readonly object StructureVisualizerFilter = TextColor.StructureVisualizerFilter;
-		public static readonly object StructureVisualizerFinally = TextColor.StructureVisualizerFinally;
-		public static readonly object StructureVisualizerFault = TextColor.StructureVisualizerFault;
-		public static readonly object StructureVisualizerLock = TextColor.StructureVisualizerLock;
-		public static readonly object StructureVisualizerUsing = TextColor.StructureVisualizerUsing;
-		public static readonly object StructureVisualizerFixed = TextColor.StructureVisualizerFixed;
-		public static readonly object StructureVisualizerSwitch = TextColor.StructureVisualizerSwitch;
-		public static readonly object StructureVisualizerCase = TextColor.StructureVisualizerCase;
-		public static readonly object StructureVisualizerLocalFunction = TextColor.StructureVisualizerLocalFunction;
-		public static readonly object StructureVisualizerOther = TextColor.StructureVisualizerOther;
+		public static readonly object BlockStructureNamespace = TextColor.BlockStructureNamespace;
+		public static readonly object BlockStructureType = TextColor.BlockStructureType;
+		public static readonly object BlockStructureModule = TextColor.BlockStructureModule;
+		public static readonly object BlockStructureValueType = TextColor.BlockStructureValueType;
+		public static readonly object BlockStructureInterface = TextColor.BlockStructureInterface;
+		public static readonly object BlockStructureMethod = TextColor.BlockStructureMethod;
+		public static readonly object BlockStructureAccessor = TextColor.BlockStructureAccessor;
+		public static readonly object BlockStructureAnonymousMethod = TextColor.BlockStructureAnonymousMethod;
+		public static readonly object BlockStructureConstructor = TextColor.BlockStructureConstructor;
+		public static readonly object BlockStructureDestructor = TextColor.BlockStructureDestructor;
+		public static readonly object BlockStructureOperator = TextColor.BlockStructureOperator;
+		public static readonly object BlockStructureConditional = TextColor.BlockStructureConditional;
+		public static readonly object BlockStructureLoop = TextColor.BlockStructureLoop;
+		public static readonly object BlockStructureProperty = TextColor.BlockStructureProperty;
+		public static readonly object BlockStructureEvent = TextColor.BlockStructureEvent;
+		public static readonly object BlockStructureTry = TextColor.BlockStructureTry;
+		public static readonly object BlockStructureCatch = TextColor.BlockStructureCatch;
+		public static readonly object BlockStructureFilter = TextColor.BlockStructureFilter;
+		public static readonly object BlockStructureFinally = TextColor.BlockStructureFinally;
+		public static readonly object BlockStructureFault = TextColor.BlockStructureFault;
+		public static readonly object BlockStructureLock = TextColor.BlockStructureLock;
+		public static readonly object BlockStructureUsing = TextColor.BlockStructureUsing;
+		public static readonly object BlockStructureFixed = TextColor.BlockStructureFixed;
+		public static readonly object BlockStructureSwitch = TextColor.BlockStructureSwitch;
+		public static readonly object BlockStructureCase = TextColor.BlockStructureCase;
+		public static readonly object BlockStructureLocalFunction = TextColor.BlockStructureLocalFunction;
+		public static readonly object BlockStructureOther = TextColor.BlockStructureOther;
+		public static readonly object BlockStructureXml = TextColor.BlockStructureXml;
+		public static readonly object BlockStructureXaml = TextColor.BlockStructureXaml;
 		public static readonly object CompletionMatchHighlight = TextColor.CompletionMatchHighlight;
 		public static readonly object CompletionSuffix = TextColor.CompletionSuffix;
 		public static readonly object SignatureHelpDocumentation = TextColor.SignatureHelpDocumentation;
@@ -488,6 +566,78 @@ namespace dnSpy.Contracts.Text {
 		public static readonly object GacMatchHighlight = TextColor.GacMatchHighlight;
 		public static readonly object AppSettingsTreeViewNodeMatchHighlight = TextColor.AppSettingsTreeViewNodeMatchHighlight;
 		public static readonly object AppSettingsTextMatchHighlight = TextColor.AppSettingsTextMatchHighlight;
+		public static readonly object HexCurrentLine = TextColor.HexCurrentLine;
+		public static readonly object HexCurrentLineNoFocus = TextColor.HexCurrentLineNoFocus;
+		public static readonly object HexInactiveSelectedText = TextColor.HexInactiveSelectedText;
+		public static readonly object HexColumnLine0 = TextColor.HexColumnLine0;
+		public static readonly object HexColumnLine1 = TextColor.HexColumnLine1;
+		public static readonly object HexColumnLineGroup0 = TextColor.HexColumnLineGroup0;
+		public static readonly object HexColumnLineGroup1 = TextColor.HexColumnLineGroup1;
+		public static readonly object HexHighlightedValuesColumn = TextColor.HexHighlightedValuesColumn;
+		public static readonly object HexHighlightedAsciiColumn = TextColor.HexHighlightedAsciiColumn;
+		public static readonly object HexGlyphMargin = TextColor.HexGlyphMargin;
+		public static readonly object HexCurrentValueCell = TextColor.HexCurrentValueCell;
+		public static readonly object HexCurrentAsciiCell = TextColor.HexCurrentAsciiCell;
+		public static readonly object OutputWindowText = TextColor.OutputWindowText;
+		public static readonly object HexFindMatchHighlightMarker = TextColor.HexFindMatchHighlightMarker;
+		public static readonly object HexToolTipServiceField0 = TextColor.HexToolTipServiceField0;
+		public static readonly object HexToolTipServiceField1 = TextColor.HexToolTipServiceField1;
+		public static readonly object HexToolTipServiceCurrentField = TextColor.HexToolTipServiceCurrentField;
+		public static readonly object ListFindMatchHighlight = TextColor.ListFindMatchHighlight;
+		public static readonly object AdvancedBreakpointStatement = TextColor.AdvancedBreakpointStatement;
+		public static readonly object AdvancedBreakpointStatementMarker = TextColor.AdvancedBreakpointStatementMarker;
+		public static readonly object SelectedAdvancedBreakpointStatementMarker = TextColor.SelectedAdvancedBreakpointStatementMarker;
+		public static readonly object DisabledAdvancedBreakpointStatement = TextColor.DisabledAdvancedBreakpointStatement;
+		public static readonly object DisabledAdvancedBreakpointStatementMarker = TextColor.DisabledAdvancedBreakpointStatementMarker;
+		public static readonly object SelectedDisabledAdvancedBreakpointStatementMarker = TextColor.SelectedDisabledAdvancedBreakpointStatementMarker;
+		public static readonly object BreakpointWarningStatement = TextColor.BreakpointWarningStatement;
+		public static readonly object BreakpointWarningStatementMarker = TextColor.BreakpointWarningStatementMarker;
+		public static readonly object SelectedBreakpointWarningStatementMarker = TextColor.SelectedBreakpointWarningStatementMarker;
+		public static readonly object BreakpointErrorStatement = TextColor.BreakpointErrorStatement;
+		public static readonly object BreakpointErrorStatementMarker = TextColor.BreakpointErrorStatementMarker;
+		public static readonly object SelectedBreakpointErrorStatementMarker = TextColor.SelectedBreakpointErrorStatementMarker;
+		public static readonly object AdvancedBreakpointWarningStatement = TextColor.AdvancedBreakpointWarningStatement;
+		public static readonly object AdvancedBreakpointWarningStatementMarker = TextColor.AdvancedBreakpointWarningStatementMarker;
+		public static readonly object SelectedAdvancedBreakpointWarningStatementMarker = TextColor.SelectedAdvancedBreakpointWarningStatementMarker;
+		public static readonly object AdvancedBreakpointErrorStatement = TextColor.AdvancedBreakpointErrorStatement;
+		public static readonly object AdvancedBreakpointErrorStatementMarker = TextColor.AdvancedBreakpointErrorStatementMarker;
+		public static readonly object SelectedAdvancedBreakpointErrorStatementMarker = TextColor.SelectedAdvancedBreakpointErrorStatementMarker;
+		public static readonly object TracepointStatement = TextColor.TracepointStatement;
+		public static readonly object TracepointStatementMarker = TextColor.TracepointStatementMarker;
+		public static readonly object SelectedTracepointStatementMarker = TextColor.SelectedTracepointStatementMarker;
+		public static readonly object DisabledTracepointStatement = TextColor.DisabledTracepointStatement;
+		public static readonly object DisabledTracepointStatementMarker = TextColor.DisabledTracepointStatementMarker;
+		public static readonly object SelectedDisabledTracepointStatementMarker = TextColor.SelectedDisabledTracepointStatementMarker;
+		public static readonly object AdvancedTracepointStatement = TextColor.AdvancedTracepointStatement;
+		public static readonly object AdvancedTracepointStatementMarker = TextColor.AdvancedTracepointStatementMarker;
+		public static readonly object SelectedAdvancedTracepointStatementMarker = TextColor.SelectedAdvancedTracepointStatementMarker;
+		public static readonly object DisabledAdvancedTracepointStatement = TextColor.DisabledAdvancedTracepointStatement;
+		public static readonly object DisabledAdvancedTracepointStatementMarker = TextColor.DisabledAdvancedTracepointStatementMarker;
+		public static readonly object SelectedDisabledAdvancedTracepointStatementMarker = TextColor.SelectedDisabledAdvancedTracepointStatementMarker;
+		public static readonly object TracepointWarningStatement = TextColor.TracepointWarningStatement;
+		public static readonly object TracepointWarningStatementMarker = TextColor.TracepointWarningStatementMarker;
+		public static readonly object SelectedTracepointWarningStatementMarker = TextColor.SelectedTracepointWarningStatementMarker;
+		public static readonly object TracepointErrorStatement = TextColor.TracepointErrorStatement;
+		public static readonly object TracepointErrorStatementMarker = TextColor.TracepointErrorStatementMarker;
+		public static readonly object SelectedTracepointErrorStatementMarker = TextColor.SelectedTracepointErrorStatementMarker;
+		public static readonly object AdvancedTracepointWarningStatement = TextColor.AdvancedTracepointWarningStatement;
+		public static readonly object AdvancedTracepointWarningStatementMarker = TextColor.AdvancedTracepointWarningStatementMarker;
+		public static readonly object SelectedAdvancedTracepointWarningStatementMarker = TextColor.SelectedAdvancedTracepointWarningStatementMarker;
+		public static readonly object AdvancedTracepointErrorStatement = TextColor.AdvancedTracepointErrorStatement;
+		public static readonly object AdvancedTracepointErrorStatementMarker = TextColor.AdvancedTracepointErrorStatementMarker;
+		public static readonly object SelectedAdvancedTracepointErrorStatementMarker = TextColor.SelectedAdvancedTracepointErrorStatementMarker;
+		public static readonly object BookmarkName = TextColor.BookmarkName;
+		public static readonly object ActiveBookmarkName = TextColor.ActiveBookmarkName;
+		public static readonly object DebugLogTrace = TextColor.DebugLogTrace;
+		public static readonly object DebugLogExtensionMessage = TextColor.DebugLogExtensionMessage;
+		public static readonly object DebuggerValueChangedHighlight = TextColor.DebuggerValueChangedHighlight;
+		public static readonly object DebugExceptionName = TextColor.DebugExceptionName;
+		public static readonly object DebugStowedExceptionName = TextColor.DebugStowedExceptionName;
+		public static readonly object DebugReturnValueName = TextColor.DebugReturnValueName;
+		public static readonly object DebugVariableName = TextColor.DebugVariableName;
+		public static readonly object DebugObjectIdName = TextColor.DebugObjectIdName;
+		public static readonly object DebuggerDisplayAttributeEval = TextColor.DebuggerDisplayAttributeEval;
+		public static readonly object DebuggerNoStringQuotesEval = TextColor.DebuggerNoStringQuotesEval;
 
 		/// <summary>
 		/// Boxes <paramref name="color"/>
@@ -520,6 +670,7 @@ namespace dnSpy.Contracts.Text {
 			Enum,
 			Interface,
 			ValueType,
+			Module,
 			TypeGenericParameter,
 			MethodGenericParameter,
 			InstanceMethod,
@@ -589,7 +740,7 @@ namespace dnSpy.Contracts.Text {
 			XmlDocToolTipHeader,
 			Assembly,
 			AssemblyExe,
-			Module,
+			AssemblyModule,
 			DirectoryPart,
 			FileNameNoExtension,
 			FileExtension,
@@ -675,33 +826,35 @@ namespace dnSpy.Contracts.Text {
 			BraceMatching,
 			LineSeparator,
 			FindMatchHighlightMarker,
-			StructureVisualizerNamespace,
-			StructureVisualizerType,
-			StructureVisualizerModule,
-			StructureVisualizerValueType,
-			StructureVisualizerInterface,
-			StructureVisualizerMethod,
-			StructureVisualizerAccessor,
-			StructureVisualizerAnonymousMethod,
-			StructureVisualizerConstructor,
-			StructureVisualizerDestructor,
-			StructureVisualizerOperator,
-			StructureVisualizerConditional,
-			StructureVisualizerLoop,
-			StructureVisualizerProperty,
-			StructureVisualizerEvent,
-			StructureVisualizerTry,
-			StructureVisualizerCatch,
-			StructureVisualizerFilter,
-			StructureVisualizerFinally,
-			StructureVisualizerFault,
-			StructureVisualizerLock,
-			StructureVisualizerUsing,
-			StructureVisualizerFixed,
-			StructureVisualizerSwitch,
-			StructureVisualizerCase,
-			StructureVisualizerLocalFunction,
-			StructureVisualizerOther,
+			BlockStructureNamespace,
+			BlockStructureType,
+			BlockStructureModule,
+			BlockStructureValueType,
+			BlockStructureInterface,
+			BlockStructureMethod,
+			BlockStructureAccessor,
+			BlockStructureAnonymousMethod,
+			BlockStructureConstructor,
+			BlockStructureDestructor,
+			BlockStructureOperator,
+			BlockStructureConditional,
+			BlockStructureLoop,
+			BlockStructureProperty,
+			BlockStructureEvent,
+			BlockStructureTry,
+			BlockStructureCatch,
+			BlockStructureFilter,
+			BlockStructureFinally,
+			BlockStructureFault,
+			BlockStructureLock,
+			BlockStructureUsing,
+			BlockStructureFixed,
+			BlockStructureSwitch,
+			BlockStructureCase,
+			BlockStructureLocalFunction,
+			BlockStructureOther,
+			BlockStructureXml,
+			BlockStructureXaml,
 			CompletionMatchHighlight,
 			CompletionSuffix,
 			SignatureHelpDocumentation,
@@ -727,6 +880,78 @@ namespace dnSpy.Contracts.Text {
 			GacMatchHighlight,
 			AppSettingsTreeViewNodeMatchHighlight,
 			AppSettingsTextMatchHighlight,
+			HexCurrentLine,
+			HexCurrentLineNoFocus,
+			HexInactiveSelectedText,
+			HexColumnLine0,
+			HexColumnLine1,
+			HexColumnLineGroup0,
+			HexColumnLineGroup1,
+			HexHighlightedValuesColumn,
+			HexHighlightedAsciiColumn,
+			HexGlyphMargin,
+			HexCurrentValueCell,
+			HexCurrentAsciiCell,
+			OutputWindowText,
+			HexFindMatchHighlightMarker,
+			HexToolTipServiceField0,
+			HexToolTipServiceField1,
+			HexToolTipServiceCurrentField,
+			ListFindMatchHighlight,
+			AdvancedBreakpointStatement,
+			AdvancedBreakpointStatementMarker,
+			SelectedAdvancedBreakpointStatementMarker,
+			DisabledAdvancedBreakpointStatement,
+			DisabledAdvancedBreakpointStatementMarker,
+			SelectedDisabledAdvancedBreakpointStatementMarker,
+			BreakpointWarningStatement,
+			BreakpointWarningStatementMarker,
+			SelectedBreakpointWarningStatementMarker,
+			BreakpointErrorStatement,
+			BreakpointErrorStatementMarker,
+			SelectedBreakpointErrorStatementMarker,
+			AdvancedBreakpointWarningStatement,
+			AdvancedBreakpointWarningStatementMarker,
+			SelectedAdvancedBreakpointWarningStatementMarker,
+			AdvancedBreakpointErrorStatement,
+			AdvancedBreakpointErrorStatementMarker,
+			SelectedAdvancedBreakpointErrorStatementMarker,
+			TracepointStatement,
+			TracepointStatementMarker,
+			SelectedTracepointStatementMarker,
+			DisabledTracepointStatement,
+			DisabledTracepointStatementMarker,
+			SelectedDisabledTracepointStatementMarker,
+			AdvancedTracepointStatement,
+			AdvancedTracepointStatementMarker,
+			SelectedAdvancedTracepointStatementMarker,
+			DisabledAdvancedTracepointStatement,
+			DisabledAdvancedTracepointStatementMarker,
+			SelectedDisabledAdvancedTracepointStatementMarker,
+			TracepointWarningStatement,
+			TracepointWarningStatementMarker,
+			SelectedTracepointWarningStatementMarker,
+			TracepointErrorStatement,
+			TracepointErrorStatementMarker,
+			SelectedTracepointErrorStatementMarker,
+			AdvancedTracepointWarningStatement,
+			AdvancedTracepointWarningStatementMarker,
+			SelectedAdvancedTracepointWarningStatementMarker,
+			AdvancedTracepointErrorStatement,
+			AdvancedTracepointErrorStatementMarker,
+			SelectedAdvancedTracepointErrorStatementMarker,
+			BookmarkName,
+			ActiveBookmarkName,
+			DebugLogTrace,
+			DebugLogExtensionMessage,
+			DebuggerValueChangedHighlight,
+			DebugExceptionName,
+			DebugStowedExceptionName,
+			DebugReturnValueName,
+			DebugVariableName,
+			DebugObjectIdName,
+			DebuggerDisplayAttributeEval,
+			DebuggerNoStringQuotesEval,
 		};
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}

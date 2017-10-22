@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,21 +36,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly Dispatcher dispatcher;
 
 		public DecompileNodeContext(DecompilationContext decompilationContext, IDecompiler decompiler, IDecompilerOutput output, IDocumentWriterService documentWriterService, Dispatcher dispatcher) {
-			if (decompilationContext == null)
-				throw new ArgumentNullException(nameof(decompilationContext));
-			if (decompiler == null)
-				throw new ArgumentNullException(nameof(decompiler));
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			if (documentWriterService == null)
-				throw new ArgumentNullException(nameof(documentWriterService));
-			if (dispatcher == null)
-				throw new ArgumentNullException(nameof(dispatcher));
-			this.DecompilationContext = decompilationContext;
-			this.Decompiler = decompiler;
-			this.Output = output;
-			this.DocumentWriterService = documentWriterService;
-			this.dispatcher = dispatcher;
+			DecompilationContext = decompilationContext ?? throw new ArgumentNullException(nameof(decompilationContext));
+			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			Output = output ?? throw new ArgumentNullException(nameof(output));
+			DocumentWriterService = documentWriterService ?? throw new ArgumentNullException(nameof(documentWriterService));
+			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
 		}
 
 		public T UIThread<T>(Func<T> func) {

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,12 +34,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public ContextMenuInitializer(IWpfTextView textView, FrameworkElement ctrl) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (ctrl == null)
-				throw new ArgumentNullException(nameof(ctrl));
-			this.textView = textView;
-			this.ctrl = ctrl;
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.ctrl = ctrl ?? throw new ArgumentNullException(nameof(ctrl));
 		}
 
 		public void Initialize(IMenuItemContext context, ContextMenu menu) {

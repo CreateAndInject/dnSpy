@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,9 +45,7 @@ namespace dnSpy.Text.Editor {
 		readonly ILineSeparatorServiceProvider lineSeparatorServiceProvider;
 
 		[ImportingConstructor]
-		LineSeparatorWpfTextViewCreationListener(ILineSeparatorServiceProvider lineSeparatorServiceProvider) {
-			this.lineSeparatorServiceProvider = lineSeparatorServiceProvider;
-		}
+		LineSeparatorWpfTextViewCreationListener(ILineSeparatorServiceProvider lineSeparatorServiceProvider) => this.lineSeparatorServiceProvider = lineSeparatorServiceProvider;
 
 		public void TextViewCreated(IWpfTextView textView) =>
 			lineSeparatorServiceProvider.InstallLineSeparatorService(textView);
@@ -95,18 +93,12 @@ namespace dnSpy.Text.Editor {
 		Brush lineSeparatorBrush;
 
 		public LineSeparatorService(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (viewTagAggregatorFactoryService == null)
-				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			this.wpfTextView = wpfTextView;
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.editorFormatMapService = editorFormatMapService;
-			this.lineSeparatorElements = new List<LineSeparatorElement>();
-			this.usedLines = new HashSet<object>();
-			this.onRemovedDelegate = OnRemoved;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
+			lineSeparatorElements = new List<LineSeparatorElement>();
+			usedLines = new HashSet<object>();
+			onRemovedDelegate = OnRemoved;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			UpdateLineSeparator();

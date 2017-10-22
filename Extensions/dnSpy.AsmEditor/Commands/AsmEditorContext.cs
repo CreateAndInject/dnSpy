@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,8 +23,6 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class AsmEditorContext {
 		public DocumentTreeNodeData[] Nodes { get; }
 
-		public AsmEditorContext(DocumentTreeNodeData[] nodes) {
-			this.Nodes = nodes;
-		}
+		public AsmEditorContext(DocumentTreeNodeData[] nodes) => Nodes = nodes;
 	}
 }

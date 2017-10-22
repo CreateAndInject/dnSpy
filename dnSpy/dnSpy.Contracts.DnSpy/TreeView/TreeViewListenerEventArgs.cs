@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="event">Event</param>
 		/// <param name="arg">Argument</param>
 		public TreeViewListenerEventArgs(TreeViewListenerEvent @event, object arg) {
-			this.Event = @event;
-			this.Argument = arg;
+			Event = @event;
+			Argument = arg;
 		}
 	}
 }

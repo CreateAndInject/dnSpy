@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -34,6 +35,12 @@ using dnSpy.Contracts.Text.Classification;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Controls {
+	[Export(typeof(ITextElementFactory))]
+	sealed class TextElementFactoryImpl : ITextElementFactory {
+		public FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, IList<TextClassificationTag> tags, TextElementFlags flags) =>
+			TextElementFactory.Create(classificationFormatMap, text, tags, flags);
+	}
+
 	static class TextElementFactory {
 		static string ToString(string s, bool filterOutNewLines) {
 			if (!filterOutNewLines)
@@ -68,19 +75,19 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, List<TextClassificationTag> tagsList, TextElementFlags flags) {
+		public static FrameworkElement Create(IClassificationFormatMap classificationFormatMap, string text, IList<TextClassificationTag> tags, TextElementFlags flags) {
 			bool useFastTextBlock = (flags & (TextElementFlags.TrimmingMask | TextElementFlags.WrapMask | TextElementFlags.FilterOutNewLines)) == (TextElementFlags.NoTrimming | TextElementFlags.NoWrap | TextElementFlags.FilterOutNewLines);
 			bool filterOutNewLines = (flags & TextElementFlags.FilterOutNewLines) != 0;
-			if (tagsList.Count != 0) {
+			if (tags.Count != 0) {
 				if (useFastTextBlock) {
 					return new FastTextBlock((flags & TextElementFlags.NewFormatter) != 0, new TextSrc {
 						text = ToString(text, filterOutNewLines),
 						classificationFormatMap = classificationFormatMap,
-						tagsList = tagsList.ToArray(),
+						tagsList = tags.ToArray(),
 					});
 				}
 
-				var propsSpans = tagsList.Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
+				var propsSpans = tags.Select(a => new TextRunPropertiesAndSpan(a.Span, classificationFormatMap.GetTextProperties(a.ClassificationType)));
 				var textBlock = TextBlockFactory.Create(text, classificationFormatMap.DefaultTextProperties, propsSpans, TextBlockFactory.Flags.DisableSetTextBlockFontFamily | TextBlockFactory.Flags.DisableFontSize | (filterOutNewLines ? TextBlockFactory.Flags.FilterOutNewlines : 0));
 				textBlock.TextTrimming = GetTextTrimming(flags);
 				textBlock.TextWrapping = GetTextWrapping(flags);
@@ -153,31 +160,25 @@ namespace dnSpy.Controls {
 				public override Typeface Typeface => typeface;
 			}
 
-			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) {
-				return new TextSpan<CultureSpecificCharacterBufferRange>(0,
+			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) => new TextSpan<CultureSpecificCharacterBufferRange>(0,
 					new CultureSpecificCharacterBufferRange(CultureInfo.CurrentUICulture, new CharacterBufferRange(string.Empty, 0, 0)));
-			}
 
-			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) {
-				throw new NotSupportedException();
-			}
+			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) => throw new NotSupportedException();
 
 			public void UpdateParent(FastTextBlock ftb) => parent = ftb;
 			public TextSource Source => this;
 
-			TextRunProperties GetDefaultTextRunProperties() {
-				return new TextProps {
-					background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
-					foreground = TextElement.GetForeground(parent),
-					typeface = new Typeface(
-											TextElement.GetFontFamily(parent),
-											TextElement.GetFontStyle(parent),
-											TextElement.GetFontWeight(parent),
-											TextElement.GetFontStretch(parent)
+			TextRunProperties GetDefaultTextRunProperties() => new TextProps {
+				background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
+				foreground = TextElement.GetForeground(parent),
+				typeface = new Typeface(
+										TextElement.GetFontFamily(parent),
+										TextElement.GetFontStyle(parent),
+										TextElement.GetFontWeight(parent),
+										TextElement.GetFontStretch(parent)
 										),
-					fontSize = TextElement.GetFontSize(parent),
-				};
-			}
+				fontSize = TextElement.GetFontSize(parent),
+			};
 
 			int GetStartIndex(int position) {
 				var list = tagsList;

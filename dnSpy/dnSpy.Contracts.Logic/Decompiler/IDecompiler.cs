@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,6 +31,11 @@ namespace dnSpy.Contracts.Decompiler {
 		/// Gets the settings
 		/// </summary>
 		DecompilerSettingsBase Settings { get; }
+
+		/// <summary>
+		/// Gets the <see cref="Decompiler.MetadataTextColorProvider"/> instance
+		/// </summary>
+		MetadataTextColorProvider MetadataTextColorProvider { get; }
 
 		/// <summary>
 		/// Gets the content type string
@@ -176,8 +181,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="variable">Local or argument</param>
-		/// <param name="name">Name or null</param>
-		void WriteToolTip(ITextColorWriter output, IVariable variable, string name);
+		void WriteToolTip(ITextColorWriter output, ISourceVariable variable);
 
 		/// <summary>
 		/// Writes a namespace tooltip
@@ -192,7 +196,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="output">Output</param>
 		/// <param name="member">Member</param>
 		/// <param name="flags">Flags</param>
-		void Write(ITextColorWriter output, IMemberRef member, SimplePrinterFlags flags);
+		void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags);
 
 		/// <summary>
 		/// Writes a comment prefix

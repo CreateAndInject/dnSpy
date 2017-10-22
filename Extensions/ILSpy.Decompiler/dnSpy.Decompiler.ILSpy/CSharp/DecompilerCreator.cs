@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.Decompiler.ILSpy.CSharp {
 		readonly DecompilerSettingsService decompilerSettingsService;
 
 		[ImportingConstructor]
-		MyDecompilerCreator(DecompilerSettingsService decompilerSettingsService) {
-			this.decompilerSettingsService = decompilerSettingsService;
-		}
+		MyDecompilerCreator(DecompilerSettingsService decompilerSettingsService) => this.decompilerSettingsService = decompilerSettingsService;
 
 		public IEnumerable<IDecompiler> Create() => new DecompilerProvider(decompilerSettingsService).Create();
 	}

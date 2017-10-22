@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,10 +26,6 @@ namespace dnSpy.Text.Formatting {
 		public bool ShouldRenderText => true;
 		public IMappingSpan Span { get; }
 
-		public TextSequenceElement(IMappingSpan span) {
-			if (span == null)
-				throw new ArgumentNullException(nameof(span));
-			Span = span;
-		}
+		public TextSequenceElement(IMappingSpan span) => Span = span ?? throw new ArgumentNullException(nameof(span));
 	}
 }

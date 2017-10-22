@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,6 +24,11 @@ namespace dnSpy.Contracts.Decompiler {
 	/// Instruction bytes reader
 	/// </summary>
 	public interface IInstructionBytesReader : IDisposable {
+		/// <summary>
+		/// true if it's reading the original bytes, false if the method has been modified
+		/// </summary>
+		bool IsOriginalBytes { get; }
+
 		/// <summary>
 		/// Reads the next byte or returns a value less than 0 if the byte is unknown
 		/// </summary>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,18 @@ namespace dnSpy.Contracts.Output {
 	public interface IOutputServiceListener {
 	}
 
+	/// <summary>
+	/// Gets created when <see cref="IOutputService"/> gets created. Use
+	/// <see cref="ExportOutputServiceListenerAttribute"/> to export an instance.
+	/// </summary>
+	public interface IOutputServiceListener2 : IOutputServiceListener {
+		/// <summary>
+		/// Called to initialize the instance
+		/// </summary>
+		/// <param name="outputService">Output service</param>
+		void Initialize(IOutputService outputService);
+	}
+
 	/// <summary>Metadata</summary>
 	public interface IOutputServiceListenerMetadata {
 		/// <summary>See <see cref="ExportOutputServiceListenerAttribute.Order"/></summary>
@@ -47,9 +59,7 @@ namespace dnSpy.Contracts.Output {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance</param>
 		public ExportOutputServiceListenerAttribute(double order)
-			: base(typeof(IOutputServiceListener)) {
-			Order = order;
-		}
+			: base(typeof(IOutputServiceListener)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

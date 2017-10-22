@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -56,19 +56,19 @@ namespace dnSpy.AsmEditor.Resources {
 		public ImageListStreamerVM ImageListStreamerVM { get; }
 
 		public ImageListVM(ImageListOptions options) {
-			this.origOptions = options;
+			origOptions = options;
 
-			this.ImageListStreamerVM = new ImageListStreamerVM();
+			ImageListStreamerVM = new ImageListStreamerVM();
 			ImageListStreamerVM.Collection.CollectionChanged += (s, e) => HasErrorUpdated();
-			this.WidthVM = new Int32VM(a => HasErrorUpdated(), true) {
+			WidthVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 1,
 				Max = 256,
 			};
-			this.HeightVM = new Int32VM(a => HasErrorUpdated(), true) {
+			HeightVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 1,
 				Max = 256,
 			};
-			this.TransparentColorVM = new DefaultConverterVM<Color>(a => HasErrorUpdated());
+			TransparentColorVM = new DefaultConverterVM<Color>(a => HasErrorUpdated());
 
 			Reinitialize();
 		}

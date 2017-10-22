@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,19 +53,17 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public bool AutoColorizeObjects { get; set; }
 
 		public PrintOptionsImpl() {
-			this.printOptions = new PrintOptions();
-			this.AutoColorizeObjects = true;
+			printOptions = new PrintOptions();
+			AutoColorizeObjects = true;
 		}
 
-		public PrintOptionsImpl Clone() {
-			return new PrintOptionsImpl {
-				Ellipsis = Ellipsis,
-				EscapeNonPrintableCharacters = EscapeNonPrintableCharacters,
-				MaximumOutputLength = MaximumOutputLength,
-				MemberDisplayFormat = MemberDisplayFormat,
-				NumberRadix = NumberRadix,
-				AutoColorizeObjects = AutoColorizeObjects,
-			};
-		}
+		public PrintOptionsImpl Clone() => new PrintOptionsImpl {
+			Ellipsis = Ellipsis,
+			EscapeNonPrintableCharacters = EscapeNonPrintableCharacters,
+			MaximumOutputLength = MaximumOutputLength,
+			MemberDisplayFormat = MemberDisplayFormat,
+			NumberRadix = NumberRadix,
+			AutoColorizeObjects = AutoColorizeObjects,
+		};
 	}
 }

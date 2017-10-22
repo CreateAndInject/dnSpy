@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -67,17 +67,17 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// <summary>
 		/// Icon
 		/// </summary>
-		public sealed override ImageReference Icon => GetIcon(this.Context.DocumentTreeView.DotNetImageService);
+		public sealed override ImageReference Icon => GetIcon(Context.DocumentTreeView.DotNetImageService);
 
 		/// <summary>
 		/// Expanded icon or null to use <see cref="Icon"/>
 		/// </summary>
-		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(this.Context.DocumentTreeView.DotNetImageService);
+		public sealed override ImageReference? ExpandedIcon => GetExpandedIcon(Context.DocumentTreeView.DotNetImageService);
 
 		static class Cache {
 			static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 			public static TextClassifierTextColorWriter GetWriter() => writer;
-			public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+			public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public sealed override void OnEnsureChildrenLoaded() {
 			if (refilter) {
 				refilter = false;
-				foreach (var node in this.TreeNode.DataChildren.OfType<DocumentTreeNodeData>())
+				foreach (var node in TreeNode.DataChildren.OfType<DocumentTreeNodeData>())
 					Filter(node);
 			}
 		}
@@ -283,7 +283,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 				return;
 			}
 
-			foreach (var node in this.TreeNode.DataChildren)
+			foreach (var node in TreeNode.DataChildren)
 				Filter(node as DocumentTreeNodeData);
 		}
 
@@ -363,8 +363,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		public static DsDocumentNode GetTopNode(this TreeNodeData self) {
 			var root = self == null ? null : self.TreeNode.TreeView.Root;
 			while (self != null) {
-				var found = self as DsDocumentNode;
-				if (found != null) {
+				if (self is DsDocumentNode found) {
 					var p = found.TreeNode.Parent;
 					if (p == null || p == root)
 						return found;

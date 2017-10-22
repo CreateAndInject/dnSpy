@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,14 +37,10 @@ namespace dnSpy.Text.Classification {
 		readonly Dictionary<string, ResourceDictionary> resourceDicts;
 
 		public CategoryEditorFormatMap(Dispatcher dispatcher, IEditorFormatDefinitionService editorFormatDefinitionService) {
-			if (dispatcher == null)
-				throw new ArgumentNullException(nameof(dispatcher));
-			if (editorFormatDefinitionService == null)
-				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
-			this.dispatcher = dispatcher;
-			this.editorFormatDefinitionService = editorFormatDefinitionService;
-			this.batchChanges = new HashSet<string>();
-			this.resourceDicts = new Dictionary<string, ResourceDictionary>(StringComparer.Ordinal);
+			this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
+			this.editorFormatDefinitionService = editorFormatDefinitionService ?? throw new ArgumentNullException(nameof(editorFormatDefinitionService));
+			batchChanges = new HashSet<string>(StringComparer.Ordinal);
+			resourceDicts = new Dictionary<string, ResourceDictionary>(StringComparer.Ordinal);
 		}
 
 		public void BeginBatchUpdate() {
@@ -85,8 +81,7 @@ namespace dnSpy.Text.Classification {
 		public ResourceDictionary GetProperties(string key) {
 			if (key == null)
 				throw new ArgumentNullException(nameof(key));
-			ResourceDictionary resDict;
-			if (resourceDicts.TryGetValue(key, out resDict))
+			if (resourceDicts.TryGetValue(key, out var resDict))
 				return resDict;
 			resDict = editorFormatDefinitionService.GetDefinition(key)?.CreateResourceDictionary() ?? new ResourceDictionary();
 			resourceDicts.Add(key, resDict);

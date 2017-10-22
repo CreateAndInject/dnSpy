@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,10 +61,6 @@ namespace dnSpy.Text.Formatting {
 				throw new ArgumentNullException(nameof(sourceTextSnapshot));
 			if (visualBufferSnapshot == null)
 				throw new ArgumentNullException(nameof(visualBufferSnapshot));
-			if (aggregateClassifier == null)
-				throw new ArgumentNullException(nameof(aggregateClassifier));
-			if (sequencer == null)
-				throw new ArgumentNullException(nameof(sequencer));
 			if (classificationFormatMap == null)
 				throw new ArgumentNullException(nameof(classificationFormatMap));
 			if (tabSize <= 0)
@@ -72,8 +68,8 @@ namespace dnSpy.Text.Formatting {
 			if (sourceTextSnapshot != visualBufferSnapshot)
 				throw new NotSupportedException("Text snapshot must be identical to visual snapshot");
 
-			this.textFormatter = textFormatterProvider.Create(useDisplayMode);
-			this.formattedTextCache = new FormattedTextCache(useDisplayMode);
+			textFormatter = textFormatterProvider.Create(useDisplayMode);
+			formattedTextCache = new FormattedTextCache(useDisplayMode);
 			this.textParagraphPropertiesFactoryService = textParagraphPropertiesFactoryService;
 			SourceTextSnapshot = sourceTextSnapshot;
 			TopTextSnapshot = visualBufferSnapshot;
@@ -83,14 +79,14 @@ namespace dnSpy.Text.Formatting {
 			WordWrapWidth = wordWrapWidth;
 			MaxAutoIndent = Math.Round(maxAutoIndent);
 			ColumnWidth = formattedTextCache.GetColumnWidth(classificationFormatMap.DefaultTextProperties);
-			this.wrapGlyphWidth = isViewWrapEnabled ? 1.5 * ColumnWidth : 0;
+			wrapGlyphWidth = isViewWrapEnabled ? 1.5 * ColumnWidth : 0;
 			LineHeight = WpfTextViewLine.DEFAULT_TOP_SPACE + WpfTextViewLine.DEFAULT_BOTTOM_SPACE + formattedTextCache.GetLineHeight(classificationFormatMap.DefaultTextProperties);
 			TextHeightAboveBaseline = formattedTextCache.GetTextHeightAboveBaseline(classificationFormatMap.DefaultTextProperties);
 			TextHeightBelowBaseline = formattedTextCache.GetTextHeightBelowBaseline(classificationFormatMap.DefaultTextProperties);
-			TextAndAdornmentSequencer = sequencer;
-			this.aggregateClassifier = aggregateClassifier;
+			TextAndAdornmentSequencer = sequencer ?? throw new ArgumentNullException(nameof(sequencer));
+			this.aggregateClassifier = aggregateClassifier ?? throw new ArgumentNullException(nameof(aggregateClassifier));
 			this.classificationFormatMap = classificationFormatMap;
-			this.defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
+			defaultTextParagraphProperties = new TextFormattingParagraphProperties(classificationFormatMap.DefaultTextProperties, ColumnWidth * TabSize);
 		}
 
 		ITextSnapshotLine GetBufferLine(ITextAndAdornmentCollection coll) =>
@@ -217,8 +213,7 @@ namespace dnSpy.Text.Formatting {
 					}
 				}
 				else {
-					var adornmentElement = seqElem as IAdornmentElement;
-					if (adornmentElement != null && seqSpans.Count == 1) {
+					if (seqElem is IAdornmentElement adornmentElement && seqSpans.Count == 1) {
 						var span = seqSpans[0].Span;
 						list.Add(new LinePart(list.Count, column, new Span(span.Start - startOffs, span.Length), adornmentElement, DefaultTextProperties));
 						column += list[list.Count - 1].ColumnLength;

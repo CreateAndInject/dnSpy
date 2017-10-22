@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,34 +27,32 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Editor.OptionsExtensionMethods;
 
 namespace dnSpy.Text.Classification {
-	sealed class ViewEditorFormatMap : IEditorFormatMap {
+	abstract class ViewEditorFormatMap : IEditorFormatMap {
 		public bool IsInBatchUpdate => categoryMap.IsInBatchUpdate;
 		public event EventHandler<FormatItemsEventArgs> FormatMappingChanged;
 
-		readonly ITextView textView;
-		readonly IEditorFormatMapService editorFormatMapService;
+		readonly EditorFormatMapService editorFormatMapService;
+		readonly string appearanceCategoryName;
 		IEditorFormatMap categoryMap;
 		readonly HashSet<string> viewProps;
 
-		public ViewEditorFormatMap(ITextView textView, IEditorFormatMapService editorFormatMapService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			this.textView = textView;
-			this.editorFormatMapService = editorFormatMapService;
-			this.viewProps = new HashSet<string>();
-			textView.Options.OptionChanged += Options_OptionChanged;
-			UpdateAppearanceMap();
+		protected ViewEditorFormatMap(EditorFormatMapService editorFormatMapService, string appearanceCategoryName) {
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
+			this.appearanceCategoryName = appearanceCategoryName ?? throw new ArgumentNullException(nameof(appearanceCategoryName));
+			viewProps = new HashSet<string>(StringComparer.Ordinal);
 		}
 
-		void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
-			if (e.OptionId == DefaultWpfViewOptions.AppearanceCategoryName)
+		protected void Initialize() => UpdateAppearanceMap();
+
+		protected void Options_OptionChanged(object sender, EditorOptionChangedEventArgs e) {
+			if (e.OptionId == appearanceCategoryName)
 				UpdateAppearanceMap();
 		}
 
+		protected abstract string GetAppearanceCategory();
+
 		void UpdateAppearanceMap() {
-			var newMap = editorFormatMapService.GetEditorFormatMap(textView.Options.AppearanceCategory());
+			var newMap = editorFormatMapService.GetEditorFormatMap(GetAppearanceCategory());
 			if (categoryMap == newMap)
 				return;
 
@@ -89,7 +87,23 @@ namespace dnSpy.Text.Classification {
 		public void Dispose() {
 			if (categoryMap != null)
 				categoryMap.FormatMappingChanged -= CategoryMap_FormatMappingChanged;
-			textView.Options.OptionChanged -= Options_OptionChanged;
+			DisposeCore();
 		}
+
+		protected abstract void DisposeCore();
+	}
+
+	sealed class TextViewEditorFormatMap : ViewEditorFormatMap {
+		readonly ITextView textView;
+
+		public TextViewEditorFormatMap(ITextView textView, EditorFormatMapService editorFormatMapService)
+			: base(editorFormatMapService, DefaultWpfViewOptions.AppearanceCategoryName) {
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
+			textView.Options.OptionChanged += Options_OptionChanged;
+			Initialize();
+		}
+
+		protected override string GetAppearanceCategory() => textView.Options.AppearanceCategory();
+		protected override void DisposeCore() => textView.Options.OptionChanged -= Options_OptionChanged;
 	}
 }

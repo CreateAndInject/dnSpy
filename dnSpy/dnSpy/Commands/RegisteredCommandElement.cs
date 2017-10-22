@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,9 +47,7 @@ namespace dnSpy.Commands {
 		sealed class CommandTargetCollection : ICommandTargetCollection {
 			RegisteredCommandElement registeredCommandElement;
 
-			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) {
-				this.registeredCommandElement = registeredCommandElement;
-			}
+			public CommandTargetCollection(RegisteredCommandElement registeredCommandElement) => this.registeredCommandElement = registeredCommandElement;
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 				if (registeredCommandElement?.TryGetTargetOrUnregister() == null) {
@@ -83,8 +81,8 @@ namespace dnSpy.Commands {
 			readonly WeakReference ownerWeakRef;
 
 			public NextCommandTarget(RegisteredCommandElement owner, ICommandTargetFilter filter) {
-				this.ownerWeakRef = new WeakReference(owner);
-				this.filterWeakRef = new WeakReference(filter);
+				ownerWeakRef = new WeakReference(owner);
+				filterWeakRef = new WeakReference(filter);
 			}
 
 			public CommandTargetStatus CanExecute(Guid group, int cmdId) {
@@ -110,19 +108,15 @@ namespace dnSpy.Commands {
 		}
 
 		public RegisteredCommandElement(CommandService commandService, UIElement sourceElement, KeyShortcutCollection keyShortcutCollection, object target) {
-			if (commandService == null)
-				throw new ArgumentNullException(nameof(commandService));
 			if (sourceElement == null)
 				throw new ArgumentNullException(nameof(sourceElement));
-			if (keyShortcutCollection == null)
-				throw new ArgumentNullException(nameof(keyShortcutCollection));
 			if (target == null)
 				throw new ArgumentNullException(nameof(target));
-			this.commandService = commandService;
-			this.weakSourceElement = new WeakReference(sourceElement);
-			this.weakTarget = new WeakReference(target);
-			this.keyShortcutCollection = keyShortcutCollection;
-			this.commandTargetInfos = new List<CommandTargetFilterInfo>();
+			this.commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
+			weakSourceElement = new WeakReference(sourceElement);
+			weakTarget = new WeakReference(target);
+			this.keyShortcutCollection = keyShortcutCollection ?? throw new ArgumentNullException(nameof(keyShortcutCollection));
+			commandTargetInfos = new List<CommandTargetFilterInfo>();
 			CommandTarget = new CommandTargetCollection(this);
 			sourceElement.PreviewKeyDown += SourceElement_PreviewKeyDown;
 			sourceElement.PreviewTextInput += SourceElement_PreviewTextInput;
@@ -153,7 +147,7 @@ namespace dnSpy.Commands {
 				if (keyShortcutCollection.IsTwoKeyCombo(keyInput)) {
 					waitForSecondKey = true;
 					prevKey = keyInput;
-					result = default(ProviderAndCommand);
+					result = default;
 				}
 				else {
 					waitForSecondKey = false;
@@ -170,8 +164,7 @@ namespace dnSpy.Commands {
 			var target = TryGetTargetOrUnregister();
 			if (target == null)
 				return;
-			bool waitForSecondKey;
-			var cmd = GetCommand(e, target, out waitForSecondKey);
+			var cmd = GetCommand(e, target, out bool waitForSecondKey);
 			if (waitForSecondKey) {
 				e.Handled = true;
 				return;

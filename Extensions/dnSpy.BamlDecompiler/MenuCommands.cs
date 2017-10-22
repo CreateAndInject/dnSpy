@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly BamlSettingsImpl bamlSettings;
 
 		[ImportingConstructor]
-		DisassembleBamlCommand(BamlSettingsImpl bamlSettings) {
-			this.bamlSettings = bamlSettings;
-		}
+		DisassembleBamlCommand(BamlSettingsImpl bamlSettings) => this.bamlSettings = bamlSettings;
 
 		public override void Execute(IMenuItemContext context) => bamlSettings.DisassembleBaml = !bamlSettings.DisassembleBaml;
 		public override bool IsChecked(IMenuItemContext context) => bamlSettings.DisassembleBaml;

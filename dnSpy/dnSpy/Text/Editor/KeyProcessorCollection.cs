@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,13 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class KeyProcessorCollection {
@@ -35,8 +33,8 @@ namespace dnSpy.Text.Editor {
 
 		public KeyProcessorCollection(IWpfTextView wpfTextView, Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders) {
 			this.wpfTextView = wpfTextView;
-			this.keyProcessorProviders = Orderer.Order(keyProcessorProviders).ToArray();
-			this.keyProcessors = Array.Empty<KeyProcessor>();
+			this.keyProcessorProviders = keyProcessorProviders;
+			keyProcessors = Array.Empty<KeyProcessor>();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			wpfTextView.VisualElement.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(VisualElement_KeyDown), true);
@@ -53,10 +51,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void VisualElement_KeyDown(object sender, KeyEventArgs e) {
-			// Copy it to a local in case it gets updated when calling the KeyProcessor.
-			// The compiler will probably do it already, but just in case...
-			var array = keyProcessors;
-			foreach (var keyProcessor in array) {
+			foreach (var keyProcessor in keyProcessors) {
 				if (keyProcessor.IsInterestedInHandledEvents || !e.Handled)
 					keyProcessor.KeyDown(e);
 			}

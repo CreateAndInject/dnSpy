@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,8 +42,19 @@ namespace dnSpy.Settings.Dialog {
 		public double Order => Page.Order;
 		public List<AppSettingsPageVM> Children { get; }
 		internal AppSettingsPage Page { get; }
-		public object UIObject => uiObject ?? (uiObject = GetOrCreateUIObject());
-		object uiObject;
+		public object UIObject => VisiblePageAndUIObject.UIObject;
+		internal AppSettingsPageVM VisiblePage => VisiblePageAndUIObject.Page;
+		PageAndUIObject VisiblePageAndUIObject => pageAndUIObject ?? (pageAndUIObject = GetOrCreatePageAndUIObject());
+		PageAndUIObject pageAndUIObject;
+
+		sealed class PageAndUIObject {
+			public AppSettingsPageVM Page { get; }
+			public object UIObject { get; }
+			public PageAndUIObject(AppSettingsPageVM page, object uiObject) {
+				Page = page;
+				UIObject = uiObject;
+			}
+		}
 
 		public bool SavedIsExpanded { get; set; }
 
@@ -59,31 +70,27 @@ namespace dnSpy.Settings.Dialog {
 		readonly PageContext context;
 
 		public AppSettingsPageVM(AppSettingsPage page, PageContext context) {
-			if (page == null)
-				throw new ArgumentNullException(nameof(page));
-			if (context == null)
-				throw new ArgumentNullException(nameof(context));
-			Page = page;
+			Page = page ?? throw new ArgumentNullException(nameof(page));
 			Children = new List<AppSettingsPageVM>();
-			this.context = context;
+			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
-		object GetOrCreateUIObject() {
+		PageAndUIObject GetOrCreatePageAndUIObject() {
 			var uiObj = context.PageUIObjectLoader.GetUIObject(Page);
 			if (uiObj != null)
-				return createdUIObject ?? (createdUIObject = CreateUIObject(uiObj));
+				return createdPageAndUIObject ?? (createdPageAndUIObject = new PageAndUIObject(this, CreateUIObject(uiObj)));
 
 			// Try to pick a visible child
 			foreach (var child in Children) {
 				if (!child.TreeNode.IsHidden)
-					return child.UIObject;
+					return child.VisiblePageAndUIObject;
 			}
 
 			if (Children.Count == 0)
 				return null;
-			return Children[0].UIObject;
+			return Children[0].VisiblePageAndUIObject;
 		}
-		object createdUIObject;
+		PageAndUIObject createdPageAndUIObject;
 
 		static object CreateUIObject(object uiObj) {
 			if (uiObj is ScrollViewer)
@@ -95,10 +102,9 @@ namespace dnSpy.Settings.Dialog {
 			};
 		}
 
-		public void ClearUICache() {
+		public void ClearUICache() =>
 			// Make sure we don't show hidden pages
-			uiObject = null;
-		}
+			pageAndUIObject = null;
 
 		public void RefreshUI() {
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UIObject)));
@@ -123,8 +129,7 @@ namespace dnSpy.Settings.Dialog {
 			if (obj == null)
 				return Array.Empty<string>();
 
-			var uiElem = obj as UIElement;
-			if (uiElem != null)
+			if (obj is UIElement uiElem)
 				return GetStrings(uiElem);
 
 			var key = new DataTemplateKey(obj as Type ?? obj.GetType());

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,10 +36,8 @@ namespace dnSpy.Contracts.Language.Intellisense {
 		/// </summary>
 		/// <param name="searchText">Search text</param>
 		public CompletionFilter(string searchText) {
-			if (searchText == null)
-				throw new ArgumentNullException(nameof(searchText));
-			this.searchText = searchText;
-			this.acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);
+			this.searchText = searchText ?? throw new ArgumentNullException(nameof(searchText));
+			acronymMatchIndexes = AcronymSearchHelpers.TryCreateMatchIndexes(searchText);
 		}
 
 		bool TryUpdateAcronymIndexes(string completionText) =>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Language.Intellisense {
 			: base(session) {
 			wpfTextView = session.TextView as IWpfTextView;
 			Debug.Assert(wpfTextView != null);
-			this.popup = new Popup {
+			popup = new Popup {
 				PlacementTarget = wpfTextView?.VisualElement,
 				Placement = PlacementMode.Relative,
 				Visibility = Visibility.Collapsed,
@@ -83,27 +83,41 @@ namespace dnSpy.Language.Intellisense {
 
 			wpfTextView.VisualElement.MouseLeave += VisualElement_MouseLeave;
 			wpfTextView.VisualElement.MouseMove += VisualElement_MouseMove;
+			popup.AddHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave), handledEventsToo: true);
 			wpfTextView.Caret.PositionChanged += Caret_PositionChanged;
 			wpfTextView.LayoutChanged += TextView_LayoutChanged;
 			return true;
 		}
 
-		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => session.Dismiss();
+		void Popup_MouseLeave(object sender, MouseEventArgs e) => DismissIfNeeded(e);
+		void VisualElement_MouseLeave(object sender, MouseEventArgs e) => DismissIfNeeded(e);
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => session.Dismiss();
 		void Caret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => session.Dismiss();
+		void VisualElement_MouseMove(object sender, MouseEventArgs e) => DismissIfNeeded(e);
 
-		void VisualElement_MouseMove(object sender, MouseEventArgs e) {
+		void DismissIfNeeded(MouseEventArgs e) {
 			if (session.IsDismissed)
 				return;
-			var mousePos = GetMousePoint(e.MouseDevice);
-			if (mousePos == null || !IsMouseWithinSpan(mousePos.Value))
+			if (ShouldDismiss(e))
 				session.Dismiss();
+		}
+
+		bool ShouldDismiss(MouseEventArgs e) {
+			var mousePos = GetMousePoint(e.MouseDevice);
+			if (mousePos == null)
+				return true;
+			if (IsMouseWithinSpan(mousePos.Value) && wpfTextView.VisualElement.IsMouseOver)
+				return false;
+			if (popup.IsMouseOver)
+				return false;
+			// Not over popup or applicable-to-span
+			return true;
 		}
 
 		Point? GetMousePoint(MouseDevice device) {
 			if (wpfTextView == null)
 				return null;
-			var mousePos = Mouse.PrimaryDevice.GetPosition(wpfTextView.VisualElement);
+			var mousePos = device.GetPosition(wpfTextView.VisualElement);
 			mousePos.X += wpfTextView.ViewportLeft;
 			mousePos.Y += wpfTextView.ViewportTop;
 			return mousePos;
@@ -117,7 +131,7 @@ namespace dnSpy.Language.Intellisense {
 			var lines = session.TextView.TextViewLines.GetTextViewLinesIntersectingSpan(span);
 			foreach (var line in lines) {
 				foreach (var bounds in line.GetNormalizedTextBounds(span)) {
-					if (bounds.Left <= mousePos.X && mousePos.X < bounds.Right && bounds.TextTop <= mousePos.Y && mousePos.Y < bounds.TextBottom)
+					if (bounds.Left <= mousePos.X && mousePos.X < bounds.Right && bounds.Top <= mousePos.Y && mousePos.Y < bounds.Bottom)
 						return true;
 				}
 			}
@@ -135,6 +149,7 @@ namespace dnSpy.Language.Intellisense {
 			if (wpfTextView != null) {
 				wpfTextView.VisualElement.MouseLeave -= VisualElement_MouseLeave;
 				wpfTextView.VisualElement.MouseMove -= VisualElement_MouseMove;
+				popup.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(Popup_MouseLeave));
 				wpfTextView.Caret.PositionChanged -= Caret_PositionChanged;
 				wpfTextView.LayoutChanged -= TextView_LayoutChanged;
 			}

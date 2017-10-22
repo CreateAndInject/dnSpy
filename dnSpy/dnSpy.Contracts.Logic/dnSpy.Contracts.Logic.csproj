@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BB748E78-376F-429A-8D83-9A8946EC179F}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.Contracts</RootNamespace>
     <AssemblyName>dnSpy.Contracts.Logic</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,6 +55,7 @@
     <Compile Include="Decompiler\DecompileTypeBase.cs" />
     <Compile Include="Decompiler\DecompileTypeMethods.cs" />
     <Compile Include="Decompiler\Extensions.cs" />
+    <Compile Include="Decompiler\FormatterOptions.cs" />
     <Compile Include="Decompiler\GenericArgumentResolver.cs" />
     <Compile Include="Decompiler\IBamlDecompiler.cs" />
     <Compile Include="Decompiler\IDecompiler.cs" />
@@ -66,17 +67,22 @@
     <Compile Include="Decompiler\IInstructionBytesReader.cs" />
     <Compile Include="Decompiler\InstructionReference.cs" />
     <Compile Include="Decompiler\ISimpleILPrinter.cs" />
+    <Compile Include="Decompiler\ISourceVariable.cs" />
     <Compile Include="Decompiler\LineSeparator.cs" />
     <Compile Include="Decompiler\MemberComparer.cs" />
+    <Compile Include="Decompiler\MetadataTextColorProvider.cs" />
     <Compile Include="Decompiler\MethodDebugInfo.cs" />
     <Compile Include="Decompiler\MethodDebugInfoBuilder.cs" />
+    <Compile Include="Decompiler\MethodDebugScope.cs" />
+    <Compile Include="Decompiler\MethodDebugScopeBuilder.cs" />
     <Compile Include="Decompiler\MethodSourceStatement.cs" />
+    <Compile Include="Decompiler\MethodStatementReference.cs" />
     <Compile Include="Decompiler\NamespaceReference.cs" />
     <Compile Include="Decompiler\PredefinedCustomDataIds.cs" />
     <Compile Include="Decompiler\PredefinedSpanReferenceIds.cs" />
-    <Compile Include="Decompiler\SimplePrinterFlags.cs" />
     <Compile Include="Decompiler\SimpleXmlParser.cs" />
     <Compile Include="Decompiler\SourceLocal.cs" />
+    <Compile Include="Decompiler\SourceParameter.cs" />
     <Compile Include="Decompiler\SourceStatement.cs" />
     <Compile Include="Decompiler\SpanReference.cs" />
     <Compile Include="Decompiler\StringBuilderDecompilerOutput.cs" />
@@ -101,11 +107,11 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ResourceHelper.cs" />
+    <Compile Include="Text\Indenter.cs" />
     <Compile Include="Text\ITextColorWriter.cs" />
     <Compile Include="Text\ITextColorWriterExtensions.cs" />
     <Compile Include="Text\NameUtilities.cs" />
     <Compile Include="Text\TextColor.cs" />
-    <Compile Include="Text\TextColorHelper.cs" />
     <Compile Include="Utilities\GacInfo.cs" />
     <Compile Include="Utilities\SimpleTypeConverter.cs" />
   </ItemGroup>
@@ -134,12 +140,8 @@
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\dnSpy.Contracts.Logic.Resources.de.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

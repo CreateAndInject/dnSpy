@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,5 +25,11 @@ namespace dnSpy.Output {
 	sealed class ShowTimestampsEditorOptionDefinition : ViewOptionDefinition<bool> {
 		public override EditorOptionKey<bool> Key => DefaultOutputOptions.ShowTimestampsId;
 		public override bool Default => true;
+	}
+
+	[Export(typeof(EditorOptionDefinition))]
+	sealed class TimestampDateTimeFormatEditorOptionDefinition : ViewOptionDefinition<string> {
+		public override EditorOptionKey<string> Key => DefaultOutputOptions.TimestampDateTimeFormatId;
+		public override string Default => DefaultOutputOptions.DefaultTimestampDateTimeFormat;
 	}
 }

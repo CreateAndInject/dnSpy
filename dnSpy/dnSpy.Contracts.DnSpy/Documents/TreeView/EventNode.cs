@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,11 +37,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="event">Event</param>
-		protected EventNode(EventDef @event) {
-			if (@event == null)
-				throw new ArgumentNullException(nameof(@event));
-			EventDef = @event;
-		}
+		protected EventNode(EventDef @event) => EventDef = @event ?? throw new ArgumentNullException(nameof(@event));
 
 		/// <summary>
 		/// Creates a <see cref="MethodNode"/>, an adder, remover, invoker, or an other method

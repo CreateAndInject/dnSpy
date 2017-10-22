@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -261,15 +261,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public ListVM<object> OperandListVM { get; }
 
 		public InstructionOperandVM() {
-			this.SByte = new SByteVM(a => FieldUpdated());
-			this.Byte = new ByteVM(a => FieldUpdated());
-			this.Int32 = new Int32VM(a => FieldUpdated());
-			this.Int64 = new Int64VM(a => FieldUpdated());
-			this.Single = new SingleVM(a => FieldUpdated());
-			this.Double = new DoubleVM(a => FieldUpdated());
-			this.String = new StringVM(a => FieldUpdated());
-			this.OperandListVM = new ListVM<object>((a, b) => FieldUpdated());
-			this.OperandListVM.DataErrorInfoDelegate = VerifyOperand;
+			SByte = new SByteVM(a => FieldUpdated());
+			Byte = new ByteVM(a => FieldUpdated());
+			Int32 = new Int32VM(a => FieldUpdated());
+			Int64 = new Int64VM(a => FieldUpdated());
+			Single = new SingleVM(a => FieldUpdated());
+			Double = new DoubleVM(a => FieldUpdated());
+			String = new StringVM(a => FieldUpdated());
+			OperandListVM = new ListVM<object>((a, b) => FieldUpdated());
+			OperandListVM.DataErrorInfoDelegate = VerifyOperand;
 		}
 
 		void EditOther(object parameter) {
@@ -346,20 +346,20 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public void InitializeFrom(InstructionOperandVM other) {
-			this.InstructionOperandType = other.InstructionOperandType;
-			this.SByte.StringValue = other.SByte.StringValue;
-			this.Byte.StringValue = other.Byte.StringValue;
-			this.Int32.StringValue = other.Int32.StringValue;
-			this.Int64.StringValue = other.Int64.StringValue;
-			this.Single.StringValue = other.Single.StringValue;
-			this.Double.StringValue = other.Double.StringValue;
-			this.String.StringValue = other.String.StringValue;
-			this.Other = other.Other;
-			this.OperandListItem = other.OperandListItem;
+			InstructionOperandType = other.InstructionOperandType;
+			SByte.StringValue = other.SByte.StringValue;
+			Byte.StringValue = other.Byte.StringValue;
+			Int32.StringValue = other.Int32.StringValue;
+			Int64.StringValue = other.Int64.StringValue;
+			Single.StringValue = other.Single.StringValue;
+			Double.StringValue = other.Double.StringValue;
+			String.StringValue = other.String.StringValue;
+			Other = other.Other;
+			OperandListItem = other.OperandListItem;
 		}
 
 		public void ImportFrom(ModuleDef ownerModule, InstructionOperandVM other) {
-			this.InstructionOperandType = other.InstructionOperandType;
+			InstructionOperandType = other.InstructionOperandType;
 
 			switch (other.InstructionOperandType) {
 			case MethodBody.InstructionOperandType.None:	break;
@@ -386,20 +386,16 @@ namespace dnSpy.AsmEditor.MethodBody {
 		object Import(ModuleDef ownerModule, object o) {
 			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
 
-			var tdr = o as ITypeDefOrRef;
-			if (tdr != null)
+			if (o is ITypeDefOrRef tdr)
 				return importer.Import(tdr);
 
-			var method = o as IMethod;
-			if (method != null && method.IsMethod)
+			if (o is IMethod method && method.IsMethod)
 				return importer.Import(method);
 
-			var field = o as IField;
-			if (field != null && field.IsField)
+			if (o is IField field && field.IsField)
 				return importer.Import(field);
 
-			var msig = o as MethodSig;
-			if (msig != null)
+			if (o is MethodSig msig)
 				return importer.Import(msig);
 
 			Debug.Assert(o == null);
@@ -426,8 +422,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					if (Other != null) {
 						if (!(Other is IField))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
-						var method = Other as IMethod;
-						if (method != null && method.MethodSig != null)
+						if (Other is IMethod method && method.MethodSig != null)
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeField;
 					}
 					break;
@@ -436,8 +431,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					if (Other != null) {
 						if (!(Other is IMethod))
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
-						var field = Other as IField;
-						if (field != null && field.FieldSig != null)
+						if (Other is IField field && field.FieldSig != null)
 							return dnSpy_AsmEditor_Resources.Error_OpMustBeMethod;
 					}
 					break;

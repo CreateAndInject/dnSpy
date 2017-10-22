@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,11 +27,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Windows.Threading;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Utilities;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.AsmEditor.Compiler {
 	partial class EditCodeDlg : WindowBase {
@@ -41,8 +39,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			decompilingControl.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
 
 			DataContextChanged += (s, e) => {
-				var vm = DataContext as EditCodeVM;
-				if (vm != null) {
+				if (DataContext is EditCodeVM vm) {
 					vm.PropertyChanged += EditCodeVM_PropertyChanged;
 					vm.OwnerWindow = this;
 					vm.CodeCompiled += EditCodeVM_CodeCompiled;
@@ -56,22 +53,27 @@ namespace dnSpy.AsmEditor.Compiler {
 					}
 					InputBindings.Add(new KeyBinding(vm.AddGacReferenceCommand, Key.O, ModifierKeys.Control | ModifierKeys.Shift));
 					InputBindings.Add(new KeyBinding(vm.AddAssemblyReferenceCommand, Key.O, ModifierKeys.Control));
+					InputBindings.Add(new KeyBinding(vm.GoToNextDiagnosticCommand, Key.F4, ModifierKeys.None));
+					InputBindings.Add(new KeyBinding(vm.GoToNextDiagnosticCommand, Key.F8, ModifierKeys.None));
+					InputBindings.Add(new KeyBinding(vm.GoToPreviousDiagnosticCommand, Key.F4, ModifierKeys.Shift));
+					InputBindings.Add(new KeyBinding(vm.GoToPreviousDiagnosticCommand, Key.F8, ModifierKeys.Shift));
 				}
 			};
 			diagnosticsListView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy,
 				(s, e) => CopyToClipboard(diagnosticsListView.SelectedItems.OfType<CompilerDiagnosticVM>().ToArray()),
 				(s, e) => e.CanExecute = diagnosticsListView.SelectedItems.Count != 0));
+			diagnosticsListView.SelectionChanged += DiagnosticsListView_SelectionChanged;
 		}
 
 		void EditCodeVM_CodeCompiled(object sender, EventArgs e) {
 			((EditCodeVM)sender).CodeCompiled -= EditCodeVM_CodeCompiled;
-			this.ClickOK();
+			ClickOK();
 		}
 
 		protected override void OnClosed(EventArgs e) {
+			progressBar.IsIndeterminate = false;
 			base.OnClosed(e);
-			var vm = DataContext as EditCodeVM;
-			if (vm != null)
+			if (DataContext is EditCodeVM vm)
 				vm.CodeCompiled -= EditCodeVM_CodeCompiled;
 		}
 
@@ -92,40 +94,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			if (vm == null || diag == null)
 				return;
 
-			HandleActivatedDiagnostic(vm, diag);
-		}
-
-		void HandleActivatedDiagnostic(EditCodeVM vm, CompilerDiagnosticVM diag) {
-			if (string.IsNullOrEmpty(diag.FullPath))
-				return;
-
-			var doc = vm.Documents.FirstOrDefault(a => a.Name == diag.FullPath);
-			Debug.Assert(doc != null);
-			if (doc == null)
-				return;
-			vm.SelectedDocument = doc;
-
-			if (diag.LineLocationSpan != null) {
-				UIUtilities.Focus(doc.TextView.VisualElement, () => {
-					// The caret isn't always moved unless we wait a little
-					Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-						if (doc == vm.SelectedDocument) {
-							MoveCaretTo(doc.TextView, diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
-							doc.TextView.EnsureCaretVisible();
-							doc.TextView.Selection.Clear();
-						}
-					}));
-				});
-			}
-		}
-
-		static CaretPosition MoveCaretTo(ITextView textView, int line, int column) {
-			if (line >= textView.TextSnapshot.LineCount)
-				line = textView.TextSnapshot.LineCount - 1;
-			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
-			if (column >= snapshotLine.Length)
-				column = snapshotLine.Length;
-			return textView.Caret.MoveTo(snapshotLine.Start + column);
+			vm.MoveTo(diag);
 		}
 
 		void EditCodeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -134,15 +103,31 @@ namespace dnSpy.AsmEditor.Compiler {
 				UIUtilities.Focus(vm.SelectedDocument?.TextView.VisualElement);
 		}
 
+		void DiagnosticsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+			var item = diagnosticsListView.SelectedItem;
+			if (item == null)
+				return;
+			diagnosticsListView.ScrollIntoView(item);
+		}
+
 		void CopyToClipboard(CompilerDiagnosticVM[] diags) {
 			if (diags.Length == 0)
 				return;
 
 			var sb = new StringBuilder();
+
+			foreach (var header in viewHeaders) {
+				if (sb.Length > 0)
+					sb.Append('\t');
+				sb.Append(header);
+			}
+			sb.AppendLine();
+
 			foreach (var d in diags) {
 				d.WriteTo(sb);
 				sb.AppendLine();
 			}
+
 			if (sb.Length > 0) {
 				try {
 					Clipboard.SetText(sb.ToString());
@@ -150,5 +135,12 @@ namespace dnSpy.AsmEditor.Compiler {
 				catch (ExternalException) { }
 			}
 		}
+		static readonly string[] viewHeaders = new string[] {
+			dnSpy_AsmEditor_Resources.CompileDiagnostics_Header_Severity,
+			dnSpy_AsmEditor_Resources.CompileDiagnostics_Header_Code,
+			dnSpy_AsmEditor_Resources.CompileDiagnostics_Header_Description,
+			dnSpy_AsmEditor_Resources.CompileDiagnostics_Header_File,
+			dnSpy_AsmEditor_Resources.CompileDiagnostics_Header_Line,
+		};
 	}
 }

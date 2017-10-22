@@ -4,10 +4,7 @@
                     xmlns:shtv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
                     xmlns:ctrls="clr-namespace:dnSpy.Controls"
                     xmlns:ctrls2="clr-namespace:dnSpy.Contracts.Controls;assembly=dnSpy.Contracts.DnSpy"
-                    xmlns:tabs="clr-namespace:dnSpy.Tabs"
                     xmlns:tabssettings="clr-namespace:dnSpy.Documents.Tabs.Settings"
-                    xmlns:decompiler="clr-namespace:dnSpy.Decompiler"
-                    xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:mainappsettings="clr-namespace:dnSpy.MainApp.Settings"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
                     xmlns:p="clr-namespace:dnSpy.Properties"
@@ -21,6 +18,8 @@
                     xmlns:replsettings="clr-namespace:dnSpy.Text.Repl"
                     xmlns:docvwrsettings="clr-namespace:dnSpy.Documents.Tabs.DocViewer.Settings"
                     xmlns:outputsettings="clr-namespace:dnSpy.Output.Settings"
+                    xmlns:hexedsettings="clr-namespace:dnSpy.Hex.HexEditor"
+                    xmlns:bm="clr-namespace:dnSpy.Bookmarks.Settings"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
@@ -39,10 +38,19 @@
     <Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
     <SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
     <img2:DsImageConverter x:Key="dsImageConverter" />
+    <img2:DsImageBitmapScalingModeConverter x:Key="dsImageBitmapScalingModeConverter" />
 
     <Style x:Key="{x:Type img:DsImage}" TargetType="{x:Type img:DsImage}">
         <Setter Property="Width" Value="16" />
         <Setter Property="Height" Value="16" />
+        <Setter Property="RenderOptions.BitmapScalingMode">
+            <Setter.Value>
+                <MultiBinding Mode="OneWay" Converter="{StaticResource dsImageBitmapScalingModeConverter}">
+                    <Binding Mode="OneWay" Path="(img:DsImage.Zoom)" RelativeSource="{RelativeSource Self}" />
+                    <Binding Mode="OneWay" Path="(img:DsImage.Dpi)" RelativeSource="{RelativeSource Self}" />
+                </MultiBinding>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Source">
             <Setter.Value>
                 <MultiBinding Mode="OneWay" Converter="{StaticResource dsImageConverter}">
@@ -2776,21 +2784,31 @@
 
     <Style x:Key="{x:Static ToolBar.SeparatorStyleKey}"
            TargetType="{x:Type Separator}">
-        <Setter Property="Background"
-                Value="{DynamicResource ToolBarSeparatorFill}"/>
         <Setter Property="MinWidth"
-                Value="1"/>
+                Value="2"/>
         <Setter Property="MinHeight"
                 Value="1"/>
         <Setter Property="Margin"
-                Value="2,2,2,2"/>
+                Value="3 3 3 2"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1" />
+                            <ColumnDefinition Width="1" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource EnvironmentCommandBarToolBarSeparator}"
+                            BorderThickness="1"
                             SnapsToDevicePixels="true"/>
+                        <Border Grid.Column="1"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource EnvironmentCommandBarToolBarSeparatorHighlight}"
+                            BorderThickness="1"
+                            SnapsToDevicePixels="true"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -4835,18 +4853,16 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type shtv:SharpTreeViewItem}">
-                    <Border Background="Transparent">
-                        <Border Background="{TemplateBinding Background}">
-                            <ctrls:FastTreeNodeView x:Name="nodeView"
-                                                       Foreground="{Binding Foreground}"
-                                                       HorizontalAlignment="Left" />
-                        </Border>
+                    <Border x:Name="nodeBorder" Background="{TemplateBinding Background}">
+                        <ctrls:FastTreeNodeView x:Name="nodeView"
+                                                    Foreground="{Binding Foreground}"
+                                                    HorizontalAlignment="Left" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"
                                  Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
+                            <Setter TargetName="nodeBorder"
+                                    Property="Background"
                                     Value="{DynamicResource TreeViewItemSelectedBackground}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
@@ -4854,8 +4870,8 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
+                            <Setter TargetName="nodeBorder"
+                                    Property="Background"
                                     Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
@@ -4868,8 +4884,8 @@
                                 <Condition Property="Selector.IsSelectionActive"
                                            Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
+                            <Setter TargetName="nodeBorder"
+                                    Property="Background"
                                     Value="{DynamicResource SystemColorsControl}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
@@ -6064,16 +6080,15 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <ctrls2:TextControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
                                Content="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
-                    <!-- TODO: It doesn't support the new text editor code
-                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" />
-                    -->
-                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_HexEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_HexEditor}" />
+                    <!-- TODO: The text formatter doesn't support the hex view and text view -->
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" IsEnabled="False" />
+                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_HexEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_HexEditor}" IsEnabled="False" />
                     <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRendererVM.UseNewRenderer_DocumentTreeView}" Content="{x:Static p:dnSpy_Resources.AssemblyExplorerTitle}" />
                 </Grid>
             </GroupBox>
@@ -6089,20 +6104,22 @@
             </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="0" Margin="0 0 0 0" x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding FontFamilyVM}" ItemsSource="{Binding FontFamilies}">
+            <ComboBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding SelectedFontAndColorOptions}" ItemsSource="{Binding FontAndColorOptions}" DisplayMemberPath="DisplayName" />
+            <ComboBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding SelectedFontAndColorOptions.FontFamilyVM}" ItemsSource="{Binding SelectedFontAndColorOptions.FontCollection.FontFamilies}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <ContentPresenter Content="{Binding Converter={StaticResource fontFamilyVMConverter}, Mode=OneWay}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <ComboBox Grid.Column="1" Text="{Binding FontSize, Converter={StaticResource fontSizeConverter}}" IsEditable="True" Margin="5 0 0 0" HorizontalAlignment="Stretch">
+            <ComboBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedFontAndColorOptions.FontSize, Converter={StaticResource fontSizeConverter}}" IsEditable="True" Margin="5 5 0 0" HorizontalAlignment="Stretch">
                 <ComboBoxItem>6</ComboBoxItem>
                 <ComboBoxItem>7</ComboBoxItem>
                 <ComboBoxItem>8</ComboBoxItem>
@@ -6458,12 +6475,19 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding UseVirtualSpace}" IsEnabled="{Binding UseVirtualSpaceEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorVirtualSpace}" />
-            <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding WordWrap}" IsEnabled="{Binding WordWrapEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorWordWrap}" />
-            <CheckBox Grid.Row="2" Margin="0 5 0 0" IsChecked="{Binding ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.TextEditorLineNumbers}" />
-            <CheckBox Grid.Row="3" Margin="0 5 0 0" IsChecked="{Binding HighlightCurrentLine}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightCurrentLine}" />
-            <CheckBox Grid.Row="4" Margin="0 5 0 0" IsChecked="{Binding ShowTimestamps}" Content="{x:Static p:dnSpy_Resources.TextEditorShowTimestamps}" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseVirtualSpace}" IsEnabled="{Binding UseVirtualSpaceEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorVirtualSpace}" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding WordWrap}" IsEnabled="{Binding WordWrapEnabled}" Content="{x:Static p:dnSpy_Resources.TextEditorWordWrap}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.TextEditorLineNumbers}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding HighlightCurrentLine}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightCurrentLine}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowTimestamps}" Content="{x:Static p:dnSpy_Resources.TextEditorShowTimestamps}" />
+            <Label Grid.Row="5" Grid.Column="0" Margin="-5 5 0 0" Content="{x:Static p:dnSpy_Resources.TimestampDateTimeFormat}" />
+            <TextBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Text="{Binding TimestampDateTimeFormat, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
     </DataTemplate>
 
@@ -6557,6 +6581,106 @@
                     <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding ZoomControl}" Content="{x:Static p:dnSpy_Resources.TextEditorZoomControl}" />
                 </Grid>
             </GroupBox>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type hexedsettings:GeneralAppSettingsPage}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <CheckBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding EnableHighlightCurrentLine}" Content="{x:Static p:dnSpy_Resources.TextEditorHighlightCurrentLine}" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding HighlightCurrentValue}" Content="{x:Static p:dnSpy_Resources.HexEditorHighlightCurrentValue}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding HighlightStructureUnderMouseCursor}" Content="{x:Static p:dnSpy_Resources.HexEditorHighlightStructureUnderMouseCursor}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ValuesLowerCaseHex}" Content="{x:Static p:dnSpy_Resources.HexEditorValuesLowerCaseHex}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding OffsetLowerCaseHex}" Content="{x:Static p:dnSpy_Resources.HexEditorOffsetLowerCaseHex}" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding EnableColorization}" Content="{x:Static p:dnSpy_Resources.OptionColorizeText}" />
+            <Label Grid.Row="6" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=groupSizeInBytesTextBox}" Content="{x:Static p:dnSpy_Resources.HexEditorGroupSizeInBytes}" />
+            <TextBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Name="groupSizeInBytesTextBox" Text="{Binding GroupSizeInBytesVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="7" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=hexOffsetFormatComboBox}" Content="{x:Static p:dnSpy_Resources.HexEditorOffsetFormat}" />
+            <ComboBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hexOffsetFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HexOffsetFormatVM.Items}" SelectedIndex="{Binding HexOffsetFormatVM.SelectedIndex}" VerticalContentAlignment="Center" />
+            <Label Grid.Row="8" Grid.Column="0" Margin="-5 5 0 0" Target="{Binding ElementName=encodingComboBox}" Content="{x:Static p:dnSpy_Resources.HexEditorEncoding}" />
+            <ComboBox Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding EncodingInfoVM.Items}" SelectedIndex="{Binding EncodingInfoVM.SelectedIndex}" VerticalContentAlignment="Center" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type hexedsettings:ScrollBarsAppSettingsPage}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding HorizontalScrollBar}" Content="{x:Static p:dnSpy_Resources.TextEditorHorizontalScrollBar}" />
+            <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding VerticalScrollBar}" Content="{x:Static p:dnSpy_Resources.TextEditorVerticalScrollBar}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type hexedsettings:AdvancedAppSettingsPage}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.GeneralSettings}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding ShowColumnLines}" Content="{x:Static p:dnSpy_Resources.HexEditorShowColumnLineSeparators}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding RemoveExtraTextLineVerticalPixels}" Content="{x:Static p:dnSpy_Resources.TextEditorMinimumLineSpacing}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorMargins}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding SelectionMargin}" Content="{x:Static p:dnSpy_Resources.TextEditorSelectionMargin}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding GlyphMargin}" Content="{x:Static p:dnSpy_Resources.TextEditorGlyphMargin}" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Row="3" Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.TextEditorZoom}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Margin="0 5 0 0" IsChecked="{Binding EnableMouseWheelZoom}" Content="{x:Static p:dnSpy_Resources.TextEditorMouseWheelZoom}" />
+                    <CheckBox Grid.Row="1" Margin="0 5 0 0" IsChecked="{Binding ZoomControl}" Content="{x:Static p:dnSpy_Resources.TextEditorZoomControl}" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </DataTemplate>
+
+    <Style x:Key="BookmarksTableGridViewScrollViewerStyle"
+           BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+           TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+
+    <DataTemplate DataType="{x:Type bm:BookmarksAppSettingsPage}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <CheckBox Grid.Row="0" Margin="0 0 0 0" IsChecked="{Binding Settings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.BookmarksSettings_SyntaxHighlight}" />
         </Grid>
     </DataTemplate>
 

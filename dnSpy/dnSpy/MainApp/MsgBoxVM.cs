@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -99,7 +99,7 @@ namespace dnSpy.MainApp {
 		readonly Action<MsgBoxButton> listener;
 
 		public MsgBoxVM(string message, Action<MsgBoxButton> listener) {
-			this.Message = message;
+			Message = message;
 			this.listener = listener;
 		}
 	}

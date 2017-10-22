@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,8 +38,8 @@ namespace dnSpy.Documents {
 		public DsDocumentLoader(IDsDocumentService documentService, Window ownerWindow) {
 			this.documentService = documentService;
 			this.ownerWindow = ownerWindow;
-			this.loadedDocuments = new List<IDsDocument>();
-			this.hash = new HashSet<IDsDocument>();
+			loadedDocuments = new List<IDsDocument>();
+			hash = new HashSet<IDsDocument>();
 		}
 
 		public IDsDocument[] Load(IEnumerable<DocumentToLoad> documents) {

@@ -177,11 +177,20 @@
   <data name="DecompilerSettings_MaxArrayElements" xml:space="preserve">
     <value>Максимальное количество отображаемых элементов массива</value>
   </data>
+  <data name="DecompilerSettings_MemberAddPrivateModifier" xml:space="preserve">
+    <value>Добавить модификатор 'private' к членам типа</value>
+  </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Декомпилировать инициализаторы объекта или коллекции</value>
   </data>
+  <data name="DecompilerSettings_OneCustomAttributePerLine" xml:space="preserve">
+    <value>Показывать по одному атрибуту на строке</value>
+  </data>
   <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
     <value>Удалить пустые конструкторы по умолчанию</value>
+  </data>
+  <data name="DecompilerSettings_RemoveNewDelegateClass" xml:space="preserve">
+    <value>Заменить «new delegate-class(xxx)» на «xxx»</value>
   </data>
   <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
     <value>Показать скрытые типы и методы, созданные компилятором</value>
@@ -191,6 +200,9 @@
   </data>
   <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
     <value>Показывать байты инструкций IL</value>
+  </data>
+  <data name="DecompilerSettings_ShowPdbInfo" xml:space="preserve">
+    <value>Показать номера строк и имена файлов, если имеются</value>
   </data>
   <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
     <value>Показывать токены, RVA и смещения в файле</value>
@@ -206,6 +218,9 @@
   </data>
   <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
     <value>Поместить директивы 'System' в начало при сортировке</value>
+  </data>
+  <data name="DecompilerSettings_TypeAddInternalModifier" xml:space="preserve">
+    <value>Добавить модификатор 'internal' к типам</value>
   </data>
   <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
     <value>Использовать имена переменных из отладочных символов, при наличии</value>

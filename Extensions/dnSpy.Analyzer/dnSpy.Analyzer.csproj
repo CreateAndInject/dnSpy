@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{82E9DEC4-564F-42D5-8856-AA17D3962829}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.Analyzer</RootNamespace>
     <AssemblyName>dnSpy.Analyzer.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +66,7 @@
     <Compile Include="TreeNodes\EventAccessorNode.cs" />
     <Compile Include="TreeNodes\EventFiredByNode.cs" />
     <Compile Include="TreeNodes\EventNode.cs" />
+    <Compile Include="TreeNodes\EventOverriddenNode.cs" />
     <Compile Include="TreeNodes\EventOverridesNode.cs" />
     <Compile Include="TreeNodes\FieldAccessNode.cs" />
     <Compile Include="TreeNodes\FieldNode.cs" />
@@ -76,12 +77,14 @@
     <Compile Include="TreeNodes\InterfaceMethodImplementedByNode.cs" />
     <Compile Include="TreeNodes\InterfacePropertyImplementedByNode.cs" />
     <Compile Include="TreeNodes\MethodNode.cs" />
+    <Compile Include="TreeNodes\MethodOverriddenNode.cs" />
     <Compile Include="TreeNodes\MethodOverridesNode.cs" />
     <Compile Include="TreeNodes\MethodUsedByNode.cs" />
     <Compile Include="TreeNodes\MethodUsesNode.cs" />
     <Compile Include="TreeNodes\ModuleNode.cs" />
     <Compile Include="TreeNodes\PropertyAccessorNode.cs" />
     <Compile Include="TreeNodes\PropertyNode.cs" />
+    <Compile Include="TreeNodes\PropertyOverriddenNode.cs" />
     <Compile Include="TreeNodes\PropertyOverridesNode.cs" />
     <Compile Include="TreeNodes\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\SearchNode.cs" />
@@ -126,11 +129,4 @@
     <None Include="project.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

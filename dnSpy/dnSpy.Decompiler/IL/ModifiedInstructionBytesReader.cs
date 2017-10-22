@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,11 @@ namespace dnSpy.Decompiler.IL {
 		readonly List<short> instrBytes = new List<short>(10);
 		int byteIndex;
 
+		public bool IsOriginalBytes => false;
+
 		public ModifiedInstructionBytesReader(MethodDef method) {
-			this.resolver = method.Module;
-			this.instrs = method.Body.Instructions;
+			resolver = method.Module;
+			instrs = method.Body.Instructions;
 		}
 
 		public int ReadByte() {

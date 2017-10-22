@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -68,11 +68,7 @@ namespace dnSpy.BackgroundImage {
 		public bool IsEnabled => rawSettings.IsEnabled;
 		public TimeSpan Interval => rawSettings.Interval;
 
-		public BackgroundImageSettings(RawSettings rawSettings) {
-			if (rawSettings == null)
-				throw new ArgumentNullException(nameof(rawSettings));
-			this.rawSettings = rawSettings;
-		}
+		public BackgroundImageSettings(RawSettings rawSettings) => this.rawSettings = rawSettings ?? throw new ArgumentNullException(nameof(rawSettings));
 
 		public void RaiseSettingsChanged() => SettingsChanged?.Invoke(this, EventArgs.Empty);
 	}

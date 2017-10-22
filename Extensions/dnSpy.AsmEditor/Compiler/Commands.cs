@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			cmds.Add(EditBodyCommand,
 				(s, e) => editBodyCmd2.Execute(null),
 				(s, e) => e.CanExecute = editBodyCmd2.CanExecute(null),
-				ModifierKeys.Control, Key.E);
+				ModifierKeys.Control | ModifierKeys.Shift, Key.E);
 		}
 	}
 
@@ -160,7 +160,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override string Description => dnSpy_AsmEditor_Resources.EditMethodCode;
 	}
 
-	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 0)]
+	[Export, ExportMenuItem(InputGestureText = "res:ShortCutKeyCtrlShiftE", Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 0)]
 	sealed class EditBodyCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandService> undoCommandService;
 		readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -180,13 +180,12 @@ namespace dnSpy.AsmEditor.Compiler {
 		public override bool IsVisible(IMenuItemContext context) => IsVisibleInternal(editCodeVMCreator, context);
 
 		internal static bool IsVisibleInternal(EditCodeVMCreator editCodeVMCreator, IMenuItemContext context) => IsVisible(editCodeVMCreator, BodyCommandUtils.GetStatements(context));
-		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) {
-			return editCodeVMCreator.CanCreate(CompilationKind.Method) &&
-				list != null &&
-				list.Count != 0 &&
-				list[0].Method.Body != null &&
-				list[0].Method.Body.Instructions.Count > 0;
-		}
+		static bool IsVisible(EditCodeVMCreator editCodeVMCreator, IList<MethodSourceStatement> list) =>
+			editCodeVMCreator.CanCreate(CompilationKind.Method) &&
+			list != null &&
+			list.Count != 0 &&
+			list[0].Method.Body != null &&
+			list[0].Method.Body.Instructions.Count > 0;
 
 		public override void Execute(IMenuItemContext context) => Execute(BodyCommandUtils.GetStatements(context));
 

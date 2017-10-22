@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,17 +38,13 @@ namespace dnSpy.Text.Tagging {
 		protected ITextBuffer TextBuffer { get; }
 
 		protected TagAggregatorBase(IBufferGraph bufferGraph, ITextBuffer textBuffer, TagAggregatorOptions options) {
-			if (bufferGraph == null)
-				throw new ArgumentNullException(nameof(bufferGraph));
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			this.dispatcher = Dispatcher.CurrentDispatcher;
-			this.batchedTagsChangedList = new List<IMappingSpan>();
-			this.lockObj = new object();
-			BufferGraph = bufferGraph;
-			TextBuffer = textBuffer;
+			dispatcher = Dispatcher.CurrentDispatcher;
+			batchedTagsChangedList = new List<IMappingSpan>();
+			lockObj = new object();
+			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
+			TextBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			TextBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
-			this.taggers = Array.Empty<ITagger<T>>();
+			taggers = Array.Empty<ITagger<T>>();
 		}
 
 		protected void Initialize() => RecreateTaggers();
@@ -136,10 +132,9 @@ namespace dnSpy.Text.Tagging {
 			taggers = Array.Empty<ITagger<T>>();
 		}
 
-		void Tagger_TagsChanged(object sender, SnapshotSpanEventArgs e) {
+		void Tagger_TagsChanged(object sender, SnapshotSpanEventArgs e) =>
 			// Use original sender, not us
 			RaiseTagsChanged(e.Span, sender);
-		}
 
 		void RaiseTagsChanged(SnapshotSpan span, object sender = null) {
 			if (IsDisposed)

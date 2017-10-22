@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,9 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Text.Editor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Text.MEF;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace dnSpy.Text.Editor {
@@ -35,16 +37,13 @@ namespace dnSpy.Text.Editor {
 		event EventHandler<GlyphTextMarkerAddedEventArgs> MarkerAdded;
 		event EventHandler<GlyphTextMarkerRemovedEventArgs> MarkerRemoved;
 		event EventHandler<GlyphTextMarkersRemovedEventArgs> MarkersRemoved;
+		event EventHandler<GetGlyphTextMarkerAndSpanEventArgs> GetGlyphTextMarkerAndSpan;
 	}
 
 	abstract class GlyphTextMarkerEventArgs : EventArgs {
 		public IGlyphTextMarkerImpl Marker { get; }
 
-		protected GlyphTextMarkerEventArgs(IGlyphTextMarkerImpl marker) {
-			if (marker == null)
-				throw new ArgumentNullException(nameof(marker));
-			Marker = marker;
-		}
+		protected GlyphTextMarkerEventArgs(IGlyphTextMarkerImpl marker) => Marker = marker ?? throw new ArgumentNullException(nameof(marker));
 	}
 
 	sealed class GlyphTextMarkerAddedEventArgs : GlyphTextMarkerEventArgs {
@@ -62,10 +61,30 @@ namespace dnSpy.Text.Editor {
 	sealed class GlyphTextMarkersRemovedEventArgs : EventArgs {
 		public HashSet<IGlyphTextMarkerImpl> Markers { get; }
 
-		public GlyphTextMarkersRemovedEventArgs(HashSet<IGlyphTextMarkerImpl> markers) {
-			if (markers == null)
-				throw new ArgumentNullException(nameof(markers));
-			Markers = markers;
+		public GlyphTextMarkersRemovedEventArgs(HashSet<IGlyphTextMarkerImpl> markers) => Markers = markers ?? throw new ArgumentNullException(nameof(markers));
+	}
+
+	sealed class GetGlyphTextMarkerAndSpanEventArgs : EventArgs {
+		public ITextView TextView { get; }
+		public SnapshotSpan Span { get; }
+		public GlyphTextMarkerAndSpan[] Result { get; set; }
+		public GetGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			Span = span;
+		}
+	}
+
+	sealed class GetFirstGlyphTextMarkerAndSpanEventArgs : EventArgs {
+		public ITextView TextView { get; }
+		public SnapshotSpan Span { get; }
+		public GlyphTextMarkerAndSpan? Result { get; set; }
+		public GetFirstGlyphTextMarkerAndSpanEventArgs(ITextView textView, SnapshotSpan span) {
+			if (span.Snapshot == null)
+				throw new ArgumentException();
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			Span = span;
 		}
 	}
 }

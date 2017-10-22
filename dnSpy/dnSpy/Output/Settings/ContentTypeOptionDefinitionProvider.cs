@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,7 +46,7 @@ namespace dnSpy.Output.Settings {
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.BraceMatchingId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.LineSeparatorsId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultTextViewOptions.ShowBlockStructureId, true);
-				yield return new OptionDefinition<BlockStructureLineKind>(contentType, DefaultDsTextViewOptions.BlockStructureLineKindId, BlockStructureLineKind.Dashed_2_2);
+				yield return new OptionDefinition<BlockStructureLineKind>(contentType, DefaultDsTextViewOptions.BlockStructureLineKindId, BlockStructureLineKind.Dashed_3_3);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.CompressEmptyOrWhitespaceLinesId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.CompressNonLetterLinesId, true);
 				yield return new OptionDefinition<bool>(contentType, DefaultDsTextViewOptions.RemoveExtraTextLineVerticalPixelsId, false);
@@ -56,6 +56,7 @@ namespace dnSpy.Output.Settings {
 				yield return new OptionDefinition<bool>(contentType, DefaultTextViewHostOptions.ZoomControlId, true);
 				yield return new OptionDefinition<double>(contentType, DefaultWpfViewOptions.ZoomLevelId, 100);
 				yield return new OptionDefinition<bool>(contentType, DefaultOutputOptions.ShowTimestampsId, true);
+				yield return new OptionDefinition<string>(contentType, DefaultOutputOptions.TimestampDateTimeFormatId, DefaultOutputOptions.DefaultTimestampDateTimeFormat);
 			}
 		}
 

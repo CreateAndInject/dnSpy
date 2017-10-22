@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly Lazy<IAppSettingsService> appSettingsService;
 
 		[ImportingConstructor]
-		ShowOptionsCommand(Lazy<IAppSettingsService> appSettingsService) {
-			this.appSettingsService = appSettingsService;
-		}
+		ShowOptionsCommand(Lazy<IAppSettingsService> appSettingsService) => this.appSettingsService = appSettingsService;
 
 		public override void Execute(IMenuItemContext context) => appSettingsService.Value.Show();
 	}

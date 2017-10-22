@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,10 +32,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 
 		public CSharpVBDecompilerSettings(DecompilerSettings decompilerSettings = null) {
 			this.decompilerSettings = decompilerSettings ?? new DecompilerSettings();
-			this.options = CreateOptions().ToArray();
+			options = CreateOptions().ToArray();
 		}
 
-		public override DecompilerSettingsBase Clone() => new CSharpVBDecompilerSettings(this.decompilerSettings.Clone());
+		public override DecompilerSettingsBase Clone() => new CSharpVBDecompilerSettings(decompilerSettings.Clone());
 
 		public override IEnumerable<IDecompilerOption> Options => options;
 		readonly IDecompilerOption[] options;
@@ -191,6 +191,26 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_AllowFieldInitializers,
 				Name = DecompilerOptionConstants.AllowFieldInitializers_NAME,
 			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.OneCustomAttributePerLine_GUID,
+						() => decompilerSettings.OneCustomAttributePerLine, a => decompilerSettings.OneCustomAttributePerLine = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_OneCustomAttributePerLine,
+				Name = DecompilerOptionConstants.OneCustomAttributePerLine_NAME,
+			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.TypeAddInternalModifier_GUID,
+						() => decompilerSettings.TypeAddInternalModifier, a => decompilerSettings.TypeAddInternalModifier = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_TypeAddInternalModifier,
+				Name = DecompilerOptionConstants.TypeAddInternalModifier_NAME,
+			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.MemberAddPrivateModifier_GUID,
+						() => decompilerSettings.MemberAddPrivateModifier, a => decompilerSettings.MemberAddPrivateModifier = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_MemberAddPrivateModifier,
+				Name = DecompilerOptionConstants.MemberAddPrivateModifier_NAME,
+			};
+			yield return new DecompilerOption<bool>(DecompilerOptionConstants.RemoveNewDelegateClass_GUID,
+						() => decompilerSettings.RemoveNewDelegateClass, a => decompilerSettings.RemoveNewDelegateClass = a) {
+				Description = dnSpy_Decompiler_ILSpy_Core_Resources.DecompilerSettings_RemoveNewDelegateClass,
+				Name = DecompilerOptionConstants.RemoveNewDelegateClass_NAME,
+			};
 		}
 
 		string GetMemberOrder() =>
@@ -234,11 +254,11 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			return null;
 		}
 
-		protected override bool EqualsCore(object obj) {
+		public override bool Equals(object obj) {
 			var other = obj as CSharpVBDecompilerSettings;
 			return other != null && decompilerSettings.Equals(other.decompilerSettings);
 		}
 
-		protected override int GetHashCodeCore() => decompilerSettings.GetHashCode();
+		public override int GetHashCode() => decompilerSettings.GetHashCode();
 	}
 }

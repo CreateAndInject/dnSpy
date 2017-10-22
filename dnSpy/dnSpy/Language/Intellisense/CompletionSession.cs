@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -69,21 +69,13 @@ namespace dnSpy.Language.Intellisense {
 		ICompletionSource[] completionSources;
 
 		public CompletionSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ICompletionSourceProvider, IOrderableContentTypeMetadata>[] completionSourceProviders) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
-				throw new ArgumentNullException(nameof(triggerPoint));
-			if (intellisensePresenterFactoryService == null)
-				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
-			if (completionSourceProviders == null)
-				throw new ArgumentNullException(nameof(completionSourceProviders));
-			this.completionSets = new ObservableCollection<CompletionSet>();
-			CompletionSets = new ReadOnlyObservableCollection<CompletionSet>(this.completionSets);
+			completionSets = new ObservableCollection<CompletionSet>();
+			CompletionSets = new ReadOnlyObservableCollection<CompletionSet>(completionSets);
 			Properties = new PropertyCollection();
-			TextView = textView;
-			this.triggerPoint = triggerPoint;
-			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
-			this.completionSourceProviders = completionSourceProviders;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.triggerPoint = triggerPoint ?? throw new ArgumentNullException(nameof(triggerPoint));
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService ?? throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
+			this.completionSourceProviders = completionSourceProviders ?? throw new ArgumentNullException(nameof(completionSourceProviders));
 			//TODO: Use trackCaret
 			TextView.Closed += TextView_Closed;
 		}
@@ -112,7 +104,7 @@ namespace dnSpy.Language.Intellisense {
 			if (IsDismissed)
 				throw new InvalidOperationException();
 			IsStarted = true;
-			this.completionSources = CreateCompletionSources();
+			completionSources = CreateCompletionSources();
 
 			var list = new List<CompletionSet>();
 			foreach (var source in completionSources)
@@ -165,8 +157,7 @@ namespace dnSpy.Language.Intellisense {
 			var completion = completionSet?.SelectionStatus.Completion;
 			if (completion != null) {
 				Debug.Assert(completionSet.SelectionStatus.IsSelected);
-				var customCommit = completion as ICustomCommit;
-				if (customCommit != null)
+				if (completion is ICustomCommit customCommit)
 					customCommit.Commit();
 				else {
 					var insertionText = completion.InsertionText;

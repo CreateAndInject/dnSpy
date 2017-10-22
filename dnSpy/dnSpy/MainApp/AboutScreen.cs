@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,7 +51,7 @@ namespace dnSpy.MainApp {
 			this.documentViewerContentFactoryProvider = documentViewerContentFactoryProvider;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
-			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
+			aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) => null;
@@ -85,7 +85,7 @@ namespace dnSpy.MainApp {
 			this.documentTabService = documentTabService;
 			this.appWindow = appWindow;
 			this.extensionService = extensionService;
-			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
+			aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.AboutDnSpy);
 		}
 
 		public override void Execute(IMenuItemContext context) {
@@ -184,8 +184,8 @@ namespace dnSpy.MainApp {
 			}
 
 			public Info(Assembly asm, ExtensionInfo info) {
-				this.Assembly = asm;
-				this.ExtensionInfo = info;
+				Assembly = asm;
+				ExtensionInfo = info;
 			}
 		}
 
@@ -241,8 +241,7 @@ namespace dnSpy.MainApp {
 			var random = new Random();
 			foreach (var x in extensionService.LoadedExtensions.OrderBy(a => random.Next())) {
 				ExtensionInfo extensionInfo;
-				IExtension extension;
-				if (toExtension.TryGetValue(x.Assembly, out extension))
+				if (toExtension.TryGetValue(x.Assembly, out var extension))
 					extensionInfo = extension.ExtensionInfo;
 				else
 					extensionInfo = new ExtensionInfo();

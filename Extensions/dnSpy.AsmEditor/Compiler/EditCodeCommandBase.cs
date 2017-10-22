@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,9 +26,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	abstract class EditCodeCommandBase : IUndoCommand {
 		readonly AddUpdatedNodesHelper addUpdatedNodesHelper;
 
-		protected EditCodeCommandBase(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer) {
-			this.addUpdatedNodesHelper = addUpdatedNodesHelperProvider.Value.Create(modNode, importer);
-		}
+		protected EditCodeCommandBase(Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, ModuleDocumentNode modNode, ModuleImporter importer) => addUpdatedNodesHelper = addUpdatedNodesHelperProvider.Value.Create(modNode, importer);
 
 		public abstract string Description { get; }
 		public void Execute() => addUpdatedNodesHelper.Execute();

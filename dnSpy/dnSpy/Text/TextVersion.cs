@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -76,9 +76,7 @@ namespace dnSpy.Text {
 			return new TrackingSpan(this, span, trackingMode, trackingFidelity);
 		}
 
-		public ITrackingSpan CreateCustomTrackingSpan(Span span, TrackingFidelityMode trackingFidelity, object customState, CustomTrackToVersion behavior) {
-			throw new NotImplementedException();//TODO:
-		}
+		public ITrackingSpan CreateCustomTrackingSpan(Span span, TrackingFidelityMode trackingFidelity, object customState, CustomTrackToVersion behavior) => throw new NotImplementedException();//TODO:
 
 		public override string ToString() => $"V{VersionNumber} (r{ReiteratedVersionNumber})";
 	}

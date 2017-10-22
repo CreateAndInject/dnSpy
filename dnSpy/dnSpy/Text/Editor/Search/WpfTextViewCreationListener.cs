@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,9 +30,7 @@ namespace dnSpy.Text.Editor.Search {
 		readonly ISearchServiceProvider searchServiceProvider;
 
 		[ImportingConstructor]
-		WpfTextViewCreationListener(ISearchServiceProvider searchServiceProvider) {
-			this.searchServiceProvider = searchServiceProvider;
-		}
+		WpfTextViewCreationListener(ISearchServiceProvider searchServiceProvider) => this.searchServiceProvider = searchServiceProvider;
 
 		public void TextViewCreated(IWpfTextView textView) => searchServiceProvider.Get(textView);
 	}

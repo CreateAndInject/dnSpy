@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,8 @@ namespace dnSpy.Contracts.Utilities {
 	/// Converts numbers, strings and a few other types to or from strings
 	/// </summary>
 	public static class SimpleTypeConverter {
+		const string digitSeparator = "_";
+
 		/// <summary>
 		/// Parses a byte array string
 		/// </summary>
@@ -297,6 +299,7 @@ namespace dnSpy.Contracts.Utilities {
 			value = 0;
 			bool isValid;
 			s = s.Trim();
+			s = s.Replace(digitSeparator, string.Empty);
 			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ||
 				s.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
 				var s2 = s.Substring(2);
@@ -319,8 +322,7 @@ namespace dnSpy.Contracts.Utilities {
 		}
 
 		static ulong ParseUnsigned(string s, ulong min, ulong max, out string error) {
-			ulong value;
-			error = TryParseUnsigned(s, min, max, out value);
+			error = TryParseUnsigned(s, min, max, out ulong value);
 			if (error != null)
 				return 0;
 			return value;
@@ -333,8 +335,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
 		public static float ParseSingle(string s, out string error) {
-			float value;
-			if (float.TryParse(s, out value)) {
+			if (float.TryParse(s, out float value)) {
 				error = null;
 				return value;
 			}
@@ -349,8 +350,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
 		public static double ParseDouble(string s, out string error) {
-			double value;
-			if (double.TryParse(s, out value)) {
+			if (double.TryParse(s, out double value)) {
 				error = null;
 				return value;
 			}
@@ -365,8 +365,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
 		public static decimal ParseDecimal(string s, out string error) {
-			decimal value;
-			if (decimal.TryParse(s, out value)) {
+			if (decimal.TryParse(s, out decimal value)) {
 				error = null;
 				return value;
 			}
@@ -381,8 +380,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
 		public static DateTime ParseDateTime(string s, out string error) {
-			DateTime value;
-			if (DateTime.TryParse(s, out value)) {
+			if (DateTime.TryParse(s, out var value)) {
 				error = null;
 				return value;
 			}
@@ -397,8 +395,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
 		public static TimeSpan ParseTimeSpan(string s, out string error) {
-			TimeSpan value;
-			if (TimeSpan.TryParse(s, out value)) {
+			if (TimeSpan.TryParse(s, out var value)) {
 				error = null;
 				return value;
 			}
@@ -413,8 +410,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
 		public static bool ParseBoolean(string s, out string error) {
-			bool value;
-			if (bool.TryParse(s, out value)) {
+			if (bool.TryParse(s, out bool value)) {
 				error = null;
 				return value;
 			}
@@ -665,6 +661,7 @@ namespace dnSpy.Contracts.Utilities {
 			value = 0;
 			bool isValid;
 			s = s.Trim();
+			s = s.Replace(digitSeparator, string.Empty);
 			bool isSigned = s.StartsWith("-", StringComparison.OrdinalIgnoreCase);
 			if (isSigned)
 				s = s.Substring(1);
@@ -700,8 +697,7 @@ namespace dnSpy.Contracts.Utilities {
 		}
 
 		static long ParseSigned(string s, long min, long max, object minObject, out string error) {
-			long value;
-			error = TryParseSigned(s, min, max, minObject, out value);
+			error = TryParseSigned(s, min, max, minObject, out long value);
 			if (error != null)
 				return 0;
 			return value;
@@ -876,7 +872,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <returns></returns>
 		public static string ToString(IList<string> values, bool canHaveNull) => ToString(values, v => ToString(v, canHaveNull));
 
-		static T[] ParseList<T>(string s, out string error, Func<string, Tuple<T, string>> parseValue) {
+		static T[] ParseList<T>(string s, out string error, Func<string, (T value, string error)> parseValue) {
 			var list = new List<T>();
 
 			s = s.Trim();
@@ -892,11 +888,11 @@ namespace dnSpy.Contracts.Utilities {
 					return null;
 				}
 				var res = parseValue(value);
-				if (res.Item2 != null) {
-					error = res.Item2;
+				if (res.error != null) {
+					error = res.error;
 					return null;
 				}
-				list.Add(res.Item1);
+				list.Add(res.value);
 			}
 
 			error = null;
@@ -941,7 +937,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="s">Input string</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static bool[] ParseBooleanList(string s, out string error) => ParseList(s, out error, v => { string err; var res = ParseBoolean(v, out err); return Tuple.Create(res, err); });
+		public static bool[] ParseBooleanList(string s, out string error) => ParseList(s, out error, v => { var res = ParseBoolean(v, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="char"/>s to an array
@@ -960,7 +956,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static byte[] ParseByteList(string s, byte min, byte max, out string error) => ParseList(s, out error, v => { string err; var res = ParseByte(v, min, max, out err); return Tuple.Create(res, err); });
+		public static byte[] ParseByteList(string s, byte min, byte max, out string error) => ParseList(s, out error, v => { var res = ParseByte(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="ushort"/>s to an array
@@ -970,7 +966,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error) => ParseList(s, out error, v => { string err; var res = ParseUInt16(v, min, max, out err); return Tuple.Create(res, err); });
+		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error) => ParseList(s, out error, v => { var res = ParseUInt16(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="uint"/>s to an array
@@ -980,7 +976,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error) => ParseList(s, out error, v => { string err; var res = ParseUInt32(v, min, max, out err); return Tuple.Create(res, err); });
+		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error) => ParseList(s, out error, v => { var res = ParseUInt32(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="ulong"/>s to an array
@@ -990,7 +986,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error) => ParseList(s, out error, v => { string err; var res = ParseUInt64(v, min, max, out err); return Tuple.Create(res, err); });
+		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error) => ParseList(s, out error, v => { var res = ParseUInt64(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="sbyte"/>s to an array
@@ -1000,7 +996,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error) => ParseList(s, out error, v => { string err; var res = ParseSByte(v, min, max, out err); return Tuple.Create(res, err); });
+		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error) => ParseList(s, out error, v => { var res = ParseSByte(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="short"/>s to an array
@@ -1010,7 +1006,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static short[] ParseInt16List(string s, short min, short max, out string error) => ParseList(s, out error, v => { string err; var res = ParseInt16(v, min, max, out err); return Tuple.Create(res, err); });
+		public static short[] ParseInt16List(string s, short min, short max, out string error) => ParseList(s, out error, v => { var res = ParseInt16(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="int"/>s to an array
@@ -1020,7 +1016,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static int[] ParseInt32List(string s, int min, int max, out string error) => ParseList(s, out error, v => { string err; var res = ParseInt32(v, min, max, out err); return Tuple.Create(res, err); });
+		public static int[] ParseInt32List(string s, int min, int max, out string error) => ParseList(s, out error, v => { var res = ParseInt32(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="long"/>s to an array
@@ -1030,7 +1026,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="max">Maximium value</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static long[] ParseInt64List(string s, long min, long max, out string error) => ParseList(s, out error, v => { string err; var res = ParseInt64(v, min, max, out err); return Tuple.Create(res, err); });
+		public static long[] ParseInt64List(string s, long min, long max, out string error) => ParseList(s, out error, v => { var res = ParseInt64(v, min, max, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="float"/>s to an array
@@ -1038,7 +1034,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="s">Input string</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static float[] ParseSingleList(string s, out string error) => ParseList(s, out error, v => { string err; var res = ParseSingle(v, out err); return Tuple.Create(res, err); });
+		public static float[] ParseSingleList(string s, out string error) => ParseList(s, out error, v => { var res = ParseSingle(v, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="double"/>s to an array
@@ -1046,7 +1042,7 @@ namespace dnSpy.Contracts.Utilities {
 		/// <param name="s">Input string</param>
 		/// <param name="error">Updated with error string or null if no error</param>
 		/// <returns></returns>
-		public static double[] ParseDoubleList(string s, out string error) => ParseList(s, out error, v => { string err; var res = ParseDouble(v, out err); return Tuple.Create(res, err); });
+		public static double[] ParseDoubleList(string s, out string error) => ParseList(s, out error, v => { var res = ParseDouble(v, out string err); return (res, err); });
 
 		/// <summary>
 		/// Converts a string containing a list of <see cref="string"/>s to an array

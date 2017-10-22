@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="name">Name</param>
-		protected NamespaceNode(string name) {
-			Name = name;
-		}
+		protected NamespaceNode(string name) => Name = name;
 
 		/// <summary>
 		/// Creates a <see cref="TypeNode"/>

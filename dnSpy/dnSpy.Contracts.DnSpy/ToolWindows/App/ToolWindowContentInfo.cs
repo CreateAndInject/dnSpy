@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,10 +52,10 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// <param name="order">Order</param>
 		/// <param name="isDefault">true if default</param>
 		public ToolWindowContentInfo(Guid guid, AppToolWindowLocation location = AppToolWindowLocation.DefaultHorizontal, double order = double.MaxValue, bool isDefault = false) {
-			this.Guid = guid;
-			this.Location = location;
-			this.Order = order;
-			this.IsDefault = isDefault;
+			Guid = guid;
+			Location = location;
+			Order = order;
+			IsDefault = isDefault;
 		}
 	}
 }

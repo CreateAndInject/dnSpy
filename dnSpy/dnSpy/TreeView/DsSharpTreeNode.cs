@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ namespace dnSpy.TreeView {
 		public TreeNodeImpl TreeNodeImpl => treeNodeImpl;
 		readonly TreeNodeImpl treeNodeImpl;
 
-		public DsSharpTreeNode(TreeNodeImpl treeNodeImpl) {
-			this.treeNodeImpl = treeNodeImpl;
-		}
+		public DsSharpTreeNode(TreeNodeImpl treeNodeImpl) => this.treeNodeImpl = treeNodeImpl;
 
 		// Needed by XAML
 		public TreeNodeData Data => treeNodeImpl.Data;
@@ -74,7 +72,6 @@ namespace dnSpy.TreeView {
 
 		protected override void OnExpanding() {
 			base.OnExpanding();
-			Debug.Assert(IsExpanded);
 			treeNodeImpl.Data.OnIsExpandedChanged(true);
 		}
 

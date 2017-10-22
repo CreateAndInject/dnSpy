@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,11 +32,9 @@ namespace dnSpy.BackgroundImage {
 		readonly IImageSourceServiceProvider imageSourceServiceProvider;
 
 		[ImportingConstructor]
-		WpfTextViewCreationListener(IImageSourceServiceProvider imageSourceServiceProvider) {
-			this.imageSourceServiceProvider = imageSourceServiceProvider;
-		}
+		WpfTextViewCreationListener(IImageSourceServiceProvider imageSourceServiceProvider) => this.imageSourceServiceProvider = imageSourceServiceProvider;
 
 		public void TextViewCreated(IWpfTextView textView) =>
-			BackgroundImageService.InstallService(textView, imageSourceServiceProvider.Create(textView));
+			TextViewBackgroundImageService.InstallService(textView, imageSourceServiceProvider.Create(textView));
 	}
 }

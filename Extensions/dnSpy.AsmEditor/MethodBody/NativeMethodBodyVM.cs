@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public UInt32VM RVA { get; }
 
 		public NativeMethodBodyVM(NativeMethodBodyOptions options, bool initialize) {
-			this.origOptions = options;
-			this.RVA = new UInt32VM(a => HasErrorUpdated());
+			origOptions = options;
+			RVA = new UInt32VM(a => HasErrorUpdated());
 
 			if (initialize)
 				Reinitialize();
@@ -37,10 +37,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void Reinitialize() => InitializeFrom(origOptions);
 		public NativeMethodBodyOptions CreateNativeMethodBodyOptions() => CopyTo(new NativeMethodBodyOptions());
-		public void InitializeFrom(NativeMethodBodyOptions options) => this.RVA.Value = (uint)options.RVA;
+		public void InitializeFrom(NativeMethodBodyOptions options) => RVA.Value = (uint)options.RVA;
 
 		public NativeMethodBodyOptions CopyTo(NativeMethodBodyOptions options) {
-			options.RVA = (dnlib.PE.RVA)(uint)this.RVA.Value;
+			options.RVA = (dnlib.PE.RVA)(uint)RVA.Value;
 			return options;
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void InitializeEnumUnderlyingTypeField(EnumInfo enumInfo) {
 			this.enumInfo = enumInfo;
-			this.enumUnderlyingTypeField = null;
+			enumUnderlyingTypeField = null;
 
 			if (enumInfo.Value != null)
 				enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);

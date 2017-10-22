@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,9 +52,7 @@ namespace dnSpy.AsmEditor.Event {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 
 			[ImportingConstructor]
-			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) {
-				this.undoCommandService = undoCommandService;
-			}
+			DocumentsCommand(Lazy<IUndoCommandService> undoCommandService) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
@@ -67,9 +65,7 @@ namespace dnSpy.AsmEditor.Event {
 
 			[ImportingConstructor]
 			EditMenuCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsVisible(AsmEditorContext context) => DeleteEventDefCommand.CanExecute(context.Nodes);
 			public override void Execute(AsmEditorContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
@@ -82,9 +78,7 @@ namespace dnSpy.AsmEditor.Event {
 
 			[ImportingConstructor]
 			CodeCommand(Lazy<IUndoCommandService> undoCommandService, IDocumentTreeView documentTreeView)
-				: base(documentTreeView) {
-				this.undoCommandService = undoCommandService;
-			}
+				: base(documentTreeView) => this.undoCommandService = undoCommandService;
 
 			public override bool IsEnabled(CodeContext context) => context.IsDefinition && DeleteEventDefCommand.CanExecute(context.Nodes);
 			public override void Execute(CodeContext context) => DeleteEventDefCommand.Execute(undoCommandService, context.Nodes);
@@ -117,11 +111,11 @@ namespace dnSpy.AsmEditor.Event {
 				public readonly MethodDef[] Methods;
 
 				public ModelInfo(EventDef evt) {
-					this.OwnerType = evt.DeclaringType;
-					this.EventIndex = this.OwnerType.Events.IndexOf(evt);
-					Debug.Assert(this.EventIndex >= 0);
-					this.Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
-					this.MethodIndexes = new int[this.Methods.Length];
+					OwnerType = evt.DeclaringType;
+					EventIndex = OwnerType.Events.IndexOf(evt);
+					Debug.Assert(EventIndex >= 0);
+					Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
+					MethodIndexes = new int[Methods.Length];
 				}
 
 				static IEnumerable<MethodDef> GetMethods(EventDef evt) {
@@ -185,9 +179,7 @@ namespace dnSpy.AsmEditor.Event {
 		DeletableNodes<EventNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteEventDefCommand(EventNode[] eventNodes) {
-			this.nodes = new DeletableNodes<EventNode>(eventNodes);
-		}
+		DeleteEventDefCommand(EventNode[] eventNodes) => nodes = new DeletableNodes<EventNode>(eventNodes);
 
 		public string Description => dnSpy_AsmEditor_Resources.DeleteEventCommand;
 
@@ -249,11 +241,10 @@ namespace dnSpy.AsmEditor.Event {
 				this.appService = appService;
 			}
 
-			public override bool IsEnabled(CodeContext context) {
-				return context.IsDefinition &&
-					context.Nodes.Length == 1 &&
-					context.Nodes[0] is TypeNode;
-			}
+			public override bool IsEnabled(CodeContext context) =>
+				context.IsDefinition &&
+				context.Nodes.Length == 1 &&
+				context.Nodes[0] is TypeNode;
 
 			public override void Execute(CodeContext context) => CreateEventDefCommand.Execute(undoCommandService, appService, context.Nodes);
 		}
@@ -298,7 +289,7 @@ namespace dnSpy.AsmEditor.Event {
 
 		CreateEventDefCommand(TypeNode ownerNode, EventDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.eventNode = ownerNode.Create(options.CreateEventDef(ownerNode.TypeDef.Module));
+			eventNode = ownerNode.Create(options.CreateEventDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.CreateEventCommand2;
@@ -403,16 +394,16 @@ namespace dnSpy.AsmEditor.Event {
 
 		EventDefSettingsCommand(EventNode eventNode, EventDefOptions options) {
 			this.eventNode = eventNode;
-			this.newOptions = options;
-			this.origOptions = new EventDefOptions(eventNode.EventDef);
+			newOptions = options;
+			origOptions = new EventDefOptions(eventNode.EventDef);
 
-			this.origParentNode = (DocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
-			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(eventNode.TreeNode);
-			Debug.Assert(this.origParentChildIndex >= 0);
-			if (this.origParentChildIndex < 0)
+			origParentNode = (DocumentTreeNodeData)eventNode.TreeNode.Parent.Data;
+			origParentChildIndex = origParentNode.TreeNode.Children.IndexOf(eventNode.TreeNode);
+			Debug.Assert(origParentChildIndex >= 0);
+			if (origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
-			this.nameChanged = origOptions.Name != newOptions.Name;
+			nameChanged = origOptions.Name != newOptions.Name;
 		}
 
 		public string Description => dnSpy_AsmEditor_Resources.EditEventCommand2;
@@ -427,6 +418,7 @@ namespace dnSpy.AsmEditor.Event {
 				newOptions.CopyTo(eventNode.EventDef);
 
 				origParentNode.TreeNode.AddChild(eventNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { eventNode });
 			}
 			else
 				newOptions.CopyTo(eventNode.EventDef);
@@ -442,6 +434,7 @@ namespace dnSpy.AsmEditor.Event {
 
 				origOptions.CopyTo(eventNode.EventDef);
 				origParentNode.TreeNode.Children.Insert(origParentChildIndex, eventNode.TreeNode);
+				origParentNode.TreeNode.TreeView.SelectItems(new[] { eventNode });
 			}
 			else
 				origOptions.CopyTo(eventNode.EventDef);

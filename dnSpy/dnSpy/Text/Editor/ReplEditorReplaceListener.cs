@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,11 +37,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ReplEditorReplaceListener : IReplaceListener {
 		readonly ReplEditor replEditor;
 
-		public ReplEditorReplaceListener(ReplEditor replEditor) {
-			if (replEditor == null)
-				throw new ArgumentNullException(nameof(replEditor));
-			this.replEditor = replEditor;
-		}
+		public ReplEditorReplaceListener(ReplEditor replEditor) => this.replEditor = replEditor ?? throw new ArgumentNullException(nameof(replEditor));
 
 		public bool CanReplace(SnapshotSpan span, string newText) => replEditor.CanReplace(span, newText);
 	}

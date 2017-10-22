@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,11 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Threading;
 using dnSpy.Contracts.MVVM;
 
 namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 	class ILSettings : ViewModelBase {
 		protected virtual void OnModified() { }
+
+		void OptionsChanged() {
+			Interlocked.Increment(ref settingsVersion);
+			OnModified();
+		}
+
+		public int SettingsVersion => settingsVersion;
+		volatile int settingsVersion;
 
 		public bool ShowILComments {
 			get { return showILComments; }
@@ -29,7 +38,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showILComments != value) {
 					showILComments = value;
 					OnPropertyChanged(nameof(ShowILComments));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -41,7 +50,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showXmlDocumentation != value) {
 					showXmlDocumentation = value;
 					OnPropertyChanged(nameof(ShowXmlDocumentation));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -53,7 +62,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showTokenAndRvaComments != value) {
 					showTokenAndRvaComments = value;
 					OnPropertyChanged(nameof(ShowTokenAndRvaComments));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -65,7 +74,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (showILBytes != value) {
 					showILBytes = value;
 					OnPropertyChanged(nameof(ShowILBytes));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
@@ -77,20 +86,33 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				if (sortMembers != value) {
 					sortMembers = value;
 					OnPropertyChanged(nameof(SortMembers));
-					OnModified();
+					OptionsChanged();
 				}
 			}
 		}
-		bool sortMembers = true;
+		bool sortMembers = false;
+
+		public bool ShowPdbInfo {
+			get { return showPdbInfo; }
+			set {
+				if (showPdbInfo != value) {
+					showPdbInfo = value;
+					OnPropertyChanged(nameof(ShowPdbInfo));
+					OptionsChanged();
+				}
+			}
+		}
+		bool showPdbInfo = false;
 
 		public ILSettings Clone() => CopyTo(new ILSettings());
 
 		public ILSettings CopyTo(ILSettings other) {
-			other.ShowILComments = this.ShowILComments;
-			other.ShowXmlDocumentation = this.ShowXmlDocumentation;
-			other.ShowTokenAndRvaComments = this.ShowTokenAndRvaComments;
-			other.ShowILBytes = this.ShowILBytes;
-			other.SortMembers = this.SortMembers;
+			other.ShowILComments = ShowILComments;
+			other.ShowXmlDocumentation = ShowXmlDocumentation;
+			other.ShowTokenAndRvaComments = ShowTokenAndRvaComments;
+			other.ShowILBytes = ShowILBytes;
+			other.SortMembers = SortMembers;
+			other.ShowPdbInfo = ShowPdbInfo;
 			return other;
 		}
 
@@ -101,7 +123,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 				ShowXmlDocumentation == other.ShowXmlDocumentation &&
 				ShowTokenAndRvaComments == other.ShowTokenAndRvaComments &&
 				ShowILBytes == other.ShowILBytes &&
-				SortMembers == other.SortMembers;
+				SortMembers == other.SortMembers &&
+				ShowPdbInfo == other.ShowPdbInfo;
 		}
 
 		public override int GetHashCode() {
@@ -112,6 +135,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.Settings {
 			if (ShowTokenAndRvaComments) h ^= 0x20000000;
 			if (ShowILBytes) h ^= 0x10000000;
 			if (SortMembers) h ^= 0x08000000;
+			if (ShowPdbInfo) h ^= 0x04000000;
 
 			return (int)h;
 		}

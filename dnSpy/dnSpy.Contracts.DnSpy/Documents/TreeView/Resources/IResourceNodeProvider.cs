@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,9 +61,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 	public sealed class ExportResourceNodeProviderAttribute : ExportAttribute, IResourceNodeProviderMetadata {
 		/// <summary>Constructor</summary>
 		public ExportResourceNodeProviderAttribute()
-			: base(typeof(IResourceNodeProvider)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(IResourceNodeProvider)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance

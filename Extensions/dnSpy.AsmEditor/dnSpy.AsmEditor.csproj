@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{87772B51-FA94-47A5-83F4-4E8E69369A2D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.AsmEditor</RootNamespace>
     <AssemblyName>dnSpy.AsmEditor.x</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,13 +74,23 @@
     <Compile Include="Commands\AppService.cs" />
     <Compile Include="Commands\AsmEditorContext.cs" />
     <Compile Include="Commands\ClipboardDataHolder.cs" />
+    <Compile Include="Commands\CloseAllMissingFilesCommand.cs" />
+    <Compile Include="Commands\CloseOldInMemoryModulesCommand.cs" />
     <Compile Include="Commands\CodeContextMenuHandler.cs" />
     <Compile Include="Commands\CodeContextMenuHandlerCommandProxy.cs" />
     <Compile Include="Commands\CommandUtils.cs" />
     <Compile Include="Commands\ContextMenuHandler.cs" />
     <Compile Include="Commands\DeletableNodes.cs" />
+    <Compile Include="Commands\DeletedEventUpdater.cs" />
+    <Compile Include="Commands\DeletedFieldUpdater.cs" />
+    <Compile Include="Commands\DeletedMethodUpdater.cs" />
+    <Compile Include="Commands\DeletedPropertyUpdater.cs" />
+    <Compile Include="Commands\DeletedTypeUpdater.cs" />
     <Compile Include="Commands\DocumentsContextMenuHandler.cs" />
-    <Compile Include="Commands\EditedMethodBodyUpdater.cs" />
+    <Compile Include="Commands\EditedEventUpdater.cs" />
+    <Compile Include="Commands\EditedFieldUpdater.cs" />
+    <Compile Include="Commands\EditedMethodUpdater.cs" />
+    <Compile Include="Commands\EditedPropertyUpdater.cs" />
     <Compile Include="Commands\EditMenuHandler.cs" />
     <Compile Include="Commands\EditMenuHandlerCommandProxy.cs" />
     <Compile Include="Commands\EventNodeCreator.cs" />
@@ -111,6 +121,8 @@
     <Compile Include="Compiler\DecompiledDocument.cs" />
     <Compile Include="Compiler\EditAssemblyCommands.cs" />
     <Compile Include="Compiler\EditAssemblyVM.cs" />
+    <Compile Include="Compiler\EditClassCommands.cs" />
+    <Compile Include="Compiler\EditClassVM.cs" />
     <Compile Include="Compiler\EditCodeCommandBase.cs" />
     <Compile Include="Compiler\EditCodeCommandConstants.cs" />
     <Compile Include="Compiler\EditCodeCommandInfoProvider.cs" />
@@ -134,6 +146,7 @@
     <Compile Include="Compiler\PlatformHelper.cs" />
     <Compile Include="Compiler\RawModuleBytesProvider.cs" />
     <Compile Include="Compiler\ResourceNodeCreator.cs" />
+    <Compile Include="Compiler\StateMachineHelpers.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="DnlibDialogs\CAArgumentVM.cs" />
@@ -315,57 +328,61 @@
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Field\FieldOptionsVM.cs" />
-    <Compile Include="Hex\AsmEdHexDocument.cs" />
+    <Compile Include="Hex\ClipboardUtils.cs" />
     <Compile Include="Hex\Commands.cs" />
     <Compile Include="Hex\HexAddressReferenceFileTabContentProvider.cs" />
     <Compile Include="Hex\HexBoxDocumentTabContent.cs" />
-    <Compile Include="Hex\HexBoxUIState.cs" />
-    <Compile Include="Hex\HexBoxUIStateSerializer.cs" />
-    <Compile Include="Hex\HexBoxUndoCommand.cs" />
-    <Compile Include="Hex\HexBoxUndoService.cs" />
-    <Compile Include="Hex\HexDocumentService.cs" />
+    <Compile Include="Hex\HexBufferFileBufferServiceListener.cs" />
+    <Compile Include="Hex\HexBufferService.cs" />
+    <Compile Include="Hex\HexBufferUndoRedo.cs" />
+    <Compile Include="Hex\HexBufferWriterHelper.cs" />
     <Compile Include="Hex\HexTabSaver.cs" />
     <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
+    <Compile Include="Hex\HexViewUIState.cs" />
+    <Compile Include="Hex\HexViewUIStateSerializer.cs" />
     <Compile Include="Hex\InstructionUtils.cs" />
-    <Compile Include="Hex\IUndoHexDocument.cs" />
     <Compile Include="Hex\MDTableContextMenuCommands.cs" />
     <Compile Include="Hex\Nodes\HexDocumentTabContent.cs" />
     <Compile Include="Hex\Nodes\HexDocumentTreeNodeDataFinder.cs" />
-    <Compile Include="Hex\Nodes\HexField.cs" />
     <Compile Include="Hex\Nodes\HexNode.cs" />
-    <Compile Include="Hex\Nodes\HexUtils.cs" />
-    <Compile Include="Hex\Nodes\HexVM.cs" />
     <Compile Include="Hex\Nodes\ImageCor20HeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageCor20HeaderVM.cs" />
     <Compile Include="Hex\Nodes\ImageDosHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageDosHeaderVM.cs" />
     <Compile Include="Hex\Nodes\ImageFileHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageFileHeaderVM.cs" />
     <Compile Include="Hex\Nodes\ImageOptionalHeader32Node.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeader32VM.cs" />
     <Compile Include="Hex\Nodes\ImageOptionalHeader64Node.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeader64VM.cs" />
-    <Compile Include="Hex\Nodes\ImageOptionalHeaderVM.cs" />
     <Compile Include="Hex\Nodes\ImageSectionHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\ImageSectionHeaderVM.cs" />
     <Compile Include="Hex\Nodes\MetaDataTableNode.cs" />
     <Compile Include="Hex\Nodes\MetaDataTableRecordNode.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableRecordVM.cs" />
-    <Compile Include="Hex\Nodes\MetaDataTableVM.cs" />
     <Compile Include="Hex\Nodes\PENode.cs" />
     <Compile Include="Hex\Nodes\PETreeNodeDataProvider.cs" />
     <Compile Include="Hex\Nodes\StorageHeaderNode.cs" />
-    <Compile Include="Hex\Nodes\StorageHeaderVM.cs" />
     <Compile Include="Hex\Nodes\StorageSignatureNode.cs" />
-    <Compile Include="Hex\Nodes\StorageSignatureVM.cs" />
     <Compile Include="Hex\Nodes\StorageStreamNode.cs" />
-    <Compile Include="Hex\Nodes\StorageStreamVM.cs" />
     <Compile Include="Hex\Nodes\TablesStreamNode.cs" />
-    <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
     <Compile Include="Hex\Nodes\TokenReferenceDocumentTabContentProvider.cs" />
-    <Compile Include="Hex\Nodes\VirtualizedList.cs" />
+    <Compile Include="Hex\NormalizedHexChangeCollectionExtensions.cs" />
+    <Compile Include="Hex\PE\BufferToDocumentNodeService.cs" />
+    <Compile Include="Hex\PE\HexField.cs" />
+    <Compile Include="Hex\PE\HexFieldReference.cs" />
+    <Compile Include="Hex\PE\HexFileStructureInfoProviderImpl.cs" />
+    <Compile Include="Hex\PE\HexReferenceConverterImpl.cs" />
+    <Compile Include="Hex\PE\HexVM.cs" />
+    <Compile Include="Hex\PE\ImageCor20HeaderVM.cs" />
+    <Compile Include="Hex\PE\ImageDosHeaderVM.cs" />
+    <Compile Include="Hex\PE\ImageFileHeaderVM.cs" />
+    <Compile Include="Hex\PE\ImageOptionalHeader32VM.cs" />
+    <Compile Include="Hex\PE\ImageOptionalHeader64VM.cs" />
+    <Compile Include="Hex\PE\ImageOptionalHeaderVM.cs" />
+    <Compile Include="Hex\PE\ImageSectionHeaderVM.cs" />
+    <Compile Include="Hex\PE\MetaDataTableRecordVM.cs" />
+    <Compile Include="Hex\PE\MetaDataTableVM.cs" />
+    <Compile Include="Hex\PE\PEStructureProvider.cs" />
+    <Compile Include="Hex\PE\StorageHeaderVM.cs" />
+    <Compile Include="Hex\PE\StorageSignatureVM.cs" />
+    <Compile Include="Hex\PE\StorageStreamVM.cs" />
+    <Compile Include="Hex\PE\TablesStreamVM.cs" />
+    <Compile Include="Hex\PE\VirtualizedList.cs" />
     <Compile Include="Hex\TableSorter.cs" />
-    <Compile Include="Hex\WriteHexUndoCommand.cs" />
     <Compile Include="MethodBody\BodyCommandUtils.cs" />
     <Compile Include="MethodBody\BodyUtils.cs" />
     <Compile Include="MethodBody\CilBodyOptions.cs" />
@@ -518,7 +535,7 @@
     <Compile Include="UndoRedo\UndoCommandService.cs" />
     <Compile Include="UndoRedo\UndoCommandServiceEventArgs.cs" />
     <Compile Include="UndoRedo\UndoObject.cs" />
-    <Compile Include="UndoRedo\UndoRedoIFileListListener.cs" />
+    <Compile Include="UndoRedo\UndoRedoDocumentListListener.cs" />
     <Compile Include="UndoRedo\UndoRedoMenuCommands.cs" />
     <Compile Include="UndoRedo\UndoRoutedCommands.cs" />
     <Compile Include="Utilities\UIUtils.cs" />
@@ -844,11 +861,4 @@
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

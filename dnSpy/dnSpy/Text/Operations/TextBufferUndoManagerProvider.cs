@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.Text.Operations {
 		readonly ITextUndoHistoryRegistry textUndoHistoryRegistry;
 
 		[ImportingConstructor]
-		TextBufferUndoManagerProvider(ITextUndoHistoryRegistry textUndoHistoryRegistry) {
-			this.textUndoHistoryRegistry = textUndoHistoryRegistry;
-		}
+		TextBufferUndoManagerProvider(ITextUndoHistoryRegistry textUndoHistoryRegistry) => this.textUndoHistoryRegistry = textUndoHistoryRegistry;
 
 		public ITextBufferUndoManager GetTextBufferUndoManager(ITextBuffer textBuffer) {
 			if (textBuffer == null)
@@ -42,8 +40,7 @@ namespace dnSpy.Text.Operations {
 		public void RemoveTextBufferUndoManager(ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			TextBufferUndoManager manager;
-			if (!textBuffer.Properties.TryGetProperty(textBufferUndoManagerKey, out manager))
+			if (!textBuffer.Properties.TryGetProperty(textBufferUndoManagerKey, out TextBufferUndoManager manager))
 				return;
 			textBuffer.Properties.RemoveProperty(textBufferUndoManagerKey);
 			manager.Dispose();

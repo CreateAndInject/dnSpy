@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.IO;
 using dnlib.DotNet.MD;
 using dnlib.PE;
 
@@ -31,23 +32,31 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public MetadataFixer(byte[] data) {
 			this.data = data;
-			this.md = null;
+			md = null;
 		}
 
 		public bool MakePublic() {
 			try {
-				md = MetaDataCreator.CreateMetaData(new PEImage(data));
-			}
-			catch (BadImageFormatException) {
-				return false;
-			}
+				try {
+					md = MetaDataCreator.CreateMetaData(new PEImage(data));
+				}
+				catch (IOException) {
+					return false;
+				}
+				catch (BadImageFormatException) {
+					return false;
+				}
 
-			UpdateTypeDefTable();
-			UpdateFieldTable();
-			UpdateMethodTable();
-			UpdateExportedTypeTable();
+				UpdateTypeDefTable();
+				UpdateFieldTable();
+				UpdateMethodTable();
+				UpdateExportedTypeTable();
 
-			return true;
+				return true;
+			}
+			finally {
+				md?.Dispose();
+			}
 		}
 
 		void UpdateTypeDefTable() {

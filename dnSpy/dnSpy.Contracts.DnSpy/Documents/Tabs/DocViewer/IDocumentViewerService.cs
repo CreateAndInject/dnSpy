@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -78,9 +78,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance, eg. <see cref="DocumentViewerListenerConstants.ORDER_GLYPHTEXTMARKERSERVICE"/></param>
 		public ExportDocumentViewerListenerAttribute(double order)
-			: base(typeof(IDocumentViewerListener)) {
-			Order = order;
-		}
+			: base(typeof(IDocumentViewerListener)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance
@@ -130,11 +128,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// Constructor
 		/// </summary>
 		/// <param name="documentViewer"><see cref="IDocumentViewer"/> instance</param>
-		protected DocumentViewerEventArgs(IDocumentViewer documentViewer) {
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			DocumentViewer = documentViewer;
-		}
+		protected DocumentViewerEventArgs(IDocumentViewer documentViewer) => DocumentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 	}
 
 	/// <summary>
@@ -200,12 +194,8 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <param name="contentType">Content type</param>
 		public DocumentViewerGotNewContentEventArgs(IDocumentViewer documentViewer, DocumentViewerContent content, IContentType contentType)
 			: base(documentViewer) {
-			if (content == null)
-				throw new ArgumentNullException(nameof(content));
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
-			Content = content;
-			ContentType = contentType;
+			Content = content ?? throw new ArgumentNullException(nameof(content));
+			ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
 		}
 	}
 }

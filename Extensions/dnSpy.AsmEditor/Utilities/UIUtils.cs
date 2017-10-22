@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,14 +57,11 @@ namespace dnSpy.AsmEditor.Utilities {
 			SetFocus(listBox, obj, DispatcherPriority.Normal);
 		}
 
-		static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
-			selector.Dispatcher.BeginInvoke(prio, new Action(() => {
-				if (selector.SelectedItem == obj) {
-					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as IInputElement;
-					if (item != null)
-						item.Focus();
-				}
-			}));
-		}
+		static void SetFocus(Selector selector, object obj, DispatcherPriority prio) => selector.Dispatcher.BeginInvoke(prio, new Action(() => {
+			if (selector.SelectedItem == obj) {
+				if (selector.ItemContainerGenerator.ContainerFromItem(obj) is IInputElement item)
+					item.Focus();
+			}
+		}));
 	}
 }

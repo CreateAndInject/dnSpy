@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,21 +86,17 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public CategoryClassificationFormatMap(IThemeService themeService, IEditorFormatMap editorFormatMap, IEditorFormatDefinitionService editorFormatDefinitionService, IClassificationTypeRegistryService classificationTypeRegistryService) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
 			if (editorFormatDefinitionService == null)
 				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
 			if (classificationTypeRegistryService == null)
 				throw new ArgumentNullException(nameof(classificationTypeRegistryService));
-			this.themeService = themeService;
-			this.editorFormatMap = editorFormatMap;
-			this.toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
-			this.toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
-			this.toClassificationTypeOrder = new Dictionary<IClassificationType, int>();
-			this.classificationToEditorFormatMapKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			this.defaultResourceDictionary = new ResourceDictionary();
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
+			toClassificationInfo = new Dictionary<IClassificationType, ClassificationInfo>();
+			toEditorFormatDefinition = new Dictionary<IClassificationType, Lazy<EditorFormatDefinition, IClassificationFormatMetadata>>(editorFormatDefinitionService.ClassificationFormatDefinitions.Length);
+			toClassificationTypeOrder = new Dictionary<IClassificationType, int>();
+			classificationToEditorFormatMapKey = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			defaultResourceDictionary = new ResourceDictionary();
 
 			for (int i = 0; i < editorFormatDefinitionService.ClassificationFormatDefinitions.Length; i++) {
 				var e = editorFormatDefinitionService.ClassificationFormatDefinitions[i];
@@ -150,10 +146,8 @@ namespace dnSpy.Text.Classification {
 		}
 
 		ClassificationInfo TryGetClassificationInfo(IClassificationType classificationType, bool canCreate) {
-			ClassificationInfo info;
-			if (!toClassificationInfo.TryGetValue(classificationType, out info)) {
-				Lazy<EditorFormatDefinition, IClassificationFormatMetadata> lazy;
-				if (!toEditorFormatDefinition.TryGetValue(classificationType, out lazy)) {
+			if (!toClassificationInfo.TryGetValue(classificationType, out var info)) {
+				if (!toEditorFormatDefinition.TryGetValue(classificationType, out var lazy)) {
 					if (!canCreate)
 						return null;
 					lazy = new Lazy<EditorFormatDefinition, IClassificationFormatMetadata>(() => new TransientClassificationFormatDefinition(), new ClassificationFormatMetadata(classificationType.Classification));
@@ -230,54 +224,36 @@ namespace dnSpy.Text.Classification {
 		public string GetEditorFormatMapKey(IClassificationType classificationType) {
 			if (classificationType == null)
 				throw new ArgumentNullException(nameof(classificationType));
-			string key;
-			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out key))
+			if (!classificationToEditorFormatMapKey.TryGetValue(classificationType.Classification, out string key))
 				key = classificationType.Classification;
 			return key;
 		}
 
-		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
 
-		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void AddExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties, IClassificationType priority) => throw new NotImplementedException();//TODO:
 
-		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void SetTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
 
-		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void SetExplicitTextProperties(IClassificationType classificationType, TextFormattingRunProperties properties) => throw new NotImplementedException();//TODO:
 
-		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) {
-			throw new NotImplementedException();//TODO:
-		}
+		public void SwapPriorities(IClassificationType firstType, IClassificationType secondType) => throw new NotImplementedException();//TODO:
 
-		public void BeginBatchUpdate() {
-			throw new NotImplementedException();//TODO:
-		}
+		public void BeginBatchUpdate() => throw new NotImplementedException();//TODO:
 
-		public void EndBatchUpdate() {
-			throw new NotImplementedException();//TODO:
-		}
+		public void EndBatchUpdate() => throw new NotImplementedException();//TODO:
 
 		sealed class ClassificationTypeComparer : IComparer<IClassificationType> {
 			readonly CategoryClassificationFormatMap owner;
 
-			public ClassificationTypeComparer(CategoryClassificationFormatMap owner) {
-				this.owner = owner;
-			}
+			public ClassificationTypeComparer(CategoryClassificationFormatMap owner) => this.owner = owner;
 
 			public int Compare(IClassificationType x, IClassificationType y) => GetOrder(y) - GetOrder(x);
 
 			int GetOrder(IClassificationType a) {
 				if (a == null)
 					return -1;
-				int order;
-				if (owner.toClassificationTypeOrder.TryGetValue(a, out order))
+				if (owner.toClassificationTypeOrder.TryGetValue(a, out int order))
 					return order;
 				return -1;
 			}

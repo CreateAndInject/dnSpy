@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Text.Editor.Operations;
+using dnSpy.Contracts.Text.Operations;
 
 namespace dnSpy.Contracts.Text.Editor {
 	/// <summary>

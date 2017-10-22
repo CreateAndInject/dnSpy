@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,11 @@ namespace dnSpy.Contracts.Text.Classification {
 	/// </summary>
 	[Flags]
 	public enum TextElementFlags {
+		/// <summary>
+		/// No bit is set
+		/// </summary>
+		None							= 0,
+
 		/// <summary>
 		/// Filter out newlines from the string by replacing them with spaces
 		/// </summary>

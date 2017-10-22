@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public DeletableNodes(IEnumerable<T> nodes) {
 			this.nodes = nodes.ToArray();
-			this.parents = null;
+			parents = null;
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.Commands {
 				parents[i].TreeNode.AddChild(node.TreeNode);
 			}
 
-			this.parents = null;
+			parents = null;
 		}
 	}
 }

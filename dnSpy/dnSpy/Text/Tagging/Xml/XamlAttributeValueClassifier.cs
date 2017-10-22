@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,6 +57,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			Colon,
 			EqualsSign,
 			OpenCurlyBrace,
+			Period,
 		}
 
 		struct CharSpan {
@@ -80,9 +81,7 @@ namespace dnSpy.Text.Tagging.Xml {
 			}
 		}
 
-		public XamlAttributeValueClassifier() {
-			this.buffer = new char[512];
-		}
+		public XamlAttributeValueClassifier() => buffer = new char[512];
 
 		public bool Initialize(SnapshotSpan span) {
 			// Quick check that will filter out many small strings
@@ -122,6 +121,7 @@ namespace dnSpy.Text.Tagging.Xml {
 				case TokenKind.Colon:
 				case TokenKind.EqualsSign:
 				case TokenKind.Delimiter:
+				case TokenKind.Period:
 					yield return new XamlSpan(new SnapshotSpan(snapshot, cspan.Value.Span), XamlKind.Delimiter);
 					break;
 
@@ -151,20 +151,26 @@ namespace dnSpy.Text.Tagging.Xml {
 						}
 						yield return new XamlSpan(new SnapshotSpan(snapshot, next.Value.Span), XamlKind.Delimiter);
 
-						next = GetNextSpan();
-						if (next == null)
-							break;
-						if (next.Value.Kind != TokenKind.Name) {
-							Undo(next.Value);
-							break;
-						}
-						name = GetNextName(next.Value);
+						for (;;) {
+							next = GetNextSpan();
+							if (next == null)
+								break;
+							if (next.Value.Kind == TokenKind.Period)
+								yield return new XamlSpan(new SnapshotSpan(snapshot, next.Value.Span), XamlKind.Delimiter);
+							else if (next.Value.Kind == TokenKind.Name) {
+								name = GetNextName(next.Value);
 
-						yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item1.Span), XamlKind.ParameterValue);
-						if (name.Item2 != null)
-							yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item2.Value.Span), XamlKind.Delimiter);
-						if (name.Item3 != null)
-							yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item3.Value.Span), XamlKind.ParameterValue);
+								yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item1.Span), XamlKind.ParameterValue);
+								if (name.Item2 != null)
+									yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item2.Value.Span), XamlKind.Delimiter);
+								if (name.Item3 != null)
+									yield return new XamlSpan(new SnapshotSpan(snapshot, name.Item3.Value.Span), XamlKind.ParameterValue);
+							}
+							else {
+								Undo(next.Value);
+								break;
+							}
+						}
 					}
 					break;
 
@@ -214,6 +220,8 @@ namespace dnSpy.Text.Tagging.Xml {
 			if (c < 0)
 				return null;
 
+			if (IsPeriod((char)c))
+				return new CharSpan(startPos, snapshotPos, TokenKind.Period);
 			if (IsColon((char)c))
 				return new CharSpan(startPos, snapshotPos, TokenKind.Colon);
 			if (IsEqualsSign((char)c))
@@ -229,11 +237,12 @@ namespace dnSpy.Text.Tagging.Xml {
 			return new CharSpan(startPos, snapshotPos, TokenKind.Delimiter);
 		}
 
+		bool IsPeriod(char c) => c == '.';
 		bool IsColon(char c) => c == ':';
 		bool IsEqualsSign(char c) => c == '=';
 		bool IsOpenCurlyBrace(char c) => c == '{';
 		bool IsIdChar(char c) => char.IsLetterOrDigit(c) || c == '_';
-		bool IsDelimiter(char c) => !char.IsWhiteSpace(c) && !IsIdChar(c) && !IsColon(c) && !IsEqualsSign(c) && !IsOpenCurlyBrace(c);
+		bool IsDelimiter(char c) => !char.IsWhiteSpace(c) && !IsIdChar(c) && !IsPeriod(c) && !IsColon(c) && !IsEqualsSign(c) && !IsOpenCurlyBrace(c);
 
 		void SkipDelimiter() {
 			for (;;) {

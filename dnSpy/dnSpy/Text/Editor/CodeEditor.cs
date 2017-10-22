@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Menus;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Editor;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -39,9 +39,7 @@ namespace dnSpy.Text.Editor {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly CodeEditor codeEditor;
 
-			public GuidObjectsProvider(CodeEditor codeEditorUI) {
-				this.codeEditor = codeEditorUI;
-			}
+			public GuidObjectsProvider(CodeEditor codeEditorUI) => codeEditor = codeEditorUI;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_EDITOR_GUID, codeEditor);
@@ -58,7 +56,7 @@ namespace dnSpy.Text.Editor {
 			var roles = dsTextEditorFactoryService.CreateTextViewRoleSet(options.Roles);
 			var textView = dsTextEditorFactoryService.CreateTextView(textBuffer, roles, editorOptionsFactoryService.GlobalOptions, options);
 			TextViewHost = dsTextEditorFactoryService.CreateTextViewHost(textView, false);
-			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.CodeEditor);
+			TextViewHost.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.TextEditor);
 			TextViewHost.TextView.Options.SetOptionValue(DefaultDsTextViewOptions.RefreshScreenOnChangeId, true);
 		}
 

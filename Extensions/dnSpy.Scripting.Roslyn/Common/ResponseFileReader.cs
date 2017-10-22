@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -17,13 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	static class ResponseFileReader {
-		public static IEnumerable<Tuple<string, string>> Read(string filename) {
+		public static IEnumerable<(string command, string arguments)> Read(string filename) {
 			if (!File.Exists(filename))
 				yield break;
 			foreach (var tmp in File.ReadAllLines(filename)) {
@@ -46,7 +45,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				if (cmd[0] != '/' && cmd[0] != '-')
 					continue;
 				cmd = cmd.Substring(1);
-				yield return Tuple.Create(cmd.Trim(), arg1.Trim());
+				yield return (cmd.Trim(), arg1.Trim());
 			}
 		}
 	}

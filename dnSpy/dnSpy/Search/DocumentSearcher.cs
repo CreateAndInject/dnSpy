@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -53,9 +53,7 @@ namespace dnSpy.Search {
 		public IDecompiler Decompiler {
 			get { return filterSearcherOptions.Context.Decompiler; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				filterSearcherOptions.Context.Decompiler = value;
+				filterSearcherOptions.Context.Decompiler = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 
@@ -67,9 +65,9 @@ namespace dnSpy.Search {
 			if (options.SearchComparer == null)
 				throw new ArgumentException("options.SearchComparer is null", nameof(options));
 			this.options = options.Clone();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.filterSearcherOptions = new FilterSearcherOptions {
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			filterSearcherOptions = new FilterSearcherOptions {
 				Dispatcher = Dispatcher.CurrentDispatcher,
 				DocumentTreeView = documentTreeView,
 				DotNetImageService = dotNetImageService,
@@ -77,7 +75,7 @@ namespace dnSpy.Search {
 				SearchComparer = options.SearchComparer,
 				OnMatch = r => AddSearchResult(r),
 				Context = searchResultContext,
-				CancellationToken = this.cancellationToken,
+				CancellationToken = cancellationToken,
 				SearchDecompiledData = options.SearchDecompiledData,
 			};
 		}
@@ -120,28 +118,16 @@ namespace dnSpy.Search {
 
 				if (o is DsDocumentNode[]) {
 					Parallel.ForEach((DsDocumentNode[])o, opts, node => {
-						try {
-							cancellationToken.ThrowIfCancellationRequested();
-							var searcher = new FilterSearcher(filterSearcherOptions);
-							searcher.SearchAssemblies(new DsDocumentNode[] { node });
-						}
-						catch {
-							Cancel();
-							throw;
-						}
+						cancellationToken.ThrowIfCancellationRequested();
+						var searcher = new FilterSearcher(filterSearcherOptions);
+						searcher.SearchAssemblies(new DsDocumentNode[] { node });
 					});
 				}
 				else if (o is SearchTypeInfo[]) {
 					Parallel.ForEach((SearchTypeInfo[])o, opts, info => {
-						try {
-							cancellationToken.ThrowIfCancellationRequested();
-							var searcher = new FilterSearcher(filterSearcherOptions);
-							searcher.SearchTypes(new SearchTypeInfo[] { info });
-						}
-						catch {
-							Cancel();
-							throw;
-						}
+						cancellationToken.ThrowIfCancellationRequested();
+						var searcher = new FilterSearcher(filterSearcherOptions);
+						searcher.SearchTypes(new SearchTypeInfo[] { info });
 					});
 				}
 				else
@@ -151,10 +137,13 @@ namespace dnSpy.Search {
 				if (ex.InnerExceptions.Any(a => a is TooManyResultsException))
 					TooManyResults = true;
 				else
-					throw;
+					Cancel();
 			}
 			catch (TooManyResultsException) {
 				TooManyResults = true;
+			}
+			catch {
+				Cancel();
 			}
 			finally {
 				filterSearcherOptions.Dispatcher.BeginInvoke(DISPATCHER_PRIO, new Action(SearchCompleted));

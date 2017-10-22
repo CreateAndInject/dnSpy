@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -118,11 +118,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			this.origOptions = options;
-			this.Number = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
-			this.TypeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, decompilerService, ownerType, ownerMethod);
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.GPVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
+			origOptions = options;
+			Number = new UInt16VM(a => { OnPropertyChanged(nameof(FullName)); HasErrorUpdated(); });
+			TypeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, decompilerService, ownerType, ownerMethod);
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			GPVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, decompilerService) {
 				IsLocal = false,
@@ -135,7 +135,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
 				typeSigCreatorOptions.CanAddGenericMethodVar = true;
-			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 
 			Reinitialize();
 		}

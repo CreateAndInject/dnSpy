@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,9 +51,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public TextViewCreatorOptions() {
-			EnableUndoHistory = true;
-		}
+		public TextViewCreatorOptions() => EnableUndoHistory = true;
 
 		/// <summary>
 		/// Copy this to <paramref name="other"/>

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -168,7 +168,7 @@ namespace dnSpy.Contracts.Text {
 		/// <param name="name">Module name</param>
 		/// <returns></returns>
 		public static T WriteModule<T>(this T output, string name) where T : ITextColorWriter {
-			output.Write(BoxedTextColor.Module, NameUtilities.CleanName(name));
+			output.Write(BoxedTextColor.AssemblyModule, NameUtilities.CleanName(name));
 			return output;
 		}
 

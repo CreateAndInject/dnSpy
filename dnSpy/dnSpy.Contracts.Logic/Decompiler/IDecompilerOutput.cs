@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -181,7 +181,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="xmlDocText">XML documentation</param>
 		public static void WriteXmlDoc(this IDecompilerOutput output, string xmlDocText) {
 			foreach (var info in SimpleXmlParser.Parse(xmlDocText))
-				output.Write(info.Key, info.Value);
+				output.Write(info.text, info.color);
 		}
 	}
 }

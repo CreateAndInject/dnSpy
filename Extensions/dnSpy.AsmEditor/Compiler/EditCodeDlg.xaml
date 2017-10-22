@@ -1,5 +1,5 @@
 ﻿<!--
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,7 +54,7 @@
                     TextBlock.Foreground="{DynamicResource DecompilerTextViewWaitAdornerForeground}">
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Name="decompilingControl_textBlock" Text="{x:Static p:dnSpy_AsmEditor_Resources.Decompiling}" FontSize="14pt" HorizontalAlignment="Center" />
-                    <ProgressBar IsIndeterminate="True" Height="16" MinWidth="200" Margin="0 4" HorizontalAlignment="Center" />
+                    <ProgressBar Name="progressBar" IsIndeterminate="True" Height="16" MinWidth="200" Margin="0 4" HorizontalAlignment="Center" />
                 </StackPanel>
             </Border>
 
@@ -70,7 +70,8 @@
                       IsEnabled="{Binding CanCompile}"
                       Name="diagnosticsListView"
                       SelectionMode="Extended"
-                      ItemsSource="{Binding Diagnostics}">
+                      ItemsSource="{Binding Diagnostics}"
+                      SelectedItem="{Binding SelectedCompilerDiagnosticVM}">
                 <ListView.Resources>
                     <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource CilGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
                 </ListView.Resources>

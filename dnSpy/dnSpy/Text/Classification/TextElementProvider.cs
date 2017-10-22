@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,8 +38,8 @@ namespace dnSpy.Text.Classification {
 		TextElementProvider(IContentTypeRegistryService contentTypeRegistryService, ITextClassifierAggregatorService textClassifierAggregatorService) {
 			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.textClassifierAggregatorService = textClassifierAggregatorService;
-			this.tagsList = new List<TextClassificationTag>();
-			this.toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
+			tagsList = new List<TextClassificationTag>();
+			toAggregator = new Dictionary<IContentType, ITextClassifierAggregator>();
 		}
 
 		public FrameworkElement CreateTextElement(IClassificationFormatMap classificationFormatMap, TextClassifierContext context, string contentType, TextElementFlags flags) {
@@ -53,8 +53,7 @@ namespace dnSpy.Text.Classification {
 			if (ct == null)
 				throw new ArgumentException($"Invalid content type: {contentType}");
 
-			ITextClassifierAggregator aggregator;
-			if (!toAggregator.TryGetValue(ct, out aggregator))
+			if (!toAggregator.TryGetValue(ct, out var aggregator))
 				toAggregator.Add(ct, aggregator = textClassifierAggregatorService.Create(ct));
 			try {
 				tagsList.AddRange(aggregator.GetTags(context));

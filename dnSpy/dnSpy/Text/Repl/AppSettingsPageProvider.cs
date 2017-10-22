@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,7 @@ namespace dnSpy.Text.Repl {
 		const int ADVANCED_GUID_INC = 4;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(IReplOptionsService replOptionsService) {
-			this.replOptionsService = replOptionsService;
-		}
+		AppSettingsPageProvider(IReplOptionsService replOptionsService) => this.replOptionsService = replOptionsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			var options = replOptionsService.Options.OrderBy(a => a.LanguageName, StringComparer.CurrentCultureIgnoreCase).ToArray();

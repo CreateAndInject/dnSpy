@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,8 +24,7 @@ namespace dnSpy.BamlDecompiler {
 	[ExportDocumentViewerToolTipProvider]
 	sealed class BamlDocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
 		public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
-			var bref = @ref as BamlToolTipReference;
-			if (bref != null) {
+			if (@ref is BamlToolTipReference bref) {
 				var provider = context.Create();
 				provider.Output.Write(BoxedTextColor.Text, bref.String);
 				return provider.Create();
@@ -40,8 +39,6 @@ namespace dnSpy.BamlDecompiler {
 		public static object Create(string s) => string.IsNullOrEmpty(s) ? null : new BamlToolTipReference(s);
 		public string String { get; }
 
-		BamlToolTipReference(string s) {
-			this.String = s;
-		}
+		BamlToolTipReference(string s) => String = s;
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,12 +42,8 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="document">Document</param>
 		/// <param name="type">Type</param>
 		public SearchTypeInfo(IDsDocument document, TypeDef type) {
-			if (document == null)
-				throw new ArgumentNullException(nameof(document));
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			this.Document = document;
-			this.Type = type;
+			Document = document ?? throw new ArgumentNullException(nameof(document));
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 		}
 	}
 }

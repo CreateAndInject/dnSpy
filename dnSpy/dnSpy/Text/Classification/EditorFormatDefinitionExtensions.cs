@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,8 +25,7 @@ using Microsoft.VisualStudio.Text.Classification;
 namespace dnSpy.Text.Classification {
 	static class EditorFormatDefinitionExtensions {
 		public static ResourceDictionary CreateThemeResourceDictionary(this EditorFormatDefinition def, ITheme theme) {
-			var themeDef = def as IThemeFormatDefinition;
-			if (themeDef != null)
+			if (def is IThemeFormatDefinition themeDef)
 				return themeDef.CreateResourceDictionary(theme);
 			return def.CreateResourceDictionary();
 		}

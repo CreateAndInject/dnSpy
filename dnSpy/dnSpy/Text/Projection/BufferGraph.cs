@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ namespace dnSpy.Text.Projection {
 #pragma warning restore 0067
 
 		public BufferGraph(ITextBuffer textBuffer) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			TopBuffer = textBuffer;
+			TopBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 			TopBuffer.ContentTypeChanged += TextBuffer_ContentTypeChanged;
 			if (textBuffer is IProjectionBuffer)
 				throw new NotSupportedException();

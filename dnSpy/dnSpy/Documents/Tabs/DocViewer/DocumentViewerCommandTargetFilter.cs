@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,9 +26,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed class DocumentViewerCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public DocumentViewerCommandTargetFilter(ITextView textView) {
-			this.textView = textView;
-		}
+		public DocumentViewerCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		DocumentViewer TryGetInstance() =>
 			__documentViewer ?? (__documentViewer = DocumentViewer.TryGetInstance(textView));

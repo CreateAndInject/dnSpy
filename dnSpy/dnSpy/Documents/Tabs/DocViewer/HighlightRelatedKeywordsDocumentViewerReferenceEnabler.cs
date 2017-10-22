@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,9 +38,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly IDocumentViewer documentViewer;
 
 		public HighlightRelatedKeywordsDocumentViewerReferenceEnabler(IDocumentViewer documentViewer) {
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			this.documentViewer = documentViewer;
+			this.documentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
 			IsEnabled = documentViewer.TextView.Options.IsHighlightRelatedKeywordsEnabled();
 			documentViewer.TextView.Options.OptionChanged += Options_OptionChanged;
 		}

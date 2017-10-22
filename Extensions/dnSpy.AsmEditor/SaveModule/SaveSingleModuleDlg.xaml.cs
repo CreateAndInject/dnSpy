@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,8 +19,6 @@
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed partial class SaveSingleModuleDlg : SaveModuleWindow {
-		public SaveSingleModuleDlg() {
-			InitializeComponent();
-		}
+		public SaveSingleModuleDlg() => InitializeComponent();
 	}
 }

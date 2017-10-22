@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -160,8 +160,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public ImplMapVM(ModuleDef ownerModule) {
-			this.ownerModule = ownerModule;
-		}
+		public ImplMapVM(ModuleDef ownerModule) => this.ownerModule = ownerModule;
 	}
 }

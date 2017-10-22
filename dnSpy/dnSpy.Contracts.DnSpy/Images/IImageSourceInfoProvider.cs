@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -61,17 +61,13 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="order">Order of this instance</param>
 		public ExportImageSourceInfoProviderAttribute(Type type, double order)
 			: base(typeof(IImageSourceInfoProvider)) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			Type = type;
+			Type = type ?? throw new ArgumentNullException(nameof(type));
 			Order = order;
 		}
 
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance</param>
-		internal ExportImageSourceInfoProviderAttribute(double order) {
-			Order = order;
-		}
+		internal ExportImageSourceInfoProviderAttribute(double order) => Order = order;
 
 		/// <summary>
 		/// Gets the type

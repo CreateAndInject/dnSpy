@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,5 +22,6 @@ using dnSpy.Text.Settings;
 namespace dnSpy.Output.Settings {
 	interface IOutputWindowOptions : ICommonEditorOptions {
 		bool ShowTimestamps { get; set; }
+		string TimestampDateTimeFormat { get; set; }
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,7 +38,7 @@ namespace dnSpy.Language.Intellisense {
 		public event EventHandler Recalculated;
 		public event EventHandler Dismissed;
 		public bool IsDismissed { get; private set; }
-		public bool HasInteractiveContent { get; set; }
+		public bool HasInteractiveContent { get; private set; }
 		bool IsStarted { get; set; }
 
 		public ITrackingSpan ApplicableToSpan {
@@ -59,21 +59,13 @@ namespace dnSpy.Language.Intellisense {
 		IIntellisensePresenter quickInfoPresenter;
 
 		public QuickInfoSession(ITextView textView, ITrackingPoint triggerPoint, bool trackMouse, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<IQuickInfoSourceProvider, IOrderableContentTypeMetadata>[] quickInfoSourceProviders) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
-				throw new ArgumentNullException(nameof(triggerPoint));
-			if (intellisensePresenterFactoryService == null)
-				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
-			if (quickInfoSourceProviders == null)
-				throw new ArgumentNullException(nameof(quickInfoSourceProviders));
 			Properties = new PropertyCollection();
 			QuickInfoContent = new BulkObservableCollection<object>();
-			TextView = textView;
-			this.triggerPoint = triggerPoint;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.triggerPoint = triggerPoint ?? throw new ArgumentNullException(nameof(triggerPoint));
 			TrackMouse = trackMouse;
-			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
-			this.quickInfoSourceProviders = quickInfoSourceProviders;
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService ?? throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
+			this.quickInfoSourceProviders = quickInfoSourceProviders ?? throw new ArgumentNullException(nameof(quickInfoSourceProviders));
 			TextView.Closed += TextView_Closed;
 		}
 
@@ -83,16 +75,19 @@ namespace dnSpy.Language.Intellisense {
 		}
 
 		IQuickInfoSource[] CreateQuickInfoSources() {
-			var list = new List<IQuickInfoSource>();
+			List<IQuickInfoSource> list = null;
 			var textBuffer = TextView.TextBuffer;
 			foreach (var provider in quickInfoSourceProviders) {
 				if (!TextView.TextDataModel.ContentType.IsOfAnyType(provider.Metadata.ContentTypes))
 					continue;
 				var source = provider.Value.TryCreateQuickInfoSource(textBuffer);
-				if (source != null)
+				if (source != null) {
+					if (list == null)
+						list = new List<IQuickInfoSource>();
 					list.Add(source);
+				}
 			}
-			return list.ToArray();
+			return list?.ToArray() ?? Array.Empty<IQuickInfoSource>();
 		}
 
 		void DisposeQuickInfoSources() {
@@ -122,8 +117,7 @@ namespace dnSpy.Language.Intellisense {
 			var newContent = new List<object>();
 			ITrackingSpan applicableToSpan = null;
 			foreach (var source in quickInfoSources) {
-				ITrackingSpan applicableToSpanTmp;
-				source.AugmentQuickInfoSession(this, newContent, out applicableToSpanTmp);
+				source.AugmentQuickInfoSession(this, newContent, out var applicableToSpanTmp);
 				if (IsDismissed)
 					return;
 				if (applicableToSpan == null)
@@ -169,10 +163,9 @@ namespace dnSpy.Language.Intellisense {
 			DisposeQuickInfoSources();
 		}
 
-		public bool Match() {
+		public bool Match() =>
 			// There's nothing to match...
-			return false;
-		}
+			false;
 
 		public void Collapse() => Dismiss();
 

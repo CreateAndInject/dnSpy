@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public string FileName {
 			get { return filename; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				filename = value;
+				filename = value ?? throw new ArgumentNullException(nameof(value));
 				OnPropertyChanged(nameof(FileName));
 				HasErrorUpdated();
 			}

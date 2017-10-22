@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.Text.Editor {
 	sealed class ViewScroller : IViewScroller {
 		readonly ITextView textView;
 
-		public ViewScroller(ITextView textView) {
-			this.textView = textView;
-		}
+		public ViewScroller(ITextView textView) => this.textView = textView;
 
 		public void EnsureSpanVisible(SnapshotSpan span) =>
 			EnsureSpanVisible(new VirtualSnapshotSpan(span), EnsureSpanVisibleOptions.None);
@@ -70,15 +68,15 @@ namespace dnSpy.Text.Editor {
 				if (lineSpan == null)
 					continue;
 
-				var startSpan = new VirtualSnapshotPoint(lineSpan.Value.Start);
-				var endSpan = new VirtualSnapshotPoint(lineSpan.Value.End);
-				if (startSpan.Position == span.Start.Position)
-					startSpan = span.Start;
-				if (endSpan.Position == span.End.Position)
-					endSpan = span.End;
+				var startPoint = new VirtualSnapshotPoint(lineSpan.Value.Start);
+				var endPoint = new VirtualSnapshotPoint(lineSpan.Value.End);
+				if (startPoint.Position == span.Start.Position)
+					startPoint = span.Start;
+				if (endPoint.Position == span.End.Position)
+					endPoint = span.End;
 
-				var startBounds = line.GetExtendedCharacterBounds(startSpan);
-				var endBounds = line.GetExtendedCharacterBounds(endSpan);
+				var startBounds = line.GetExtendedCharacterBounds(startPoint);
+				var endBounds = line.GetExtendedCharacterBounds(endPoint);
 
 				if (left > startBounds.Left)
 					left = startBounds.Left;
@@ -151,8 +149,14 @@ namespace dnSpy.Text.Editor {
 					return;
 				}
 
-				if (first.VisibilityState != VisibilityState.FullyVisible)
-					textView.DisplayTextLineContainingBufferPosition(first.Start, 0, ViewRelativePosition.Top);
+				if (first.VisibilityState != VisibilityState.FullyVisible) {
+					if (first != last || !minimumScroll || first.VisibilityState != VisibilityState.PartiallyVisible)
+						textView.DisplayTextLineContainingBufferPosition(first.Start, 0, ViewRelativePosition.Top);
+					else if (first.Bottom > textView.ViewportBottom)
+						textView.DisplayTextLineContainingBufferPosition(first.Start, 0, ViewRelativePosition.Bottom);
+					else
+						textView.DisplayTextLineContainingBufferPosition(first.Start, 0, ViewRelativePosition.Top);
+				}
 				else if (last.VisibilityState != VisibilityState.FullyVisible)
 					textView.DisplayTextLineContainingBufferPosition(last.Start, 0, ViewRelativePosition.Bottom);
 

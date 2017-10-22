@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -90,9 +90,7 @@ namespace dnSpy.Analyzer {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			readonly ITreeView treeView;
 
-			public GuidObjectsProvider(ITreeView treeView) {
-				this.treeView = treeView;
-			}
+			public GuidObjectsProvider(ITreeView treeView) => this.treeView = treeView;
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, treeView.TopLevelSelection);
@@ -106,7 +104,7 @@ namespace dnSpy.Analyzer {
 		AnalyzerService(IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, ITreeViewService treeViewService, IMenuService menuService, IAnalyzerSettings analyzerSettings, IDotNetImageService dotNetImageService, IDecompilerService decompilerService, ITreeViewNodeTextElementProvider treeViewNodeTextElementProvider) {
 			this.documentTabService = documentTabService;
 
-			this.context = new AnalyzerTreeNodeDataContext {
+			context = new AnalyzerTreeNodeDataContext {
 				DotNetImageService = dotNetImageService,
 				Decompiler = decompilerService.Decompiler,
 				TreeViewNodeTextElementProvider = treeViewNodeTextElementProvider,
@@ -122,16 +120,16 @@ namespace dnSpy.Analyzer {
 				CanDragAndDrop = false,
 				TreeViewListener = this,
 			};
-			this.TreeView = treeViewService.Create(ANALYZER_TREEVIEW_GUID, options);
-			this.context.TreeView = this.TreeView;
+			TreeView = treeViewService.Create(ANALYZER_TREEVIEW_GUID, options);
+			context.TreeView = TreeView;
 
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 			documentTabService.DocumentModified += DocumentTabService_FileModified;
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
 
-			menuService.InitializeContextMenu(this.TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(this.TreeView));
-			wpfCommandService.Add(ControlConstants.GUID_ANALYZER_TREEVIEW, this.TreeView.UIObject);
+			menuService.InitializeContextMenu(TreeView.UIObject, new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID), new GuidObjectsProvider(TreeView));
+			wpfCommandService.Add(ControlConstants.GUID_ANALYZER_TREEVIEW, TreeView.UIObject);
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_ANALYZER_TREEVIEW);
 			var command = new RelayCommand(a => ActivateNode());
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);
@@ -170,7 +168,7 @@ namespace dnSpy.Analyzer {
 		}
 
 		void DecompilerService_DecompilerChanged(object sender, EventArgs e) {
-			this.context.Decompiler = ((IDecompilerService)sender).Decompiler;
+			context.Decompiler = ((IDecompilerService)sender).Decompiler;
 			RefreshNodes();
 		}
 
@@ -194,14 +192,13 @@ namespace dnSpy.Analyzer {
 			}
 		}
 
-		void RefreshNodes() => this.TreeView.RefreshAllNodes();
+		void RefreshNodes() => TreeView.RefreshAllNodes();
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
 				Debug.Assert(context != null);
 				var node = (ITreeNode)e.Argument;
-				var d = node.Data as AnalyzerTreeNodeData;
-				if (d != null)
+				if (node.Data is AnalyzerTreeNodeData d)
 					d.Context = context;
 				return;
 			}
@@ -212,24 +209,24 @@ namespace dnSpy.Analyzer {
 
 		void ClearAll() {
 			Cancel();
-			this.TreeView.Root.Children.Clear();
+			TreeView.Root.Children.Clear();
 		}
 
 		public void Add(AnalyzerTreeNodeData node) {
 			if (node is EntityNode) {
 				var an = node as EntityNode;
-				var found = this.TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
+				var found = TreeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					found.TreeNode.IsExpanded = true;
-					this.TreeView.SelectItems(new TreeNodeData[] { found });
-					this.TreeView.Focus();
+					TreeView.SelectItems(new TreeNodeData[] { found });
+					TreeView.Focus();
 					return;
 				}
 			}
-			this.TreeView.Root.Children.Add(this.TreeView.Create(node));
+			TreeView.Root.Children.Add(TreeView.Create(node));
 			node.TreeNode.IsExpanded = true;
-			this.TreeView.SelectItems(new TreeNodeData[] { node });
-			this.TreeView.Focus();
+			TreeView.SelectItems(new TreeNodeData[] { node });
+			TreeView.Focus();
 		}
 
 		public void OnActivated(AnalyzerTreeNodeData node) {
@@ -329,14 +326,12 @@ namespace dnSpy.Analyzer {
 				return false;
 
 			{
-				var pb = b as PropertyDef;
-				if (pb != null) {
+				if (b is PropertyDef pb) {
 					var tmp = a;
 					a = b;
 					b = tmp;
 				}
-				var eb = b as EventDef;
-				if (eb != null) {
+				if (b is EventDef eb) {
 					var tmp = a;
 					a = b;
 					b = tmp;
@@ -345,20 +340,16 @@ namespace dnSpy.Analyzer {
 
 			const SigComparerOptions flags = SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable;
 
-			var type = a as IType;
-			if (type != null)
+			if (a is IType type)
 				return new SigComparer().Equals(type, b as IType);
 
-			var method = a as IMethod;
-			if (method != null && method.IsMethod)
+			if (a is IMethod method && method.IsMethod)
 				return new SigComparer(flags).Equals(method, b as IMethod);
 
-			var field = a as IField;
-			if (field != null && field.IsField)
+			if (a is IField field && field.IsField)
 				return new SigComparer(flags).Equals(field, b as IField);
 
-			var prop = a as PropertyDef;
-			if (prop != null) {
+			if (a is PropertyDef prop) {
 				if (new SigComparer(flags).Equals(prop, b as PropertyDef))
 					return true;
 				var bm = b as IMethod;
@@ -367,8 +358,7 @@ namespace dnSpy.Analyzer {
 					new SigComparer(flags).Equals(prop.SetMethod, bm));
 			}
 
-			var evt = a as EventDef;
-			if (evt != null) {
+			if (a is EventDef evt) {
 				if (new SigComparer(flags).Equals(evt, b as EventDef))
 					return true;
 				var bm = b as IMethod;

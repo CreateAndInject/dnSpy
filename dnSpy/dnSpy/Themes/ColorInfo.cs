@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,8 +48,8 @@ namespace dnSpy.Themes {
 		public abstract IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor);
 
 		protected ColorInfo(ColorType colorType, string description) {
-			this.ColorType = colorType;
-			this.Description = description;
+			ColorType = colorType;
+			Description = description;
 		}
 	}
 
@@ -58,9 +58,7 @@ namespace dnSpy.Themes {
 		public object ForegroundResourceKey;
 
 		public ColorColorInfo(ColorType colorType, string description)
-			: base(colorType, description) {
-			ForegroundResourceKey = null;
-		}
+			: base(colorType, description) => ForegroundResourceKey = null;
 
 		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {
 			if (ForegroundResourceKey != null) {
@@ -100,9 +98,7 @@ namespace dnSpy.Themes {
 		public bool IsHorizontal;
 
 		public DrawingBrushColorInfo(ColorType colorType, string description)
-			: base(colorType, description) {
-			ForegroundResourceKey = null;
-		}
+			: base(colorType, description) => ForegroundResourceKey = null;
 
 		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {
 			if (ForegroundResourceKey != null) {
@@ -168,9 +164,9 @@ namespace dnSpy.Themes {
 
 		public LinearGradientColorInfo(ColorType colorType, Point startPoint, Point endPoint, string description, params double[] gradientOffsets)
 			: base(colorType, description) {
-			this.StartPoint = startPoint;
-			this.EndPoint = endPoint;
-			this.GradientOffsets = gradientOffsets;
+			StartPoint = startPoint;
+			EndPoint = endPoint;
+			GradientOffsets = gradientOffsets;
 		}
 
 		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(ThemeColor hlColor) {

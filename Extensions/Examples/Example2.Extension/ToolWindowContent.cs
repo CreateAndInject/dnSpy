@@ -51,9 +51,7 @@ namespace Example2.Extension {
 
 		// Add any deps to the constructor if needed, else remove the constructor
 		[ImportingConstructor]
-		MainToolWindowContentProvider(DeppDep deppDep) {
-			deppDep.Hello();
-		}
+		MainToolWindowContentProvider(DeppDep deppDep) => deppDep.Hello();
 
 		// Lets dnSpy know which tool windows it can create and their default locations
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
@@ -93,9 +91,9 @@ namespace Example2.Extension {
 		readonly ToolWindowVM toolWindowVM;
 
 		public ToolWindowContentImpl() {
-			this.toolWindowControl = new ToolWindowControl();
-			this.toolWindowVM = new ToolWindowVM();
-			this.toolWindowControl.DataContext = this.toolWindowVM;
+			toolWindowControl = new ToolWindowControl();
+			toolWindowVM = new ToolWindowVM();
+			toolWindowControl.DataContext = toolWindowVM;
 		}
 
 		// Gets notified when the content gets hidden, visible, etc. Can be used to tell the view

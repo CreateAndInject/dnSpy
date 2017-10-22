@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -151,26 +151,14 @@ namespace dnSpy.MainApp.Settings {
 		public UseNewRendererVM UseNewRendererVM { get; }
 
 		public GeneralAppSettingsPage(IThemeServiceImpl themeService, IWindowsExplorerIntegrationService windowsExplorerIntegrationService, IDocumentTabServiceSettings documentTabServiceSettings, DocumentTreeViewSettingsImpl documentTreeViewSettings, IDsDocumentServiceSettings documentServiceSettings, AppSettingsImpl appSettings, MessageBoxService messageBoxService) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (windowsExplorerIntegrationService == null)
-				throw new ArgumentNullException(nameof(windowsExplorerIntegrationService));
-			if (documentTabServiceSettings == null)
-				throw new ArgumentNullException(nameof(documentTabServiceSettings));
-			if (documentTreeViewSettings == null)
-				throw new ArgumentNullException(nameof(documentTreeViewSettings));
-			if (documentServiceSettings == null)
-				throw new ArgumentNullException(nameof(documentServiceSettings));
 			if (appSettings == null)
 				throw new ArgumentNullException(nameof(appSettings));
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
-			this.themeService = themeService;
-			this.windowsExplorerIntegrationService = windowsExplorerIntegrationService;
-			this.documentTabServiceSettings = documentTabServiceSettings;
-			this.documentTreeViewSettings = documentTreeViewSettings;
-			this.documentServiceSettings = documentServiceSettings;
-			this.messageBoxService = messageBoxService;
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.windowsExplorerIntegrationService = windowsExplorerIntegrationService ?? throw new ArgumentNullException(nameof(windowsExplorerIntegrationService));
+			this.documentTabServiceSettings = documentTabServiceSettings ?? throw new ArgumentNullException(nameof(documentTabServiceSettings));
+			this.documentTreeViewSettings = documentTreeViewSettings ?? throw new ArgumentNullException(nameof(documentTreeViewSettings));
+			this.documentServiceSettings = documentServiceSettings ?? throw new ArgumentNullException(nameof(documentServiceSettings));
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
 
 			ThemesVM = new ObservableCollection<ThemeVM>(themeService.VisibleThemes.Select(a => new ThemeVM(a)));
 			if (!ThemesVM.Any(a => a.Theme == themeService.Theme))
@@ -188,8 +176,7 @@ namespace dnSpy.MainApp.Settings {
 
 		public override string[] GetSearchStrings() => ThemesVM.Select(a => a.Name).ToArray();
 
-		public override void OnApply() { throw new InvalidOperationException(); }
-
+		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			if (SelectedThemeVM != null)
 				themeService.Theme = SelectedThemeVM.Theme;
@@ -212,26 +199,25 @@ namespace dnSpy.MainApp.Settings {
 		public ITheme Theme { get; }
 		public string Name => Theme.GetName();
 
-		public ThemeVM(ITheme theme) {
-			if (theme == null)
-				throw new ArgumentNullException(nameof(theme));
-			Theme = theme;
-		}
+		public ThemeVM(ITheme theme) => Theme = theme ?? throw new ArgumentNullException(nameof(theme));
 	}
 
 	sealed class UseNewRendererVM : ViewModelBase {
 		public bool? UseNewRenderer {
 			get {
-				const int MAX = 2;
-				int count = (UseNewRenderer_HexEditor ? 1 : 0) +
+				const int MAX = 1;
+				int count = /*(UseNewRenderer_TextEditor ? 1 : 0) +
+							(UseNewRenderer_HexEditor ? 1 : 0) +*/
 							(UseNewRenderer_DocumentTreeView ? 1 : 0);
 				return count == 0 ? false : count == MAX ? (bool?)true : null;
 			}
 			set {
 				if (value == null)
 					return;
+				/*TODO: The text formatter doesn't support the hex view and text view
 				UseNewRenderer_TextEditor = value.Value;
 				UseNewRenderer_HexEditor = value.Value;
+				*/
 				UseNewRenderer_DocumentTreeView = value.Value;
 			}
 		}
@@ -276,15 +262,15 @@ namespace dnSpy.MainApp.Settings {
 
 		public UseNewRendererVM(AppSettingsImpl appSettings) {
 			this.appSettings = appSettings;
-			this.UseNewRenderer_TextEditor = appSettings.UseNewRenderer_TextEditor;
-			this.UseNewRenderer_HexEditor = appSettings.UseNewRenderer_HexEditor;
-			this.UseNewRenderer_DocumentTreeView = appSettings.UseNewRenderer_DocumentTreeView;
+			UseNewRenderer_TextEditor = appSettings.UseNewRenderer_TextEditor;
+			UseNewRenderer_HexEditor = appSettings.UseNewRenderer_HexEditor;
+			UseNewRenderer_DocumentTreeView = appSettings.UseNewRenderer_DocumentTreeView;
 		}
 
 		public void Save() {
-			appSettings.UseNewRenderer_TextEditor = this.UseNewRenderer_TextEditor;
-			appSettings.UseNewRenderer_HexEditor = this.UseNewRenderer_HexEditor;
-			appSettings.UseNewRenderer_DocumentTreeView = this.UseNewRenderer_DocumentTreeView;
+			appSettings.UseNewRenderer_TextEditor = UseNewRenderer_TextEditor;
+			appSettings.UseNewRenderer_HexEditor = UseNewRenderer_HexEditor;
+			appSettings.UseNewRenderer_DocumentTreeView = UseNewRenderer_DocumentTreeView;
 		}
 	}
 }

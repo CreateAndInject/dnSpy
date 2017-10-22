@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,7 +47,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (nestedType.Module != null)
 				throw new ArgumentException();
 			this.ownerTypeNode = ownerTypeNode;
-			this.nestedTypeNode = modNode.Context.DocumentTreeView.CreateNested(nestedType);
+			nestedTypeNode = modNode.Context.DocumentTreeView.CreateNested(nestedType);
 		}
 
 		public void Add() {

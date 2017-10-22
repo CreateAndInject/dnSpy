@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,10 +54,10 @@ namespace dnSpy.Output {
 		OutputServiceSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.SelectedGuid= sect.Attribute<Guid?>(nameof(SelectedGuid)) ?? this.SelectedGuid;
-			this.disableSave = false;
+			SelectedGuid = sect.Attribute<Guid?>(nameof(SelectedGuid)) ?? SelectedGuid;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

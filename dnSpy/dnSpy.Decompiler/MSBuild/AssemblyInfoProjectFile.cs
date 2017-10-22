@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public AssemblyInfoProjectFile(ModuleDef module, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput) {
 			this.module = module;
-			this.Filename = filename;
+			Filename = filename;
 			this.decompilationContext = decompilationContext;
 			this.decompiler = decompiler;
 			this.createDecompilerOutput = createDecompilerOutput;

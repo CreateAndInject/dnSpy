@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -79,13 +79,11 @@ namespace dnSpy.Text {
 		public PropertyCollection Properties { get; }
 
 		public TextBuffer(IContentType contentType, string text) {
-			if (contentType == null)
-				throw new ArgumentNullException(nameof(contentType));
 			Properties = new PropertyCollection();
-			this.contentType = contentType;
-			this.currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
-			this.Document = new TextDocument(text);
-			this.Document.SetOwnerThread(null);
+			this.contentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+			currentTextVersion = new TextVersion(this, text?.Length ?? 0, 0, 0);
+			Document = new TextDocument(text);
+			Document.SetOwnerThread(null);
 		}
 
 		public bool EditInProgress => textEditInProgress != null;
@@ -205,28 +203,16 @@ namespace dnSpy.Text {
 				throw new InvalidOperationException();
 		}
 
-		public IReadOnlyRegionEdit CreateReadOnlyRegionEdit() {
-			throw new NotImplementedException();//TODO:
-		}
+		public IReadOnlyRegionEdit CreateReadOnlyRegionEdit() => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(int position) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(int position) => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(int position, bool isEdit) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(int position, bool isEdit) => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(Span span) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(Span span) => throw new NotImplementedException();//TODO:
 
-		public bool IsReadOnly(Span span, bool isEdit) {
-			throw new NotImplementedException();//TODO:
-		}
+		public bool IsReadOnly(Span span, bool isEdit) => throw new NotImplementedException();//TODO:
 
-		public NormalizedSpanCollection GetReadOnlyExtents(Span span) {
-			throw new NotImplementedException();//TODO:
-		}
+		public NormalizedSpanCollection GetReadOnlyExtents(Span span) => throw new NotImplementedException();//TODO:
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.MainApp {
 		FullScreenInit(IAppWindow appWindow, IDocumentTreeView documentTreeView) {
 			var fullScreenCommand = new FullScreenCommand(appWindow);
 			appWindow.MainWindowCommands.Add(MetroWindow.FullScreenCommand, (s, e) => fullScreenCommand.FullScreen(), (s, e) => e.CanExecute = true, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
-			appWindow.MainWindowCommands.Add(CollapseUnusedNodesCommand, (s, e) => documentTreeView.TreeView.CollapseUnusedNodes(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.W);
+			appWindow.MainWindowCommands.Add(CollapseUnusedNodesCommand, (s, e) => documentTreeView.TreeView.CollapseUnusedNodes(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Shift, Key.P);
 		}
 	}
 
@@ -45,9 +45,7 @@ namespace dnSpy.MainApp {
 
 		[ImportingConstructor]
 		public FullScreenCommand(IAppWindow appWindow)
-			: base(MetroWindow.FullScreenCommand) {
-			this.window = (MetroWindow)appWindow.MainWindow;
-		}
+			: base(MetroWindow.FullScreenCommand) => window = (MetroWindow)appWindow.MainWindow;
 
 		public override bool IsChecked(IMenuItemContext context) => window.IsFullScreen;
 		public void FullScreen() => window.IsFullScreen = !window.IsFullScreen;
@@ -60,14 +58,12 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftW", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", InputGestureText = "res:ShortCutKeyCtrlShiftP", Icon = DsImagesAttribute.OneLevelUp, Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
 	sealed class CollapseTreeViewCommand : MenuItemBase {
 		readonly IDocumentTreeView documentTreeView;
 
 		[ImportingConstructor]
-		CollapseTreeViewCommand(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		CollapseTreeViewCommand(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		public override void Execute(IMenuItemContext context) => documentTreeView.TreeView.CollapseUnusedNodes();
 	}

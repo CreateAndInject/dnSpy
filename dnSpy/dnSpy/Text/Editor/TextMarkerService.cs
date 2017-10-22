@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,9 +55,7 @@ namespace dnSpy.Text.Editor {
 		readonly ITextMarkerProviderFactory textMarkerProviderFactory;
 
 		[ImportingConstructor]
-		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) {
-			this.textMarkerProviderFactory = textMarkerProviderFactory;
-		}
+		TextMarkerServiceTaggerProvider(ITextMarkerProviderFactory textMarkerProviderFactory) => this.textMarkerProviderFactory = textMarkerProviderFactory;
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
 			if (buffer == null)
@@ -113,23 +111,15 @@ namespace dnSpy.Text.Editor {
 		bool useReducedOpacityForHighContrast;
 
 		public TextMarkerService(IWpfTextView wpfTextView, ITagAggregator<ITextMarkerTag> tagAggregator, IEditorFormatMap editorFormatMap, IThemeService themeService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (tagAggregator == null)
-				throw new ArgumentNullException(nameof(tagAggregator));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			this.wpfTextView = wpfTextView;
-			this.tagAggregator = tagAggregator;
-			this.editorFormatMap = editorFormatMap;
-			this.themeService = themeService;
-			this.textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
-			this.negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer);
-			this.markerElements = new List<MarkerElement>();
-			this.useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
-			this.onRemovedDelegate = OnRemoved;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.tagAggregator = tagAggregator ?? throw new ArgumentNullException(nameof(tagAggregator));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			textMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedAdornmentLayers.TextMarker);
+			negativeTextMarkerAdornmentLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.NegativeTextMarkerLayer);
+			markerElements = new List<MarkerElement>();
+			useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
+			onRemovedDelegate = OnRemoved;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
@@ -179,14 +169,10 @@ namespace dnSpy.Text.Editor {
 			public MarkerElement(SnapshotSpan span, string type, int zIndex, Geometry geometry) {
 				if (span.Snapshot == null)
 					throw new ArgumentException();
-				if (type == null)
-					throw new ArgumentNullException(nameof(type));
-				if (geometry == null)
-					throw new ArgumentNullException(nameof(geometry));
 				Span = span;
-				Type = type;
+				Type = type ?? throw new ArgumentNullException(nameof(type));
 				ZIndex = zIndex;
-				this.geometry = geometry;
+				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 				Panel.SetZIndex(this, zIndex);
 			}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,10 +32,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public CustomAttributeOptions(CustomAttribute ca) {
-			this.RawData = ca.RawData;
-			this.Constructor = ca.Constructor;
-			this.ConstructorArguments.AddRange(ca.ConstructorArguments.Select(a => a.Clone()));
-			this.NamedArguments.AddRange(ca.NamedArguments.Select(a => a.Clone()));
+			RawData = ca.RawData;
+			Constructor = ca.Constructor;
+			ConstructorArguments.AddRange(ca.ConstructorArguments.Select(a => a.Clone()));
+			NamedArguments.AddRange(ca.NamedArguments.Select(a => a.Clone()));
 		}
 
 		public CustomAttribute Create() {

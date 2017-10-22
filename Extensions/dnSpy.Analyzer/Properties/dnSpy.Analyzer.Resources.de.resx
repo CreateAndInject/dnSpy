@@ -127,7 +127,7 @@
     <value>Angewendet auf</value>
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
-    <value>Zugewiesen durch</value>
+    <value>Zugewiesen von</value>
   </data>
   <data name="CopyCommand" xml:space="preserve">
     <value>_Kopieren</value>
@@ -171,6 +171,9 @@
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Überschrieben von</value>
   </data>
+  <data name="OverridesTreeNode" xml:space="preserve">
+    <value>Überschreibungen</value>
+  </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>Analysiert Assemblys</value>
   </data>
@@ -198,14 +201,14 @@
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Strg+C</value>
   </data>
-  <data name="ShortCutKeyCtrlR" xml:space="preserve">
-    <value>Strg+R</value>
+  <data name="ShortCutKeyCtrlShiftR" xml:space="preserve">
+    <value>Strg+Umschalt+R</value>
   </data>
   <data name="ShortCutKeyDelete" xml:space="preserve">
     <value>Löschen</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
-    <value>Zeige Tokens</value>
+    <value>Tokens zeigen</value>
   </data>
   <data name="SyntaxHighlightCommand" xml:space="preserve">
     <value>Syntax hervorheben</value>

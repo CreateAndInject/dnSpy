@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,9 +35,7 @@ namespace dnSpy.Contracts.Search {
 		/// Constructor
 		/// </summary>
 		/// <param name="flags">Flags</param>
-		public FlagsDocumentTreeNodeFilter(VisibleMembersFlags flags) {
-			this.flags = flags;
-		}
+		public FlagsDocumentTreeNodeFilter(VisibleMembersFlags flags) => this.flags = flags;
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public override DocumentTreeNodeFilterResult GetResult(AssemblyRef asmRef) {

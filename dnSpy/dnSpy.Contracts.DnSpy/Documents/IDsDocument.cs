@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents {
 		/// Gets any children. Eg. if it's a .NET assembly, the children would be modules of the
 		/// assembly.
 		/// </summary>
-		List<IDsDocument> Children { get; }
+		TList<IDsDocument> Children { get; }
 
 		/// <summary>
 		/// true if <see cref="Children"/> has been initialized

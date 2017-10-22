@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,16 +36,12 @@ namespace dnSpy.Text.Formatting {
 		int spansCount;
 
 		public HtmlBuilder(IClassificationFormatMap classificationFormatMap, string delimiter, int tabSize) {
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (delimiter == null)
-				throw new ArgumentNullException(nameof(delimiter));
 			if (tabSize < 1)
 				throw new ArgumentOutOfRangeException(nameof(tabSize));
-			this.classificationFormatMap = classificationFormatMap;
-			this.delimiter = delimiter;
-			this.htmlWriter = new HtmlClipboardFormatWriter() { TabSize = tabSize };
-			this.cssWriter = new StringBuilder();
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.delimiter = delimiter ?? throw new ArgumentNullException(nameof(delimiter));
+			htmlWriter = new HtmlClipboardFormatWriter() { TabSize = tabSize };
+			cssWriter = new StringBuilder();
 		}
 
 		public void Add(ISynchronousClassifier classifier, NormalizedSnapshotSpanCollection spans, CancellationToken cancellationToken) {
@@ -89,8 +85,7 @@ namespace dnSpy.Text.Formatting {
 		}
 
 		void WriteCssColor(string name, Brush brush) {
-			var scb = brush as SolidColorBrush;
-			if (scb != null)
+			if (brush is SolidColorBrush scb)
 				cssWriter.Append(string.Format(name + ": rgb({0}, {1}, {2}); ", scb.Color.R, scb.Color.G, scb.Color.B));
 		}
 

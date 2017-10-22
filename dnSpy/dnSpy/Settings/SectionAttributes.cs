@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,12 +25,19 @@ using System.Linq;
 
 namespace dnSpy.Settings {
 	sealed class SectionAttributes {
+		readonly object lockObj;
 		readonly Dictionary<string, string> attributes;
 
-		public Tuple<string, string>[] Attributes => attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
+		public Tuple<string, string>[] Attributes {
+			get {
+				lock (lockObj)
+					return attributes.Select(a => Tuple.Create(a.Key, a.Value)).ToArray();
+			}
+		}
 
 		public SectionAttributes() {
-			this.attributes = new Dictionary<string, string>(StringComparer.Ordinal);
+			lockObj = new object();
+			attributes = new Dictionary<string, string>(StringComparer.Ordinal);
 		}
 
 		public T Attribute<T>(string name) {
@@ -39,8 +46,10 @@ namespace dnSpy.Settings {
 				throw new ArgumentNullException(nameof(name));
 
 			string stringValue;
-			if (!attributes.TryGetValue(name, out stringValue))
-				return default(T);
+			lock (lockObj) {
+				if (!attributes.TryGetValue(name, out stringValue))
+					return default;
+			}
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
 			try {
@@ -50,7 +59,7 @@ namespace dnSpy.Settings {
 			}
 			catch (NotSupportedException) {
 			}
-			return default(T);
+			return default;
 		}
 
 		public void Attribute<T>(string name, T value) {
@@ -60,7 +69,8 @@ namespace dnSpy.Settings {
 
 			var c = TypeDescriptor.GetConverter(typeof(T));
 			var stringValue = c.ConvertToInvariantString(value);
-			attributes[name] = stringValue;
+			lock (lockObj)
+				attributes[name] = stringValue;
 		}
 
 		public void RemoveAttribute(string name) {
@@ -68,7 +78,8 @@ namespace dnSpy.Settings {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
-			attributes.Remove(name);
+			lock (lockObj)
+				attributes.Remove(name);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Settings.Repl {
 		public const bool HighlightMatchingBrace = true;
 		public const bool LineSeparators = true;
 		public const bool ShowBlockStructure = true;
-		public const BlockStructureLineKind BlockStructureLineKind = Text.Editor.BlockStructureLineKind.Dashed_2_2;
+		public const BlockStructureLineKind BlockStructureLineKind = Text.Editor.BlockStructureLineKind.Dashed_3_3;
 		public const bool CompressEmptyOrWhitespaceLines = true;
 		public const bool CompressNonLetterLines = true;
 		public const bool RemoveExtraTextLineVerticalPixels = false;

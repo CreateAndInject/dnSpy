@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,7 @@ namespace dnSpy.BamlDecompiler {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		BamlTabSaverProvider(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		BamlTabSaverProvider(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public ITabSaver Create(IDocumentTab tab) => BamlTabSaver.TryCreate(tab, messageBoxService);
 	}

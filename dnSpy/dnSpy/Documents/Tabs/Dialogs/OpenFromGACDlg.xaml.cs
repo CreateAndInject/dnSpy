@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,15 +45,16 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		protected override void OnClosed(EventArgs e) {
-			var id = DataContext as IDisposable;
-			if (id != null)
+			progressBar.IsIndeterminate = false;
+			base.OnClosed(e);
+			if (DataContext is IDisposable id)
 				id.Dispose();
 		}
 
-		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtilities.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			this.ClickOK();
+			ClickOK();
 		}
 	}
 }

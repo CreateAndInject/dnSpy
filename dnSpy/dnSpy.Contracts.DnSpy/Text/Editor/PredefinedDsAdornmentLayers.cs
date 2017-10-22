@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		public const string TopLayer = "dnSpy-" + nameof(TopLayer);
 
 		/// <summary>
-		/// Text marker layer for markers with a negative z-index
+		/// Text marker adornment layer for markers with a negative z-index
 		/// </summary>
 		public const string NegativeTextMarkerLayer = "negativetextmarkerlayer";
 

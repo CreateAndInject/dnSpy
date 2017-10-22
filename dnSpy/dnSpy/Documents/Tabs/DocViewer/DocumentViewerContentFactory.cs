@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -75,13 +75,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		DocumentViewerOutput documentViewerOutput;
 
 		public DocumentViewerContentFactory(Lazy<IDocumentViewerPostProcessor, IDocumentViewerPostProcessorMetadata>[] documentViewerPostProcessors, Lazy<IDocumentViewerCustomDataProvider, IDocumentViewerCustomDataProviderMetadata>[] documentViewerCustomDataProviders) {
-			if (documentViewerPostProcessors == null)
-				throw new ArgumentNullException(nameof(documentViewerPostProcessors));
-			if (documentViewerCustomDataProviders == null)
-				throw new ArgumentNullException(nameof(documentViewerCustomDataProviders));
-			this.documentViewerPostProcessors = documentViewerPostProcessors;
-			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders;
-			this.documentViewerOutput = DocumentViewerOutput.Create();
+			this.documentViewerPostProcessors = documentViewerPostProcessors ?? throw new ArgumentNullException(nameof(documentViewerPostProcessors));
+			this.documentViewerCustomDataProviders = documentViewerCustomDataProviders ?? throw new ArgumentNullException(nameof(documentViewerCustomDataProviders));
+			documentViewerOutput = DocumentViewerOutput.Create();
 		}
 
 		sealed class DocumentViewerCustomDataContext : IDocumentViewerCustomDataContext, IDisposable {
@@ -96,7 +92,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				Text = text;
 				ContentType = contentType;
 				this.customDataDict = customDataDict;
-				this.resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
+				resultDict = new Dictionary<string, object>(StringComparer.Ordinal);
 			}
 
 			internal Dictionary<string, object> GetResultDictionary() => resultDict;
@@ -117,8 +113,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				if (id == null)
 					throw new ArgumentNullException(nameof(id));
 
-				object listObj;
-				if (!customDataDict.TryGetValue(id, out listObj))
+				if (!customDataDict.TryGetValue(id, out object listObj))
 					return Array.Empty<TData>();
 				var list = (List<TData>)listObj;
 				return list.ToArray();

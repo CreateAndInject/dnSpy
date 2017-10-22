@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 
 namespace dnSpy.Scripting.Roslyn.VisualBasic {
-	[Export(typeof(IMainToolWindowContentProvider))]
+	[Export(typeof(IToolWindowContentProvider))]
 	sealed class VisualBasicToolWindowContentProvider : ScriptToolWindowContentProvider {
 		readonly Lazy<IVisualBasicContent> visualBasicContent;
 
@@ -67,7 +67,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 
 		[ImportingConstructor]
 		ShowVisualBasicInteractiveCommandLoader(IWpfCommandService wpfCommandService, IDsToolWindowService toolWindowService) {
-			var cmds = wpfCommandService.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_MAINWINDOW);
 			cmds.Add(ShowVisualBasicInteractiveRoutedCommand,
 				(s, e) => toolWindowService.Show(VisualBasicToolWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true);

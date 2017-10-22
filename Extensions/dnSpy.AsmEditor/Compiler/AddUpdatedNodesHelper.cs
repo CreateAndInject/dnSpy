@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -55,6 +55,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly TypeNodeCreator[] newTypeNodeCreators;
 		readonly ResourceNodeCreator resourceNodeCreator;
 		readonly ExistingTypeNodeUpdater[] existingTypeNodeUpdaters;
+		readonly DeclSecurity[] newAssemblyDeclSecurities;
+		readonly DeclSecurity[] origAssemblyDeclSecurities;
 		readonly CustomAttribute[] newAssemblyCustomAttributes;
 		readonly CustomAttribute[] newModuleCustomAttributes;
 		readonly CustomAttribute[] origAssemblyCustomAttributes;
@@ -64,18 +66,20 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.modNode = modNode;
 			var dict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var t in importer.NewNonNestedTypes) {
-				List<TypeDef> list;
 				var ns = (t.TargetType.Namespace ?? UTF8String.Empty).String;
-				if (!dict.TryGetValue(ns, out list))
+				if (!dict.TryGetValue(ns, out var list))
 					dict[ns] = list = new List<TypeDef>();
 				list.Add(t.TargetType);
 			}
-			this.newTypeNodeCreators = dict.Values.Select(a => new TypeNodeCreator(modNode, a)).ToArray();
-			this.existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
+			newTypeNodeCreators = dict.Values.Select(a => new TypeNodeCreator(modNode, a)).ToArray();
+			existingTypeNodeUpdaters = importer.MergedNonNestedTypes.Select(a => new ExistingTypeNodeUpdater(methodAnnotations, modNode, a)).ToArray();
 			if (!importer.MergedNonNestedTypes.All(a => a.TargetType.Module == modNode.Document.ModuleDef))
 				throw new InvalidOperationException();
-			this.newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
-			this.newModuleCustomAttributes = importer.NewModuleCustomAttributes;
+			newAssemblyDeclSecurities = importer.NewAssemblyDeclSecurities;
+			newAssemblyCustomAttributes = importer.NewAssemblyCustomAttributes;
+			newModuleCustomAttributes = importer.NewModuleCustomAttributes;
+			if (newAssemblyDeclSecurities != null)
+				origAssemblyDeclSecurities = modNode.Document.AssemblyDef?.DeclSecurities.ToArray();
 			if (newAssemblyCustomAttributes != null)
 				origAssemblyCustomAttributes = modNode.Document.AssemblyDef?.CustomAttributes.ToArray();
 			if (newModuleCustomAttributes != null)
@@ -105,6 +109,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				newTypeNodeCreators[i].Add();
 			for (int i = 0; i < existingTypeNodeUpdaters.Length; i++)
 				existingTypeNodeUpdaters[i].Add();
+			if (origAssemblyDeclSecurities != null && newAssemblyDeclSecurities != null) {
+				modNode.Document.AssemblyDef.DeclSecurities.Clear();
+				foreach (var ds in newAssemblyDeclSecurities)
+					modNode.Document.AssemblyDef.DeclSecurities.Add(ds);
+			}
 			if (origAssemblyCustomAttributes != null && newAssemblyCustomAttributes != null) {
 				modNode.Document.AssemblyDef.CustomAttributes.Clear();
 				foreach (var ca in newAssemblyCustomAttributes)
@@ -129,6 +138,11 @@ namespace dnSpy.AsmEditor.Compiler {
 				modNode.Document.AssemblyDef.CustomAttributes.Clear();
 				foreach (var ca in origAssemblyCustomAttributes)
 					modNode.Document.AssemblyDef.CustomAttributes.Add(ca);
+			}
+			if (origAssemblyDeclSecurities != null && newAssemblyDeclSecurities != null) {
+				modNode.Document.AssemblyDef.DeclSecurities.Clear();
+				foreach (var ds in origAssemblyDeclSecurities)
+					modNode.Document.AssemblyDef.DeclSecurities.Add(ds);
 			}
 			for (int i = existingTypeNodeUpdaters.Length - 1; i >= 0; i--)
 				existingTypeNodeUpdaters[i].Remove();

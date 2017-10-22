@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,11 +38,11 @@ namespace dnSpy.AsmEditor.Namespace {
 		string name;
 
 		public NamespaceVM(string name) {
-			this.origName = name;
+			origName = name;
 
 			Reinitialize();
 		}
 
-		void Reinitialize() => this.Name = origName;
+		void Reinitialize() => Name = origName;
 	}
 }

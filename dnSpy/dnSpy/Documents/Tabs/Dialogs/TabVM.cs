@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,10 +51,10 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		}
 
 		public TabVM(TabsVM owner, IDocumentTab tab) {
-			this.Owner = owner;
-			this.Tab = tab;
+			Owner = owner;
+			Tab = tab;
 			var node = tab.Content.Nodes.FirstOrDefault().GetTopNode();
-			this.document = node?.Document;
+			document = node?.Document;
 		}
 	}
 }

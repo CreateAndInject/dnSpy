@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			: this(null) {
 		}
 
-		public EditMemberRef(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
-		}
+		public EditMemberRef(Window ownerWindow) => this.ownerWindow = ownerWindow;
 
 		public MemberRefVM Edit(string title, MemberRefVM pd) {
 			var win = new MemberRefDlg();

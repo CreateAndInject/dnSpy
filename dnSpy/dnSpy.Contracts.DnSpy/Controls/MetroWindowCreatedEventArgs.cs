@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,10 +33,6 @@ namespace dnSpy.Contracts.Controls {
 		/// Constructor
 		/// </summary>
 		/// <param name="metroWindow">Created instance</param>
-		public MetroWindowCreatedEventArgs(MetroWindow metroWindow) {
-			if (metroWindow == null)
-				throw new ArgumentNullException(nameof(metroWindow));
-			MetroWindow = metroWindow;
-		}
+		public MetroWindowCreatedEventArgs(MetroWindow metroWindow) => MetroWindow = metroWindow ?? throw new ArgumentNullException(nameof(metroWindow));
 	}
 }

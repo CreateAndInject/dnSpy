@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -116,6 +116,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.ValueType"/>
 		/// </summary>
 		public const string ValueType = RoslynClassificationTypeNames.StructName;
+
+		/// <summary>
+		/// <see cref="TextColor.Module"/>
+		/// </summary>
+		public const string Module = RoslynClassificationTypeNames.ModuleName;
 
 		/// <summary>
 		/// <see cref="TextColor.TypeGenericParameter"/>
@@ -463,9 +468,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string AssemblyExe = "Theme-" + nameof(AssemblyExe);
 
 		/// <summary>
-		/// <see cref="TextColor.Module"/>
+		/// <see cref="TextColor.AssemblyModule"/>
 		/// </summary>
-		public const string Module = RoslynClassificationTypeNames.ModuleName;
+		public const string AssemblyModule = "Theme-" + nameof(AssemblyModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DirectoryPart"/>
@@ -893,139 +898,149 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string FindMatchHighlightMarker = "Theme-" + nameof(FindMatchHighlightMarker);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerNamespace"/>
+		/// <see cref="TextColor.BlockStructureNamespace"/>
 		/// </summary>
-		public const string StructureVisualizerNamespace = "Theme-" + nameof(StructureVisualizerNamespace);
+		public const string BlockStructureNamespace = "Theme-" + nameof(BlockStructureNamespace);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerType"/>
+		/// <see cref="TextColor.BlockStructureType"/>
 		/// </summary>
-		public const string StructureVisualizerType = "Theme-" + nameof(StructureVisualizerType);
+		public const string BlockStructureType = "Theme-" + nameof(BlockStructureType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerModule"/>
+		/// <see cref="TextColor.BlockStructureModule"/>
 		/// </summary>
-		public const string StructureVisualizerModule = "Theme-" + nameof(StructureVisualizerModule);
+		public const string BlockStructureModule = "Theme-" + nameof(BlockStructureModule);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerValueType"/>
+		/// <see cref="TextColor.BlockStructureValueType"/>
 		/// </summary>
-		public const string StructureVisualizerValueType = "Theme-" + nameof(StructureVisualizerValueType);
+		public const string BlockStructureValueType = "Theme-" + nameof(BlockStructureValueType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerInterface"/>
+		/// <see cref="TextColor.BlockStructureInterface"/>
 		/// </summary>
-		public const string StructureVisualizerInterface = "Theme-" + nameof(StructureVisualizerInterface);
+		public const string BlockStructureInterface = "Theme-" + nameof(BlockStructureInterface);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerMethod"/>
+		/// <see cref="TextColor.BlockStructureMethod"/>
 		/// </summary>
-		public const string StructureVisualizerMethod = "Theme-" + nameof(StructureVisualizerMethod);
+		public const string BlockStructureMethod = "Theme-" + nameof(BlockStructureMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAccessor"/>
+		/// <see cref="TextColor.BlockStructureAccessor"/>
 		/// </summary>
-		public const string StructureVisualizerAccessor = "Theme-" + nameof(StructureVisualizerAccessor);
+		public const string BlockStructureAccessor = "Theme-" + nameof(BlockStructureAccessor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
+		/// <see cref="TextColor.BlockStructureAnonymousMethod"/>
 		/// </summary>
-		public const string StructureVisualizerAnonymousMethod = "Theme-" + nameof(StructureVisualizerAnonymousMethod);
+		public const string BlockStructureAnonymousMethod = "Theme-" + nameof(BlockStructureAnonymousMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConstructor"/>
+		/// <see cref="TextColor.BlockStructureConstructor"/>
 		/// </summary>
-		public const string StructureVisualizerConstructor = "Theme-" + nameof(StructureVisualizerConstructor);
+		public const string BlockStructureConstructor = "Theme-" + nameof(BlockStructureConstructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerDestructor"/>
+		/// <see cref="TextColor.BlockStructureDestructor"/>
 		/// </summary>
-		public const string StructureVisualizerDestructor = "Theme-" + nameof(StructureVisualizerDestructor);
+		public const string BlockStructureDestructor = "Theme-" + nameof(BlockStructureDestructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOperator"/>
+		/// <see cref="TextColor.BlockStructureOperator"/>
 		/// </summary>
-		public const string StructureVisualizerOperator = "Theme-" + nameof(StructureVisualizerOperator);
+		public const string BlockStructureOperator = "Theme-" + nameof(BlockStructureOperator);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConditional"/>
+		/// <see cref="TextColor.BlockStructureConditional"/>
 		/// </summary>
-		public const string StructureVisualizerConditional = "Theme-" + nameof(StructureVisualizerConditional);
+		public const string BlockStructureConditional = "Theme-" + nameof(BlockStructureConditional);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLoop"/>
+		/// <see cref="TextColor.BlockStructureLoop"/>
 		/// </summary>
-		public const string StructureVisualizerLoop = "Theme-" + nameof(StructureVisualizerLoop);
+		public const string BlockStructureLoop = "Theme-" + nameof(BlockStructureLoop);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerProperty"/>
+		/// <see cref="TextColor.BlockStructureProperty"/>
 		/// </summary>
-		public const string StructureVisualizerProperty = "Theme-" + nameof(StructureVisualizerProperty);
+		public const string BlockStructureProperty = "Theme-" + nameof(BlockStructureProperty);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerEvent"/>
+		/// <see cref="TextColor.BlockStructureEvent"/>
 		/// </summary>
-		public const string StructureVisualizerEvent = "Theme-" + nameof(StructureVisualizerEvent);
+		public const string BlockStructureEvent = "Theme-" + nameof(BlockStructureEvent);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerTry"/>
+		/// <see cref="TextColor.BlockStructureTry"/>
 		/// </summary>
-		public const string StructureVisualizerTry = "Theme-" + nameof(StructureVisualizerTry);
+		public const string BlockStructureTry = "Theme-" + nameof(BlockStructureTry);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCatch"/>
+		/// <see cref="TextColor.BlockStructureCatch"/>
 		/// </summary>
-		public const string StructureVisualizerCatch = "Theme-" + nameof(StructureVisualizerCatch);
+		public const string BlockStructureCatch = "Theme-" + nameof(BlockStructureCatch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFilter"/>
+		/// <see cref="TextColor.BlockStructureFilter"/>
 		/// </summary>
-		public const string StructureVisualizerFilter = "Theme-" + nameof(StructureVisualizerFilter);
+		public const string BlockStructureFilter = "Theme-" + nameof(BlockStructureFilter);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFinally"/>
+		/// <see cref="TextColor.BlockStructureFinally"/>
 		/// </summary>
-		public const string StructureVisualizerFinally = "Theme-" + nameof(StructureVisualizerFinally);
+		public const string BlockStructureFinally = "Theme-" + nameof(BlockStructureFinally);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFault"/>
+		/// <see cref="TextColor.BlockStructureFault"/>
 		/// </summary>
-		public const string StructureVisualizerFault = "Theme-" + nameof(StructureVisualizerFault);
+		public const string BlockStructureFault = "Theme-" + nameof(BlockStructureFault);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLock"/>
+		/// <see cref="TextColor.BlockStructureLock"/>
 		/// </summary>
-		public const string StructureVisualizerLock = "Theme-" + nameof(StructureVisualizerLock);
+		public const string BlockStructureLock = "Theme-" + nameof(BlockStructureLock);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerUsing"/>
+		/// <see cref="TextColor.BlockStructureUsing"/>
 		/// </summary>
-		public const string StructureVisualizerUsing = "Theme-" + nameof(StructureVisualizerUsing);
+		public const string BlockStructureUsing = "Theme-" + nameof(BlockStructureUsing);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFixed"/>
+		/// <see cref="TextColor.BlockStructureFixed"/>
 		/// </summary>
-		public const string StructureVisualizerFixed = "Theme-" + nameof(StructureVisualizerFixed);
+		public const string BlockStructureFixed = "Theme-" + nameof(BlockStructureFixed);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerSwitch"/>
+		/// <see cref="TextColor.BlockStructureSwitch"/>
 		/// </summary>
-		public const string StructureVisualizerSwitch = "Theme-" + nameof(StructureVisualizerSwitch);
+		public const string BlockStructureSwitch = "Theme-" + nameof(BlockStructureSwitch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCase"/>
+		/// <see cref="TextColor.BlockStructureCase"/>
 		/// </summary>
-		public const string StructureVisualizerCase = "Theme-" + nameof(StructureVisualizerCase);
+		public const string BlockStructureCase = "Theme-" + nameof(BlockStructureCase);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLocalFunction"/>
+		/// <see cref="TextColor.BlockStructureLocalFunction"/>
 		/// </summary>
-		public const string StructureVisualizerLocalFunction = "Theme-" + nameof(StructureVisualizerLocalFunction);
+		public const string BlockStructureLocalFunction = "Theme-" + nameof(BlockStructureLocalFunction);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOther"/>
+		/// <see cref="TextColor.BlockStructureOther"/>
 		/// </summary>
-		public const string StructureVisualizerOther = "Theme-" + nameof(StructureVisualizerOther);
+		public const string BlockStructureOther = "Theme-" + nameof(BlockStructureOther);
+
+		/// <summary>
+		/// <see cref="TextColor.BlockStructureXml"/>
+		/// </summary>
+		public const string BlockStructureXml = "Theme-" + nameof(BlockStructureXml);
+
+		/// <summary>
+		/// <see cref="TextColor.BlockStructureXaml"/>
+		/// </summary>
+		public const string BlockStructureXaml = "Theme-" + nameof(BlockStructureXaml);
 
 		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
@@ -1151,5 +1166,365 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.AppSettingsTextMatchHighlight"/>
 		/// </summary>
 		public const string AppSettingsTextMatchHighlight = "Theme-" + nameof(AppSettingsTextMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentLine"/>
+		/// </summary>
+		public const string HexCurrentLine = "Theme-" + nameof(HexCurrentLine);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentLineNoFocus"/>
+		/// </summary>
+		public const string HexCurrentLineNoFocus = "Theme-" + nameof(HexCurrentLineNoFocus);
+
+		/// <summary>
+		/// <see cref="TextColor.HexInactiveSelectedText"/>
+		/// </summary>
+		public const string HexInactiveSelectedText = "Theme-" + nameof(HexInactiveSelectedText);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLine0"/>
+		/// </summary>
+		public const string HexColumnLine0 = "Theme-" + nameof(HexColumnLine0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLine1"/>
+		/// </summary>
+		public const string HexColumnLine1 = "Theme-" + nameof(HexColumnLine1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLineGroup0"/>
+		/// </summary>
+		public const string HexColumnLineGroup0 = "Theme-" + nameof(HexColumnLineGroup0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLineGroup1"/>
+		/// </summary>
+		public const string HexColumnLineGroup1 = "Theme-" + nameof(HexColumnLineGroup1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexHighlightedValuesColumn"/>
+		/// </summary>
+		public const string HexHighlightedValuesColumn = "Theme-" + nameof(HexHighlightedValuesColumn);
+
+		/// <summary>
+		/// <see cref="TextColor.HexHighlightedAsciiColumn"/>
+		/// </summary>
+		public const string HexHighlightedAsciiColumn = "Theme-" + nameof(HexHighlightedAsciiColumn);
+
+		/// <summary>
+		/// <see cref="TextColor.HexGlyphMargin"/>
+		/// </summary>
+		public const string HexGlyphMargin = "Theme-" + nameof(HexGlyphMargin);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentValueCell"/>
+		/// </summary>
+		public const string HexCurrentValueCell = "Theme-" + nameof(HexCurrentValueCell);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentAsciiCell"/>
+		/// </summary>
+		public const string HexCurrentAsciiCell = "Theme-" + nameof(HexCurrentAsciiCell);
+
+		/// <summary>
+		/// <see cref="TextColor.OutputWindowText"/>
+		/// </summary>
+		public const string OutputWindowText = "Theme-" + nameof(OutputWindowText);
+
+		/// <summary>
+		/// <see cref="TextColor.HexFindMatchHighlightMarker"/>
+		/// </summary>
+		public const string HexFindMatchHighlightMarker = "Theme-" + nameof(HexFindMatchHighlightMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceField0"/>
+		/// </summary>
+		public const string HexToolTipServiceField0 = "Theme-" + nameof(HexToolTipServiceField0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceField1"/>
+		/// </summary>
+		public const string HexToolTipServiceField1 = "Theme-" + nameof(HexToolTipServiceField1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceCurrentField"/>
+		/// </summary>
+		public const string HexToolTipServiceCurrentField = "Theme-" + nameof(HexToolTipServiceCurrentField);
+
+		/// <summary>
+		/// <see cref="TextColor.ListFindMatchHighlight"/>
+		/// </summary>
+		public const string ListFindMatchHighlight = "Theme-" + nameof(ListFindMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatement = "Theme-" + nameof(AdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatementMarker = "Theme-" + nameof(AdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointStatementMarker = "Theme-" + nameof(SelectedAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatement = "Theme-" + nameof(DisabledAdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatementMarker = "Theme-" + nameof(DisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedBreakpointStatementMarker = "Theme-" + nameof(SelectedDisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointWarningStatement"/>
+		/// </summary>
+		public const string BreakpointWarningStatement = "Theme-" + nameof(BreakpointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string BreakpointWarningStatementMarker = "Theme-" + nameof(BreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedBreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedBreakpointWarningStatementMarker = "Theme-" + nameof(SelectedBreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointErrorStatement"/>
+		/// </summary>
+		public const string BreakpointErrorStatement = "Theme-" + nameof(BreakpointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string BreakpointErrorStatementMarker = "Theme-" + nameof(BreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedBreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedBreakpointErrorStatementMarker = "Theme-" + nameof(SelectedBreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointWarningStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointWarningStatement = "Theme-" + nameof(AdvancedBreakpointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointWarningStatementMarker = "Theme-" + nameof(AdvancedBreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointWarningStatementMarker = "Theme-" + nameof(SelectedAdvancedBreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointErrorStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointErrorStatement = "Theme-" + nameof(AdvancedBreakpointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointErrorStatementMarker = "Theme-" + nameof(AdvancedBreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointErrorStatementMarker = "Theme-" + nameof(SelectedAdvancedBreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatement"/>
+		/// </summary>
+		public const string TracepointStatement = "Theme-" + nameof(TracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatementMarker"/>
+		/// </summary>
+		public const string TracepointStatementMarker = "Theme-" + nameof(TracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointStatementMarker = "Theme-" + nameof(SelectedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatement"/>
+		/// </summary>
+		public const string DisabledTracepointStatement = "Theme-" + nameof(DisabledTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledTracepointStatementMarker = "Theme-" + nameof(DisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledTracepointStatementMarker = "Theme-" + nameof(SelectedDisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointStatement = "Theme-" + nameof(AdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointStatementMarker = "Theme-" + nameof(AdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointStatementMarker = "Theme-" + nameof(SelectedAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatement = "Theme-" + nameof(DisabledAdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatementMarker = "Theme-" + nameof(DisabledAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedTracepointStatementMarker = "Theme-" + nameof(SelectedDisabledAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointWarningStatement"/>
+		/// </summary>
+		public const string TracepointWarningStatement = "Theme-" + nameof(TracepointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string TracepointWarningStatementMarker = "Theme-" + nameof(TracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointWarningStatementMarker = "Theme-" + nameof(SelectedTracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointErrorStatement"/>
+		/// </summary>
+		public const string TracepointErrorStatement = "Theme-" + nameof(TracepointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string TracepointErrorStatementMarker = "Theme-" + nameof(TracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointErrorStatementMarker = "Theme-" + nameof(SelectedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointWarningStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointWarningStatement = "Theme-" + nameof(AdvancedTracepointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointWarningStatementMarker = "Theme-" + nameof(AdvancedTracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointWarningStatementMarker = "Theme-" + nameof(SelectedAdvancedTracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointErrorStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointErrorStatement = "Theme-" + nameof(AdvancedTracepointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointErrorStatementMarker = "Theme-" + nameof(AdvancedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointErrorStatementMarker = "Theme-" + nameof(SelectedAdvancedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BookmarkName"/>
+		/// </summary>
+		public const string BookmarkName = "Theme-" + nameof(BookmarkName);
+
+		/// <summary>
+		/// <see cref="TextColor.ActiveBookmarkName"/>
+		/// </summary>
+		public const string ActiveBookmarkName = "Theme-" + nameof(ActiveBookmarkName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugLogTrace"/>
+		/// </summary>
+		public const string DebugLogTrace = "Theme-" + nameof(DebugLogTrace);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugLogExtensionMessage"/>
+		/// </summary>
+		public const string DebugLogExtensionMessage = "Theme-" + nameof(DebugLogExtensionMessage);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerValueChangedHighlight"/>
+		/// </summary>
+		public const string DebuggerValueChangedHighlight = "Theme-" + nameof(DebuggerValueChangedHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugExceptionName"/>
+		/// </summary>
+		public const string DebugExceptionName = "Theme-" + nameof(DebugExceptionName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugStowedExceptionName"/>
+		/// </summary>
+		public const string DebugStowedExceptionName = "Theme-" + nameof(DebugStowedExceptionName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugReturnValueName"/>
+		/// </summary>
+		public const string DebugReturnValueName = "Theme-" + nameof(DebugReturnValueName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugVariableName"/>
+		/// </summary>
+		public const string DebugVariableName = "Theme-" + nameof(DebugVariableName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugObjectIdName"/>
+		/// </summary>
+		public const string DebugObjectIdName = "Theme-" + nameof(DebugObjectIdName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerDisplayAttributeEval"/>
+		/// </summary>
+		public const string DebuggerDisplayAttributeEval = "Theme-" + nameof(DebuggerDisplayAttributeEval);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerNoStringQuotesEval"/>
+		/// </summary>
+		public const string DebuggerNoStringQuotesEval = "Theme-" + nameof(DebuggerNoStringQuotesEval);
 	}
 }

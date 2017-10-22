@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -189,23 +189,23 @@ namespace dnSpy.AsmEditor.Field {
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.origOptions = options;
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			origOptions = options;
 
-			this.ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
+			ConstantVM = new ConstantVM(ownerModule, options.Constant?.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType, null);
+			MarshalTypeVM = new MarshalTypeVM(ownerModule, decompilerService, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
-			this.FieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
-			this.InitialValue = new HexStringVM(a => HasErrorUpdated());
-			this.RVA = new UInt32VM(a => HasErrorUpdated());
-			this.ImplMapVM = new ImplMapVM(ownerModule);
+			FieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
+			InitialValue = new HexStringVM(a => HasErrorUpdated());
+			RVA = new UInt32VM(a => HasErrorUpdated());
+			ImplMapVM = new ImplMapVM(ownerModule);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
-			this.TypeSigCreator.CanAddFnPtr = false;
+			TypeSigCreator.CanAddFnPtr = false;
 			ConstantVM.IsEnabled = HasDefault;
 			MarshalTypeVM.IsEnabled = HasFieldMarshal;
 			ImplMapVM.IsEnabled = PinvokeImpl;
@@ -238,9 +238,7 @@ namespace dnSpy.AsmEditor.Field {
 			HasErrorUpdated();
 		}
 
-		void Reinitialize() {
-			InitializeFrom(origOptions);
-		}
+		void Reinitialize() => InitializeFrom(origOptions);
 
 		public FieldDefOptions CreateFieldDefOptions() => CopyTo(new FieldDefOptions());
 

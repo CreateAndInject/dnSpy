@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,5 +38,11 @@ namespace dnSpy.Contracts.Command {
 
 		/// <summary>Text reference command IDs</summary>
 		public static readonly Guid TextReferenceGroup = new Guid("8D5BC6C7-C013-4401-9ADC-62B411573F3C");
+
+		/// <summary>Bookmark command IDs (<see cref="BookmarkIds"/>)</summary>
+		public static readonly Guid BookmarkGroup = new Guid("BF33ED4E-B503-4D95-995D-F5C5A4541923");
+
+		/// <summary>Hex editor command IDs (<see cref="HexEditorIds"/>)</summary>
+		public static readonly Guid HexEditorGroup = new Guid("3C6A823B-CF80-4D19-914E-498F773DEC7E");
 	}
 }

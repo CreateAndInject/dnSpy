@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,9 +35,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		int index;
 
-		public SwitchInstructionVM(InstructionVM instr) {
-			this.InstructionVM = instr;
-		}
+		public SwitchInstructionVM(InstructionVM instr) => InstructionVM = instr;
 
 		public IIndexedItem Clone() => new SwitchInstructionVM(InstructionVM);
 	}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		[ExportDocumentViewerToolTipProvider]
 		sealed class DocumentViewerToolTipProvider : IDocumentViewerToolTipProvider {
 			public object Create(IDocumentViewerToolTipProviderContext context, object @ref) {
-				var nsRef = @ref as XmlNamespaceTextViewerReference;
-				if (nsRef != null)
+				if (@ref is XmlNamespaceTextViewerReference nsRef)
 					return Create(context, nsRef);
 				return null;
 			}
@@ -42,8 +41,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				const string prefix = "clr-namespace:";
 				if (name.StartsWith(prefix)) {
 					name = name.Substring(prefix.Length);
-					string assemblyName, @namespace;
-					ParseClrNamespace(name, out assemblyName, out @namespace);
+					ParseClrNamespace(name, out string assemblyName, out string @namespace);
 					if (assemblyName == null && @namespace == null)
 						provider.Output.Write(nsRef.XmlNamespaceReference.Definition.Name);
 					else {

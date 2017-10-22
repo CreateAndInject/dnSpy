@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,9 +54,7 @@ namespace dnSpy.Contracts.Documents.TreeView.Resources {
 		/// <param name="treeNodeGroup">Treenode group</param>
 		/// <param name="resourceElement">Resource element</param>
 		protected SerializedResourceElementNode(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement)
-			: base(treeNodeGroup, resourceElement) {
-			Debug.Assert(resourceElement.ResourceData is BinaryResourceData);
-		}
+			: base(treeNodeGroup, resourceElement) => Debug.Assert(resourceElement.ResourceData is BinaryResourceData);
 
 		/// <inheritdoc/>
 		public override void Initialize() => DeserializeIfPossible();

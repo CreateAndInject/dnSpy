@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,13 +26,20 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
 	[Export, Export(typeof(ISettingsService))]
-	sealed class SettingsService : ISettingsService {
+	class SettingsService : ISettingsService {
+		readonly object lockObj;
 		readonly Dictionary<string, ISettingsSection> sections;
 
 		public ISettingsSection[] Sections => sections.Values.ToArray();
 
-		SettingsService() {
-			this.sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
+		protected SettingsService() {
+			lockObj = new object();
+			sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
+		}
+
+		protected void Reset() {
+			lock (lockObj)
+				sections.Clear();
 		}
 
 		public ISettingsSection GetOrCreateSection(Guid guid) {
@@ -40,13 +47,14 @@ namespace dnSpy.Settings {
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
 			var name = guid.ToString();
-			ISettingsSection section;
-			if (sections.TryGetValue(name, out section))
-				return section;
+			lock (lockObj) {
+				if (sections.TryGetValue(name, out var section))
+					return section;
 
-			section = new SettingsSection(name);
-			sections[name] = section;
-			return section;
+				section = new SettingsSection(name);
+				sections[name] = section;
+				return section;
+			}
 		}
 
 		public void RemoveSection(Guid guid) {
@@ -54,7 +62,8 @@ namespace dnSpy.Settings {
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
 			var name = guid.ToString();
-			sections.Remove(name);
+			lock (lockObj)
+				sections.Remove(name);
 		}
 
 		public void RemoveSection(ISettingsSection section) {
@@ -62,21 +71,24 @@ namespace dnSpy.Settings {
 			if (section == null)
 				throw new ArgumentNullException(nameof(section));
 
-			ISettingsSection other;
-			bool b = sections.TryGetValue(section.Name, out other);
-			Debug.Assert(b && other == section);
-			if (!b || other != section)
-				return;
+			lock (lockObj) {
+				bool b = sections.TryGetValue(section.Name, out var other);
+				Debug.Assert(b && other == section);
+				if (!b || other != section)
+					return;
 
-			sections.Remove(section.Name);
+				sections.Remove(section.Name);
+			}
 		}
 
 		public ISettingsSection RecreateSection(Guid guid) {
 			if (guid == Guid.Empty)
 				throw new ArgumentOutOfRangeException(nameof(guid));
 
-			RemoveSection(guid);
-			return GetOrCreateSection(guid);
+			lock (lockObj) {
+				RemoveSection(guid);
+				return GetOrCreateSection(guid);
+			}
 		}
 	}
 }

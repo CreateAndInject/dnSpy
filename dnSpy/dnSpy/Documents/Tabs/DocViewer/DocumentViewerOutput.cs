@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		readonly CachedTextColorsCollection cachedTextColorsCollection;
 		readonly StringBuilder stringBuilder;
 		readonly Dictionary<string, object> customDataDict;
+		readonly Indenter indenter;
 		State state;
 		SpanDataCollectionBuilder<ReferenceInfo> referenceBuilder;
-		int indentation;
 		bool canBeCached;
 		bool addIndent = true;
 
@@ -63,7 +63,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		public int NextPosition {
 			get {
 				VerifyNotCreated();
-				return stringBuilder.Length + GetIndentSize();
+				return stringBuilder.Length + (addIndent ? indenter.String.Length : 0);
 			}
 		}
 
@@ -77,12 +77,13 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		internal static DocumentViewerOutput Create() => new DocumentViewerOutput();
 
 		DocumentViewerOutput() {
-			this.state = State.GeneratingContent;
-			this.cachedTextColorsCollection = new CachedTextColorsCollection();
-			this.stringBuilder = new StringBuilder();
-			this.referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
-			this.canBeCached = true;
-			this.customDataDict = new Dictionary<string, object>(StringComparer.Ordinal);
+			state = State.GeneratingContent;
+			cachedTextColorsCollection = new CachedTextColorsCollection();
+			stringBuilder = new StringBuilder();
+			referenceBuilder = SpanDataCollectionBuilder<ReferenceInfo>.CreateBuilder();
+			canBeCached = true;
+			customDataDict = new Dictionary<string, object>(StringComparer.Ordinal);
+			indenter = new Indenter(4, 4, true);
 		}
 
 		void VerifyGeneratingOrPostProcessing() {
@@ -137,9 +138,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public void AddCustomData<TData>(string id, TData data) {
 			VerifyGeneratingOrPostProcessing();
-			object listObj;
 			List<TData> list;
-			if (customDataDict.TryGetValue(id, out listObj))
+			if (customDataDict.TryGetValue(id, out object listObj))
 				list = (List<TData>)listObj;
 			else
 				customDataDict.Add(id, list = new List<TData>());
@@ -148,14 +148,12 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		public void IncreaseIndent() {
 			VerifyState(State.GeneratingContent);
-			indentation++;
+			indenter.IncreaseIndent();
 		}
 
 		public void DecreaseIndent() {
 			VerifyState(State.GeneratingContent);
-			Debug.Assert(indentation > 0);
-			if (indentation > 0)
-				indentation--;
+			indenter.DecreaseIndent();
 		}
 
 		public void WriteLine() {
@@ -166,39 +164,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			Debug.Assert(stringBuilder.Length == cachedTextColorsCollection.TextLength);
 		}
 
-		int GetIndentSize() => addIndent ? indentation : 0;// Tabs are used
-
 		void AddIndent() {
 			if (!addIndent)
 				return;
 			addIndent = false;
-			int count = indentation;
-			while (count > 0) {
-				switch (count) {
-				case 1:
-					AddText("\t", BoxedTextColor.Text);
-					return;
-				case 2:
-					AddText("\t\t", BoxedTextColor.Text);
-					return;
-				case 3:
-					AddText("\t\t\t", BoxedTextColor.Text);
-					return;
-				case 4:
-					AddText("\t\t\t\t", BoxedTextColor.Text);
-					return;
-				case 5:
-					AddText("\t\t\t\t\t", BoxedTextColor.Text);
-					return;
-				case 6:
-					AddText("\t\t\t\t\t\t", BoxedTextColor.Text);
-					return;
-				default:
-					AddText("\t\t\t\t\t\t\t", BoxedTextColor.Text);
-					count -= 7;
-					break;
-				}
-			}
+			AddText(indenter.String, BoxedTextColor.Text);
 		}
 
 		void AddText(string text, object color) {
@@ -231,7 +201,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 				AddText(text, index, length, color);
 				return;
 			}
-			Debug.Assert(!(reference.GetType().FullName ?? string.Empty).Contains("ICSharpCode"), "Internal decompiler data shouldn't be passed to Write()-ref");
+			Debug.Assert(!reference.GetType().FullName.Contains("ICSharpCode"), "Internal decompiler data shouldn't be passed to Write()-ref");
 			referenceBuilder.Add(new Span(stringBuilder.Length, length), new ReferenceInfo(reference, flags));
 			AddText(text, index, length, color);
 		}

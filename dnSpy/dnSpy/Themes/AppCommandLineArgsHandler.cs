@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.Themes {
 		readonly IThemeServiceImpl themeService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IThemeServiceImpl themeService) {
-			this.themeService = themeService;
-		}
+		AppCommandLineArgsHandler(IThemeServiceImpl themeService) => this.themeService = themeService;
 
 		public double Order => 0;
 
@@ -38,8 +36,7 @@ namespace dnSpy.Themes {
 			if (string.IsNullOrEmpty(args.Theme))
 				return;
 
-			Guid guid;
-			bool isGuid = Guid.TryParse(args.Theme, out guid);
+			bool isGuid = Guid.TryParse(args.Theme, out var guid);
 			var theme = themeService.AllThemes.FirstOrDefault(a => isGuid ? a.Guid == guid : !string.IsNullOrEmpty(a.Name) && StringComparer.InvariantCulture.Equals(a.Name, args.Theme));
 			if (theme != null)
 				themeService.Theme = theme;

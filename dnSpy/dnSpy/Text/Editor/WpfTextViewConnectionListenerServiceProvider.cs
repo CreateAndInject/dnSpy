@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,9 +30,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners;
 
 		[ImportingConstructor]
-		WpfTextViewConnectionListenerServiceProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> wpfTextViewConnectionListeners) {
-			this.wpfTextViewConnectionListeners = wpfTextViewConnectionListeners.ToArray();
-		}
+		WpfTextViewConnectionListenerServiceProvider([ImportMany] IEnumerable<Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>> wpfTextViewConnectionListeners) => this.wpfTextViewConnectionListeners = wpfTextViewConnectionListeners.ToArray();
 
 		public void Create(IWpfTextView wpfTextView) {
 			if (wpfTextView == null)

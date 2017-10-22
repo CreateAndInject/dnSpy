@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -56,16 +56,10 @@ namespace dnSpy.Text.Editor {
 		bool hasWrittenCursor;
 
 		public UriMouseProcessor(IWpfTextView wpfTextView, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IMessageBoxService messageBoxService) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (viewTagAggregatorFactoryService == null)
-				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (messageBoxService == null)
-				throw new ArgumentNullException(nameof(messageBoxService));
-			this.wpfTextView = wpfTextView;
-			this.messageBoxService = messageBoxService;
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.origCursor = wpfTextView.VisualElement.Cursor;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.messageBoxService = messageBoxService ?? throw new ArgumentNullException(nameof(messageBoxService));
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
+			origCursor = wpfTextView.VisualElement.Cursor;
 			wpfTextView.VisualElement.PreviewKeyDown += VisualElement_PreviewKeyDown;
 			wpfTextView.VisualElement.PreviewKeyUp += VisualElement_PreviewKeyUp;
 			wpfTextView.Closed += WpfTextView_Closed;

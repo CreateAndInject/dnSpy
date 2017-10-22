@@ -55,9 +55,7 @@ namespace Example2.Extension {
 
 		readonly AssemblyChildNode node;
 
-		public AssemblyChildNodeTabContent(AssemblyChildNode node) {
-			this.node = node;
-		}
+		public AssemblyChildNodeTabContent(AssemblyChildNode node) => this.node = node;
 
 		// Called when the user opens a new tab. Override CanClone and return false if
 		// Clone() isn't supported
@@ -103,12 +101,12 @@ namespace Example2.Extension {
 		readonly AssemblyChildNodeVM vm;
 
 		public AssemblyChildNodeUIContext() {
-			this.vm = new AssemblyChildNodeVM();
+			vm = new AssemblyChildNodeVM();
 			// A ContentPresenter + DataTemplate is used to show the VM, but you could of course use
 			// a UserControl.
-			this.content = new ContentPresenter {
+			content = new ContentPresenter {
 				Focusable = true,
-				Content = this.vm,
+				Content = vm,
 			};
 		}
 
@@ -117,8 +115,8 @@ namespace Example2.Extension {
 			public bool Value2;
 
 			public MyUIState(string value1, bool value2) {
-				this.Value1 = value1;
-				this.Value2 = value2;
+				Value1 = value1;
+				Value2 = value2;
 			}
 		}
 

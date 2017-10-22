@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,10 +34,6 @@ namespace dnSpy.Controls {
 		/// Constructor
 		/// </summary>
 		/// <param name="window">Window</param>
-		public WindowDpiChangedEventArgs(Window window) {
-			if (window == null)
-				throw new ArgumentNullException(nameof(window));
-			Window = window;
-		}
+		public WindowDpiChangedEventArgs(Window window) => Window = window ?? throw new ArgumentNullException(nameof(window));
 	}
 }

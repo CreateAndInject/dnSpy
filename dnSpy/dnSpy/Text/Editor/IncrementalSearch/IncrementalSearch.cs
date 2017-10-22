@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,9 +32,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		public string SearchString {
 			get { return searchString; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
-				searchString = value;
+				searchString = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		string searchString;
@@ -69,15 +67,11 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 		readonly IEditorOperations editorOperations;
 
 		public IncrementalSearch(ITextView textView, ITextSearchService textSearchService, IEditorOperationsFactoryService editorOperationsFactoryService) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (textSearchService == null)
-				throw new ArgumentNullException(nameof(textSearchService));
 			if (editorOperationsFactoryService == null)
 				throw new ArgumentNullException(nameof(editorOperationsFactoryService));
-			TextView = textView;
-			this.textSearchService = textSearchService;
-			this.editorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.textSearchService = textSearchService ?? throw new ArgumentNullException(nameof(textSearchService));
+			editorOperations = editorOperationsFactoryService.GetEditorOperations(textView);
 			SearchString = string.Empty;
 		}
 
@@ -93,7 +87,7 @@ namespace dnSpy.Text.Editor.IncrementalSearch {
 				throw new InvalidOperationException();
 			IsActive = false;
 			// Don't hold a strong reference to the snapshot
-			CaretStartPosition = default(SnapshotPoint);
+			CaretStartPosition = default;
 		}
 
 		public IncrementalSearchResult AppendCharAndSearch(char toAppend) {

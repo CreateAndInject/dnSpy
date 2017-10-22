@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,19 +25,32 @@ namespace dnSpy.Contracts.Images {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string Add = nameof(Add);
 		public const string AddReference = nameof(AddReference);
+		public const string AdvancedBreakpointDisabled = nameof(AdvancedBreakpointDisabled);
+		public const string AdvancedBreakpointEnabled = nameof(AdvancedBreakpointEnabled);
+		public const string AdvancedTracepointDisabled = nameof(AdvancedTracepointDisabled);
+		public const string AdvancedTracepointEnabled = nameof(AdvancedTracepointEnabled);
 		public const string Assembly = nameof(Assembly);
 		public const string AssemblyError = nameof(AssemblyError);
 		public const string AssemblyExe = nameof(AssemblyExe);
 		public const string AutoSizeOptimize = nameof(AutoSizeOptimize);
+		public const string AutosWindow = nameof(AutosWindow);
 		public const string Backwards = nameof(Backwards);
 		public const string Binary = nameof(Binary);
 		public const string BinaryFile = nameof(BinaryFile);
+		public const string Bookmark = nameof(Bookmark);
+		public const string BookmarkDisabled = nameof(BookmarkDisabled);
+		public const string BookmarkGroupDisabled = nameof(BookmarkGroupDisabled);
+		public const string BookmarkMainMenuItem = nameof(BookmarkMainMenuItem);
+		public const string BoundBreakpoint = nameof(BoundBreakpoint);
 		public const string Branch = nameof(Branch);
 		public const string BreakpointDisabled = nameof(BreakpointDisabled);
 		public const string BreakpointEnabled = nameof(BreakpointEnabled);
+		public const string BreakpointError = nameof(BreakpointError);
 		public const string BreakpointsWindow = nameof(BreakpointsWindow);
+		public const string BreakpointWarning = nameof(BreakpointWarning);
 		public const string BuildSolution = nameof(BuildSolution);
 		public const string CallReturnInstructionPointer = nameof(CallReturnInstructionPointer);
+		public const string CallReturnInstructionPointerAlert = nameof(CallReturnInstructionPointerAlert);
 		public const string CallStackWindow = nameof(CallStackWindow);
 		public const string Cancel = nameof(Cancel);
 		public const string CheckDot = nameof(CheckDot);
@@ -46,6 +59,7 @@ namespace dnSpy.Contracts.Images {
 		public const string ClassProtected = nameof(ClassProtected);
 		public const string ClassPublic = nameof(ClassPublic);
 		public const string ClassShortcut = nameof(ClassShortcut);
+		public const string ClearBookmark = nameof(ClearBookmark);
 		public const string ClearBreakpointGroup = nameof(ClearBreakpointGroup);
 		public const string ClearWindowContent = nameof(ClearWindowContent);
 		public const string CloseAll = nameof(CloseAll);
@@ -63,6 +77,8 @@ namespace dnSpy.Contracts.Images {
 		public const string CSInteractiveWindow = nameof(CSInteractiveWindow);
 		public const string CSProjectNode = nameof(CSProjectNode);
 		public const string CurrentInstructionPointer = nameof(CurrentInstructionPointer);
+		public const string CurrentInstructionPointerPaused = nameof(CurrentInstructionPointerPaused);
+		public const string CurrentInstructionPointerStopped = nameof(CurrentInstructionPointerStopped);
 		public const string Cursor = nameof(Cursor);
 		public const string Cut = nameof(Cut);
 		public const string DelegateInternal = nameof(DelegateInternal);
@@ -70,11 +86,15 @@ namespace dnSpy.Contracts.Images {
 		public const string DelegateProtected = nameof(DelegateProtected);
 		public const string DelegatePublic = nameof(DelegatePublic);
 		public const string DelegateShortcut = nameof(DelegateShortcut);
+		public const string DeleteBreakpoint = nameof(DeleteBreakpoint);
+		public const string DeleteWatch = nameof(DeleteWatch);
 		public const string Dialog = nameof(Dialog);
 		public const string DisableAllBreakpoints = nameof(DisableAllBreakpoints);
 		public const string DisassemblyWindow = nameof(DisassemblyWindow);
 		public const string DownloadNoColor = nameof(DownloadNoColor);
 		public const string DraggedCurrentInstructionPointer = nameof(DraggedCurrentInstructionPointer);
+		public const string DraggedInstructionPointerPaused = nameof(DraggedInstructionPointerPaused);
+		public const string Edit = nameof(Edit);
 		public const string Editor = nameof(Editor);
 		public const string EnableAllBreakpoints = nameof(EnableAllBreakpoints);
 		public const string EntryPoint = nameof(EntryPoint);
@@ -108,6 +128,7 @@ namespace dnSpy.Contracts.Images {
 		public const string FieldPublic = nameof(FieldPublic);
 		public const string FieldSealed = nameof(FieldSealed);
 		public const string FieldShortcut = nameof(FieldShortcut);
+		public const string FileSystemWatcher = nameof(FileSystemWatcher);
 		public const string Fill = nameof(Fill);
 		public const string Filter = nameof(Filter);
 		public const string FolderClosed = nameof(FolderClosed);
@@ -117,6 +138,7 @@ namespace dnSpy.Contracts.Images {
 		public const string GoToNextInList = nameof(GoToNextInList);
 		public const string GoToSourceCode = nameof(GoToSourceCode);
 		public const string Image = nameof(Image);
+		public const string Import = nameof(Import);
 		public const string IntellisenseKeyword = nameof(IntellisenseKeyword);
 		public const string InterfaceInternal = nameof(InterfaceInternal);
 		public const string InterfacePrivate = nameof(InterfacePrivate);
@@ -153,8 +175,12 @@ namespace dnSpy.Contracts.Images {
 		public const string NewMethod = nameof(NewMethod);
 		public const string NewProperty = nameof(NewProperty);
 		public const string NewWindow = nameof(NewWindow);
+		public const string NextBookmark = nameof(NextBookmark);
+		public const string NextBookmarkInFile = nameof(NextBookmarkInFile);
+		public const string NextBookmarkInFolder = nameof(NextBookmarkInFolder);
 		public const string NuGet = nameof(NuGet);
 		public const string OneLevelUp = nameof(OneLevelUp);
+		public const string Open = nameof(Open);
 		public const string OpenFolder = nameof(OpenFolder);
 		public const string OperatorInternal = nameof(OperatorInternal);
 		public const string OperatorPrivate = nameof(OperatorPrivate);
@@ -166,6 +192,9 @@ namespace dnSpy.Contracts.Images {
 		public const string Parameter = nameof(Parameter);
 		public const string Paste = nameof(Paste);
 		public const string Pause = nameof(Pause);
+		public const string PreviousBookmark = nameof(PreviousBookmark);
+		public const string PreviousBookmarkInFile = nameof(PreviousBookmarkInFile);
+		public const string PreviousBookmarkInFolder = nameof(PreviousBookmarkInFolder);
 		public const string Process = nameof(Process);
 		public const string Property = nameof(Property);
 		public const string PropertyInternal = nameof(PropertyInternal);
@@ -188,10 +217,12 @@ namespace dnSpy.Contracts.Images {
 		public const string Settings = nameof(Settings);
 		public const string Snippet = nameof(Snippet);
 		public const string Solution = nameof(Solution);
+		public const string SortAscending = nameof(SortAscending);
 		public const string SourceFileGroup = nameof(SourceFileGroup);
 		public const string SplitScreenHorizontally = nameof(SplitScreenHorizontally);
 		public const string SplitScreenVertically = nameof(SplitScreenVertically);
 		public const string StatusError = nameof(StatusError);
+		public const string StatusHelp = nameof(StatusHelp);
 		public const string StatusHidden = nameof(StatusHidden);
 		public const string StatusInformation = nameof(StatusInformation);
 		public const string StatusWarning = nameof(StatusWarning);
@@ -211,6 +242,7 @@ namespace dnSpy.Contracts.Images {
 		public const string TemplatePrivate = nameof(TemplatePrivate);
 		public const string TemplateProtected = nameof(TemplateProtected);
 		public const string TemplateShortcut = nameof(TemplateShortcut);
+		public const string TerminateProcess = nameof(TerminateProcess);
 		public const string TextFile = nameof(TextFile);
 		public const string Thread = nameof(Thread);
 		public const string ToggleAllBreakpoints = nameof(ToggleAllBreakpoints);
@@ -218,6 +250,10 @@ namespace dnSpy.Contracts.Images {
 		public const string ToolstripPanelLeft = nameof(ToolstripPanelLeft);
 		public const string ToolstripPanelRight = nameof(ToolstripPanelRight);
 		public const string ToolstripPanelTop = nameof(ToolstripPanelTop);
+		public const string TracepointDisabled = nameof(TracepointDisabled);
+		public const string TracepointEnabled = nameof(TracepointEnabled);
+		public const string TracepointError = nameof(TracepointError);
+		public const string TracepointWarning = nameof(TracepointWarning);
 		public const string Type = nameof(Type);
 		public const string Undo = nameof(Undo);
 		public const string UndoCheckBoxList = nameof(UndoCheckBoxList);

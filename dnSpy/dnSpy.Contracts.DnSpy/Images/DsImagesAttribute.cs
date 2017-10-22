@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,19 +26,32 @@ namespace dnSpy.Contracts.Images {
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		public const string Add = Prefix + DsImageStrings.Add;
 		public const string AddReference = Prefix + DsImageStrings.AddReference;
+		public const string AdvancedBreakpointDisabled = Prefix + DsImageStrings.AdvancedBreakpointDisabled;
+		public const string AdvancedBreakpointEnabled = Prefix + DsImageStrings.AdvancedBreakpointEnabled;
+		public const string AdvancedTracepointDisabled = Prefix + DsImageStrings.AdvancedTracepointDisabled;
+		public const string AdvancedTracepointEnabled = Prefix + DsImageStrings.AdvancedTracepointEnabled;
 		public const string Assembly = Prefix + DsImageStrings.Assembly;
 		public const string AssemblyError = Prefix + DsImageStrings.AssemblyError;
 		public const string AssemblyExe = Prefix + DsImageStrings.AssemblyExe;
 		public const string AutoSizeOptimize = Prefix + DsImageStrings.AutoSizeOptimize;
+		public const string AutosWindow = Prefix + DsImageStrings.AutosWindow;
 		public const string Backwards = Prefix + DsImageStrings.Backwards;
 		public const string Binary = Prefix + DsImageStrings.Binary;
 		public const string BinaryFile = Prefix + DsImageStrings.BinaryFile;
+		public const string Bookmark = Prefix + DsImageStrings.Bookmark;
+		public const string BookmarkDisabled = Prefix + DsImageStrings.BookmarkDisabled;
+		public const string BookmarkGroupDisabled = Prefix + DsImageStrings.BookmarkGroupDisabled;
+		public const string BookmarkMainMenuItem = Prefix + DsImageStrings.BookmarkMainMenuItem;
+		public const string BoundBreakpoint = Prefix + DsImageStrings.BoundBreakpoint;
 		public const string Branch = Prefix + DsImageStrings.Branch;
 		public const string BreakpointDisabled = Prefix + DsImageStrings.BreakpointDisabled;
 		public const string BreakpointEnabled = Prefix + DsImageStrings.BreakpointEnabled;
+		public const string BreakpointError = Prefix + DsImageStrings.BreakpointError;
 		public const string BreakpointsWindow = Prefix + DsImageStrings.BreakpointsWindow;
+		public const string BreakpointWarning = Prefix + DsImageStrings.BreakpointWarning;
 		public const string BuildSolution = Prefix + DsImageStrings.BuildSolution;
 		public const string CallReturnInstructionPointer = Prefix + DsImageStrings.CallReturnInstructionPointer;
+		public const string CallReturnInstructionPointerAlert = Prefix + DsImageStrings.CallReturnInstructionPointerAlert;
 		public const string CallStackWindow = Prefix + DsImageStrings.CallStackWindow;
 		public const string Cancel = Prefix + DsImageStrings.Cancel;
 		public const string CheckDot = Prefix + DsImageStrings.CheckDot;
@@ -47,6 +60,7 @@ namespace dnSpy.Contracts.Images {
 		public const string ClassProtected = Prefix + DsImageStrings.ClassProtected;
 		public const string ClassPublic = Prefix + DsImageStrings.ClassPublic;
 		public const string ClassShortcut = Prefix + DsImageStrings.ClassShortcut;
+		public const string ClearBookmark = Prefix + DsImageStrings.ClearBookmark;
 		public const string ClearBreakpointGroup = Prefix + DsImageStrings.ClearBreakpointGroup;
 		public const string ClearWindowContent = Prefix + DsImageStrings.ClearWindowContent;
 		public const string CloseAll = Prefix + DsImageStrings.CloseAll;
@@ -64,6 +78,8 @@ namespace dnSpy.Contracts.Images {
 		public const string CSInteractiveWindow = Prefix + DsImageStrings.CSInteractiveWindow;
 		public const string CSProjectNode = Prefix + DsImageStrings.CSProjectNode;
 		public const string CurrentInstructionPointer = Prefix + DsImageStrings.CurrentInstructionPointer;
+		public const string CurrentInstructionPointerPaused = Prefix + DsImageStrings.CurrentInstructionPointerPaused;
+		public const string CurrentInstructionPointerStopped = Prefix + DsImageStrings.CurrentInstructionPointerStopped;
 		public const string Cursor = Prefix + DsImageStrings.Cursor;
 		public const string Cut = Prefix + DsImageStrings.Cut;
 		public const string DelegateInternal = Prefix + DsImageStrings.DelegateInternal;
@@ -71,11 +87,15 @@ namespace dnSpy.Contracts.Images {
 		public const string DelegateProtected = Prefix + DsImageStrings.DelegateProtected;
 		public const string DelegatePublic = Prefix + DsImageStrings.DelegatePublic;
 		public const string DelegateShortcut = Prefix + DsImageStrings.DelegateShortcut;
+		public const string DeleteBreakpoint = Prefix + DsImageStrings.DeleteBreakpoint;
+		public const string DeleteWatch = Prefix + DsImageStrings.DeleteWatch;
 		public const string Dialog = Prefix + DsImageStrings.Dialog;
 		public const string DisableAllBreakpoints = Prefix + DsImageStrings.DisableAllBreakpoints;
 		public const string DisassemblyWindow = Prefix + DsImageStrings.DisassemblyWindow;
 		public const string DownloadNoColor = Prefix + DsImageStrings.DownloadNoColor;
 		public const string DraggedCurrentInstructionPointer = Prefix + DsImageStrings.DraggedCurrentInstructionPointer;
+		public const string DraggedInstructionPointerPaused = Prefix + DsImageStrings.DraggedInstructionPointerPaused;
+		public const string Edit = Prefix + DsImageStrings.Edit;
 		public const string Editor = Prefix + DsImageStrings.Editor;
 		public const string EnableAllBreakpoints = Prefix + DsImageStrings.EnableAllBreakpoints;
 		public const string EntryPoint = Prefix + DsImageStrings.EntryPoint;
@@ -109,6 +129,7 @@ namespace dnSpy.Contracts.Images {
 		public const string FieldPublic = Prefix + DsImageStrings.FieldPublic;
 		public const string FieldSealed = Prefix + DsImageStrings.FieldSealed;
 		public const string FieldShortcut = Prefix + DsImageStrings.FieldShortcut;
+		public const string FileSystemWatcher = Prefix + DsImageStrings.FileSystemWatcher;
 		public const string Fill = Prefix + DsImageStrings.Fill;
 		public const string Filter = Prefix + DsImageStrings.Filter;
 		public const string FolderClosed = Prefix + DsImageStrings.FolderClosed;
@@ -118,6 +139,7 @@ namespace dnSpy.Contracts.Images {
 		public const string GoToNextInList = Prefix + DsImageStrings.GoToNextInList;
 		public const string GoToSourceCode = Prefix + DsImageStrings.GoToSourceCode;
 		public const string Image = Prefix + DsImageStrings.Image;
+		public const string Import = Prefix + DsImageStrings.Import;
 		public const string IntellisenseKeyword = Prefix + DsImageStrings.IntellisenseKeyword;
 		public const string InterfaceInternal = Prefix + DsImageStrings.InterfaceInternal;
 		public const string InterfacePrivate = Prefix + DsImageStrings.InterfacePrivate;
@@ -154,8 +176,12 @@ namespace dnSpy.Contracts.Images {
 		public const string NewMethod = Prefix + DsImageStrings.NewMethod;
 		public const string NewProperty = Prefix + DsImageStrings.NewProperty;
 		public const string NewWindow = Prefix + DsImageStrings.NewWindow;
+		public const string NextBookmark = Prefix + DsImageStrings.NextBookmark;
+		public const string NextBookmarkInFile = Prefix + DsImageStrings.NextBookmarkInFile;
+		public const string NextBookmarkInFolder = Prefix + DsImageStrings.NextBookmarkInFolder;
 		public const string NuGet = Prefix + DsImageStrings.NuGet;
 		public const string OneLevelUp = Prefix + DsImageStrings.OneLevelUp;
+		public const string Open = Prefix + DsImageStrings.Open;
 		public const string OpenFolder = Prefix + DsImageStrings.OpenFolder;
 		public const string OperatorInternal = Prefix + DsImageStrings.OperatorInternal;
 		public const string OperatorPrivate = Prefix + DsImageStrings.OperatorPrivate;
@@ -167,6 +193,9 @@ namespace dnSpy.Contracts.Images {
 		public const string Parameter = Prefix + DsImageStrings.Parameter;
 		public const string Paste = Prefix + DsImageStrings.Paste;
 		public const string Pause = Prefix + DsImageStrings.Pause;
+		public const string PreviousBookmark = Prefix + DsImageStrings.PreviousBookmark;
+		public const string PreviousBookmarkInFile = Prefix + DsImageStrings.PreviousBookmarkInFile;
+		public const string PreviousBookmarkInFolder = Prefix + DsImageStrings.PreviousBookmarkInFolder;
 		public const string Process = Prefix + DsImageStrings.Process;
 		public const string Property = Prefix + DsImageStrings.Property;
 		public const string PropertyInternal = Prefix + DsImageStrings.PropertyInternal;
@@ -189,10 +218,12 @@ namespace dnSpy.Contracts.Images {
 		public const string Settings = Prefix + DsImageStrings.Settings;
 		public const string Snippet = Prefix + DsImageStrings.Snippet;
 		public const string Solution = Prefix + DsImageStrings.Solution;
+		public const string SortAscending = Prefix + DsImageStrings.SortAscending;
 		public const string SourceFileGroup = Prefix + DsImageStrings.SourceFileGroup;
 		public const string SplitScreenHorizontally = Prefix + DsImageStrings.SplitScreenHorizontally;
 		public const string SplitScreenVertically = Prefix + DsImageStrings.SplitScreenVertically;
 		public const string StatusError = Prefix + DsImageStrings.StatusError;
+		public const string StatusHelp = Prefix + DsImageStrings.StatusHelp;
 		public const string StatusHidden = Prefix + DsImageStrings.StatusHidden;
 		public const string StatusInformation = Prefix + DsImageStrings.StatusInformation;
 		public const string StatusWarning = Prefix + DsImageStrings.StatusWarning;
@@ -212,6 +243,7 @@ namespace dnSpy.Contracts.Images {
 		public const string TemplatePrivate = Prefix + DsImageStrings.TemplatePrivate;
 		public const string TemplateProtected = Prefix + DsImageStrings.TemplateProtected;
 		public const string TemplateShortcut = Prefix + DsImageStrings.TemplateShortcut;
+		public const string TerminateProcess = Prefix + DsImageStrings.TerminateProcess;
 		public const string TextFile = Prefix + DsImageStrings.TextFile;
 		public const string Thread = Prefix + DsImageStrings.Thread;
 		public const string ToggleAllBreakpoints = Prefix + DsImageStrings.ToggleAllBreakpoints;
@@ -219,6 +251,10 @@ namespace dnSpy.Contracts.Images {
 		public const string ToolstripPanelLeft = Prefix + DsImageStrings.ToolstripPanelLeft;
 		public const string ToolstripPanelRight = Prefix + DsImageStrings.ToolstripPanelRight;
 		public const string ToolstripPanelTop = Prefix + DsImageStrings.ToolstripPanelTop;
+		public const string TracepointDisabled = Prefix + DsImageStrings.TracepointDisabled;
+		public const string TracepointEnabled = Prefix + DsImageStrings.TracepointEnabled;
+		public const string TracepointError = Prefix + DsImageStrings.TracepointError;
+		public const string TracepointWarning = Prefix + DsImageStrings.TracepointWarning;
 		public const string Type = Prefix + DsImageStrings.Type;
 		public const string Undo = Prefix + DsImageStrings.Undo;
 		public const string UndoCheckBoxList = Prefix + DsImageStrings.UndoCheckBoxList;

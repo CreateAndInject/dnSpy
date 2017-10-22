@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,10 +54,10 @@ namespace dnSpy.Culture {
 		CultureSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.UIName = sect.Attribute<string>(nameof(UIName)) ?? this.UIName;
-			this.disableSave = false;
+			UIName = sect.Attribute<string>(nameof(UIName)) ?? UIName;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 

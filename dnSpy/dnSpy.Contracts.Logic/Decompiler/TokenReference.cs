@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,9 +49,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="module">Owner module</param>
 		/// <param name="token">Token</param>
 		public TokenReference(ModuleDef module, uint token) {
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			ModuleDef = module;
+			ModuleDef = module ?? throw new ArgumentNullException(nameof(module));
 			Token = token;
 		}
 

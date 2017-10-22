@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -69,7 +69,7 @@ namespace dnSpy.Contracts.Documents {
 		/// <param name="type">Type, see <see cref="Type"/></param>
 		public DsDocumentInfo(string name, Guid type) {
 			this.name = name ?? string.Empty;
-			this.Type = type;
+			Type = type;
 		}
 
 		/// <summary>

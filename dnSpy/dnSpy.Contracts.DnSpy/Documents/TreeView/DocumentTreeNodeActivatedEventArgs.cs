@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,10 +38,6 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="node">Node</param>
-		public DocumentTreeNodeActivatedEventArgs(DocumentTreeNodeData node) {
-			if (node == null)
-				throw new ArgumentNullException(nameof(node));
-			this.Node = node;
-		}
+		public DocumentTreeNodeActivatedEventArgs(DocumentTreeNodeData node) => Node = node ?? throw new ArgumentNullException(nameof(node));
 	}
 }

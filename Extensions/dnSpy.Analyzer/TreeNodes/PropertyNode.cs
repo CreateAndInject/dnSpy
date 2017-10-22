@@ -35,12 +35,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 		public PropertyNode(PropertyDef analyzedProperty, bool hidesParent = false) {
 			if (analyzedProperty == null)
 				throw new ArgumentNullException(nameof(analyzedProperty));
-			this.isIndexer = analyzedProperty.IsIndexer();
+			isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedProperty);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {
@@ -63,6 +63,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var accessor in analyzedProperty.OtherMethods)
 				yield return new PropertyAccessorNode(accessor, null);
 
+			if (PropertyOverriddenNode.CanShow(analyzedProperty))
+				yield return new PropertyOverriddenNode(analyzedProperty);
 			if (PropertyOverridesNode.CanShow(analyzedProperty))
 				yield return new PropertyOverridesNode(analyzedProperty);
 			if (InterfacePropertyImplementedByNode.CanShow(analyzedProperty))

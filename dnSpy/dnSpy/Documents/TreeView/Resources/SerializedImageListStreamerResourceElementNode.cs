@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			if (serializedData == null)
 				return null;
 
-			byte[] imageData;
-			if (SerializedImageListStreamerUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
+			if (SerializedImageListStreamerUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out var imageData))
 				return new SerializedImageListStreamerResourceElementNodeImpl(treeNodeGroup, resourceElement, imageData);
 
 			return null;
@@ -57,18 +56,15 @@ namespace dnSpy.Documents.TreeView.Resources {
 		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public SerializedImageListStreamerResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
-			: base(treeNodeGroup, resourceElement) {
-			InitializeImageData(imageData);
-		}
+			: base(treeNodeGroup, resourceElement) => InitializeImageData(imageData);
 
 		void InitializeImageData(byte[] imageData) {
-			this.imageListOptions = SerializedImageListStreamerUtilities.ReadImageData(imageData);
+			imageListOptions = SerializedImageListStreamerUtilities.ReadImageData(imageData);
 			this.imageData = imageData;
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
-			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (output is IDocumentViewerOutput documentViewerOutput) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
 					if (i > 0)
 						output.Write(" ", BoxedTextColor.Text);
@@ -100,8 +96,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			base.UpdateData(newResElem);
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			SerializedImageListStreamerUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
+			SerializedImageListStreamerUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData);
 			InitializeImageData(imageData);
 		}
 	}

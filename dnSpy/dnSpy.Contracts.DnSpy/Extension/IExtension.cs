@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -58,9 +58,7 @@ namespace dnSpy.Contracts.Extension {
 	public sealed class ExportExtensionAttribute : ExportAttribute, IExtensionMetadata {
 		/// <summary>Constructor</summary>
 		public ExportExtensionAttribute()
-			: base(typeof(IExtension)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(IExtension)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance

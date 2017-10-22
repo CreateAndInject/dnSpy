@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -147,13 +147,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public MethodSigCreatorVM(MethodSigCreatorOptions options) {
 			this.options = options.Clone();
-			this.title = options.TypeSigCreatorOptions.Title;
-			this.ParametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
-			this.ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
-			this.SentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
-			this.SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
-			this.SentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
-			this.GenericParameterCount = new UInt32VM(0, a => {
+			title = options.TypeSigCreatorOptions.Title;
+			ParametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
+			ParametersCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
+			SentinelCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
+			SentinelCreateTypeSigArray.TypeSigCollection.CollectionChanged += (s, e) => OnPropertyChanged(nameof(SignatureFullName));
+			SentinelCreateTypeSigArray.IsEnabled = CanHaveSentinel;
+			GenericParameterCount = new UInt32VM(0, a => {
 				HasErrorUpdated();
 				OnPropertyChanged(nameof(SignatureFullName));
 				if (GenericParameterCount != null && !GenericParameterCount.HasError)
@@ -162,7 +162,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
 				Max = ModelUtils.COMPRESSED_UINT32_MAX,
 			};
-			this.MethodCallingConv = new EnumListVM(methodCallingConvList, (a, b) => {
+			MethodCallingConv = new EnumListVM(methodCallingConvList, (a, b) => {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |
@@ -213,8 +213,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
-			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out canceled);
+			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out bool canceled);
 			if (newTypeSig != null)
 				ReturnType = newTypeSig;
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,11 +36,9 @@ namespace dnSpy.Language.Intellisense {
 		readonly IImageMonikerService imageMonikerService;
 
 		public CompletionVM(Completion completion, IImageMonikerService imageMonikerService) {
-			if (completion == null)
-				throw new ArgumentNullException(nameof(completion));
 			if (imageMonikerService == null)
 				throw new ArgumentNullException(nameof(imageMonikerService));
-			Completion = completion;
+			Completion = completion ?? throw new ArgumentNullException(nameof(completion));
 			Completion.Properties.AddProperty(typeof(CompletionVM), this);
 			ImageUIObject = CreateImageUIObject(completion, imageMonikerService);
 			this.imageMonikerService = imageMonikerService;
@@ -92,8 +90,7 @@ namespace dnSpy.Language.Intellisense {
 		public static CompletionVM TryGet(Completion completion) {
 			if (completion == null)
 				return null;
-			CompletionVM vm;
-			if (completion.Properties.TryGetProperty(typeof(CompletionVM), out vm))
+			if (completion.Properties.TryGetProperty(typeof(CompletionVM), out CompletionVM vm))
 				return vm;
 			return null;
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Documents.TreeView {
 		public override ITreeNodeGroup TreeNodeGroup { get; }
 
 		public EventNodeImpl(ITreeNodeGroup treeNodeGroup, EventDef @event)
-			: base(@event) {
-			this.TreeNodeGroup = treeNodeGroup;
-		}
+			: base(@event) => TreeNodeGroup = treeNodeGroup;
 
 		protected override void WriteCore(ITextColorWriter output, IDecompiler decompiler, DocumentNodeWriteOptions options) =>
 			new NodePrinter().Write(output, decompiler, EventDef, GetShowToken(options));
@@ -53,10 +51,10 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public override FilterType GetFilterType(IDocumentTreeNodeFilter filter) {
-			var res = filter.GetResult(this.EventDef);
+			var res = filter.GetResult(EventDef);
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
-			if (Context.Decompiler.ShowMember(this.EventDef))
+			if (Context.Decompiler.ShowMember(EventDef))
 				return FilterType.Visible;
 			return FilterType.Hide;
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,7 @@ using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.Utilities;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	[ExportAutoLoaded]
@@ -55,11 +56,12 @@ namespace dnSpy.AsmEditor.SaveModule {
 		void SaveAll_Execute() => documentSaver.Value.Save(GetDirtyDocs());
 	}
 
-	[ExportToolBarButton(Icon = DsImagesAttribute.SaveAll, ToolTip = "res:SaveAllToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
+	[ExportToolBarButton(Icon = DsImagesAttribute.SaveAll, Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
 	sealed class SaveAllToolbarCommand : ToolBarButtonCommand {
 		SaveAllToolbarCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
+		public override string GetToolTip(IToolBarItemContext context) => ToolTipHelper.AddKeyboardShortcut(dnSpy_AsmEditor_Resources.SaveAllToolBarToolTip, dnSpy_AsmEditor_Resources.ShortCutKeyCtrlShiftS);
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = DsImagesAttribute.SaveAll, InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
@@ -73,15 +75,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveModuleCommand : FileMenuHandler {
 		readonly IDocumentTabService documentTabService;
 		readonly Lazy<IUndoCommandService> undoCommandService;
-		readonly Lazy<IHexDocumentService> hexDocumentService;
+		readonly Lazy<IHexBufferService> hexBufferService;
 		readonly Lazy<IDocumentSaver> documentSaver;
 
 		[ImportingConstructor]
-		SaveModuleCommand(IDocumentTabService documentTabService, Lazy<IUndoCommandService> undoCommandService, Lazy<IHexDocumentService> hexDocumentService, Lazy<IDocumentSaver> documentSaver)
+		SaveModuleCommand(IDocumentTabService documentTabService, Lazy<IUndoCommandService> undoCommandService, Lazy<IHexBufferService> hexBufferService, Lazy<IDocumentSaver> documentSaver)
 			: base(documentTabService.DocumentTreeView) {
 			this.documentTabService = documentTabService;
 			this.undoCommandService = undoCommandService;
-			this.hexDocumentService = hexDocumentService;
+			this.hexBufferService = hexBufferService;
 			this.documentSaver = documentSaver;
 		}
 
@@ -109,7 +111,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					}
 				}
 
-				var doc = hexDocumentService.Value.TryGet(fileNode.Document.Filename);
+				var doc = hexBufferService.Value.TryGet(fileNode.Document.Filename);
 				if (doc != null) {
 					var uo = undoCommandService.Value.GetUndoObject(doc);
 					if (undoCommandService.Value.IsModified(uo)) {

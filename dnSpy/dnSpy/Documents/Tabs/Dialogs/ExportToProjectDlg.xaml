@@ -1,5 +1,5 @@
 ﻿<!--
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,9 @@
         xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+        SizeToContent="Height"
         MinWidth="300" MinHeight="200"
-        Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400" Height="400"
+        Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400"
         FocusManager.FocusedElement="{Binding ElementName=destDirTextBox}">
     <ctrls:WindowBase.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -108,6 +109,7 @@
             </Grid.ColumnDefinitions>
             <ProgressBar
                 Grid.Column="0"
+                Name="progressBar"
                 Margin="0 0 5 0"
                 VerticalAlignment="Stretch"
                 HorizontalAlignment="Stretch"

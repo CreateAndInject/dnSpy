@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,11 +30,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Constructor
 		/// </summary>
 		/// <param name="marginName">Name of margin, eg. <see cref="PredefinedMarginNames.Glyph"/></param>
-		public MarginNameAttribute(string marginName) {
-			if (marginName == null)
-				throw new ArgumentNullException(nameof(marginName));
-			MarginName = marginName;
-		}
+		public MarginNameAttribute(string marginName) => MarginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
 
 		/// <summary>
 		/// Name of margin, eg. <see cref="PredefinedMarginNames.Glyph"/>

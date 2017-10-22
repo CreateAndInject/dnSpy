@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -100,12 +100,8 @@ namespace dnSpy.BackgroundImage {
 				public ImageSource ImageSource { get; }
 				public string Filename { get; }
 				public ImageInfo(ImageSource imageSource, string filename) {
-					if (imageSource == null)
-						throw new ArgumentNullException(nameof(imageSource));
-					if (filename == null)
-						throw new ArgumentNullException(nameof(filename));
-					ImageSource = imageSource;
-					Filename = filename;
+					ImageSource = imageSource ?? throw new ArgumentNullException(nameof(imageSource));
+					Filename = filename ?? throw new ArgumentNullException(nameof(filename));
 				}
 			}
 
@@ -132,9 +128,7 @@ namespace dnSpy.BackgroundImage {
 
 				readonly string[] themeNames;
 
-				SourceOptions(string[] themeNames) {
-					this.themeNames = themeNames;
-				}
+				SourceOptions(string[] themeNames) => this.themeNames = themeNames;
 
 				public bool IsSupportedTheme(ITheme theme) {
 					if (themeNames.Length == 0)
@@ -153,8 +147,7 @@ namespace dnSpy.BackgroundImage {
 						return true;
 					if (StringComparer.InvariantCultureIgnoreCase.Equals(theme.Name, themeName))
 						return true;
-					Guid guid;
-					if (Guid.TryParse(themeName, out guid) && theme.Guid == guid)
+					if (Guid.TryParse(themeName, out var guid) && theme.Guid == guid)
 						return true;
 					return false;
 				}
@@ -203,18 +196,14 @@ namespace dnSpy.BackgroundImage {
 			abstract class FilenameIterator {
 				public abstract IEnumerable<string> Filenames { get; }
 				public SourceOptions SourceOptions { get; }
-				protected FilenameIterator(SourceOptions sourceOptions) {
-					SourceOptions = sourceOptions;
-				}
+				protected FilenameIterator(SourceOptions sourceOptions) => SourceOptions = sourceOptions;
 			}
 
 			sealed class FileIterator : FilenameIterator {
 				readonly string filename;
 
 				public FileIterator(string filename, SourceOptions sourceOptions)
-					: base(sourceOptions) {
-					this.filename = filename;
-				}
+					: base(sourceOptions) => this.filename = filename;
 
 				public override IEnumerable<string> Filenames {
 					get { yield return filename; }
@@ -232,9 +221,7 @@ namespace dnSpy.BackgroundImage {
 				readonly string dirPath;
 
 				public DirectoryIterator(string dirPath, SourceOptions sourceOptions)
-					: base(sourceOptions) {
-					this.dirPath = dirPath;
-				}
+					: base(sourceOptions) => this.dirPath = dirPath;
 
 				public override IEnumerable<string> Filenames => GetFiles();
 
@@ -259,17 +246,15 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			public ImageIterator(bool isRandom) {
-				this.filenameIterators = Array.Empty<FilenameIterator>();
-				this.currentFilenameIteratorIndex = 0;
-				this.currentEnumeratorInfo = null;
+				filenameIterators = Array.Empty<FilenameIterator>();
+				currentFilenameIteratorIndex = 0;
+				currentEnumeratorInfo = null;
 				this.isRandom = isRandom;
 			}
 
 			public void SetImagePaths(string[] imagePaths, bool isRandom, ITheme theme) {
 				if (imagePaths == null)
 					throw new ArgumentNullException(nameof(imagePaths));
-				if (theme == null)
-					throw new ArgumentNullException(nameof(theme));
 				var list = new List<FilenameIterator>(imagePaths.Length);
 				foreach (var pathInfo in imagePaths) {
 					if (pathInfo == null)
@@ -292,7 +277,7 @@ namespace dnSpy.BackgroundImage {
 						list.Add(new DirectoryIterator(path, sourceOptions));
 				}
 				this.isRandom = isRandom;
-				this.theme = theme;
+				this.theme = theme ?? throw new ArgumentNullException(nameof(theme));
 				cachedAllFilenamesListWeakRef = null;
 				currentEnumeratorInfo?.Dispose();
 				currentEnumeratorInfo = null;
@@ -326,8 +311,7 @@ namespace dnSpy.BackgroundImage {
 			}
 
 			List<string> GetAllFilenames() {
-				var list = cachedAllFilenamesListWeakRef?.Target as List<string>;
-				if (list != null && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
+				if (cachedAllFilenamesListWeakRef?.Target is List<string> list && (DateTimeOffset.UtcNow - cachedTime).TotalMilliseconds <= cachedFilenamesMaxMilliseconds)
 					return list;
 
 				var hash = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
@@ -426,13 +410,9 @@ namespace dnSpy.BackgroundImage {
 		}
 
 		public ImageSourceService(IThemeService themeService, IBackgroundImageSettings backgroundImageSettings) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (backgroundImageSettings == null)
-				throw new ArgumentNullException(nameof(backgroundImageSettings));
-			this.themeService = themeService;
-			this.backgroundImageSettings = backgroundImageSettings;
-			this.listeners = new List<IImageSourceServiceListener>();
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.backgroundImageSettings = backgroundImageSettings ?? throw new ArgumentNullException(nameof(backgroundImageSettings));
+			listeners = new List<IImageSourceServiceListener>();
 		}
 
 		void ThemeService_ThemeChangedLowPriority(object sender, ThemeChangedEventArgs e) {

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -139,6 +140,11 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.ValueType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition ValueTypeClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.Module)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.TypeGenericParameter)]
@@ -486,9 +492,9 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition AssemblyExeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.Module)]
+		[Name(ThemeClassificationTypeNames.AssemblyModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition ModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition AssemblyModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.DirectoryPart)]
@@ -746,6 +752,16 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition DebugLogTimestampClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogTrace)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugLogTraceClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugLogExtensionMessage)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugLogExtensionMessageClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.LineNumber)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition LineNumberClassificationTypeDefinition;
@@ -841,6 +857,226 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition DisabledBreakpointStatementMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedBreakpointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedBreakpointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedDisabledAdvancedBreakpointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedBreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedBreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedBreakpointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedBreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedBreakpointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedBreakpointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledTracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledTracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedDisabledTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedDisabledTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedTracepointStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DisabledAdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedDisabledAdvancedTracepointStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedDisabledAdvancedTracepointStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedTracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.TracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition TracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedTracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedTracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointWarningStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointWarningStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointWarningStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedTracepointWarningStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointErrorStatement)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointErrorStatementClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.AdvancedTracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition AdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.SelectedAdvancedTracepointErrorStatementMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition SelectedAdvancedTracepointErrorStatementMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BookmarkName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BookmarkNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ActiveBookmarkName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ActiveBookmarkNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CurrentLine)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition CurrentLineClassificationTypeDefinition;
@@ -916,139 +1152,149 @@ namespace dnSpy.Text.Classification {
 		static ClassificationTypeDefinition FindMatchHighlightMarkerClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerNamespace)]
+		[Name(ThemeClassificationTypeNames.BlockStructureNamespace)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerNamespaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureNamespaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerType)]
+		[Name(ThemeClassificationTypeNames.BlockStructureType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerModule)]
+		[Name(ThemeClassificationTypeNames.BlockStructureModule)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerModuleClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureModuleClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerValueType)]
+		[Name(ThemeClassificationTypeNames.BlockStructureValueType)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerValueTypeClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureValueTypeClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerInterface)]
+		[Name(ThemeClassificationTypeNames.BlockStructureInterface)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerInterfaceClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureInterfaceClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerMethod)]
+		[Name(ThemeClassificationTypeNames.BlockStructureMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerAccessor)]
+		[Name(ThemeClassificationTypeNames.BlockStructureAccessor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerAccessorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureAccessorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerAnonymousMethod)]
+		[Name(ThemeClassificationTypeNames.BlockStructureAnonymousMethod)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerAnonymousMethodClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureAnonymousMethodClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerConstructor)]
+		[Name(ThemeClassificationTypeNames.BlockStructureConstructor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerConstructorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureConstructorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerDestructor)]
+		[Name(ThemeClassificationTypeNames.BlockStructureDestructor)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerDestructorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureDestructorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerOperator)]
+		[Name(ThemeClassificationTypeNames.BlockStructureOperator)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerOperatorClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureOperatorClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerConditional)]
+		[Name(ThemeClassificationTypeNames.BlockStructureConditional)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerConditionalClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureConditionalClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerLoop)]
+		[Name(ThemeClassificationTypeNames.BlockStructureLoop)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerLoopClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureLoopClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerProperty)]
+		[Name(ThemeClassificationTypeNames.BlockStructureProperty)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerPropertyClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructurePropertyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerEvent)]
+		[Name(ThemeClassificationTypeNames.BlockStructureEvent)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerEventClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureEventClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerTry)]
+		[Name(ThemeClassificationTypeNames.BlockStructureTry)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerTryClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureTryClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerCatch)]
+		[Name(ThemeClassificationTypeNames.BlockStructureCatch)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerCatchClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureCatchClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFilter)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFilter)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFilterClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFilterClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFinally)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFinally)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFinallyClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFinallyClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFault)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFault)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFaultClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFaultClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerLock)]
+		[Name(ThemeClassificationTypeNames.BlockStructureLock)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerLockClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureLockClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerUsing)]
+		[Name(ThemeClassificationTypeNames.BlockStructureUsing)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerUsingClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureUsingClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerFixed)]
+		[Name(ThemeClassificationTypeNames.BlockStructureFixed)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerFixedClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureFixedClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerSwitch)]
+		[Name(ThemeClassificationTypeNames.BlockStructureSwitch)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerSwitchClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureSwitchClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerCase)]
+		[Name(ThemeClassificationTypeNames.BlockStructureCase)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerCaseClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureCaseClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerLocalFunction)]
+		[Name(ThemeClassificationTypeNames.BlockStructureLocalFunction)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerLocalFunctionClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureLocalFunctionClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
-		[Name(ThemeClassificationTypeNames.StructureVisualizerOther)]
+		[Name(ThemeClassificationTypeNames.BlockStructureOther)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-		static ClassificationTypeDefinition StructureVisualizerOtherClassificationTypeDefinition;
+		static ClassificationTypeDefinition BlockStructureOtherClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BlockStructureXml)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BlockStructureXmlClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.BlockStructureXaml)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition BlockStructureXamlClassificationTypeDefinition;
 
 		[Export(typeof(ClassificationTypeDefinition))]
 		[Name(ThemeClassificationTypeNames.CompletionMatchHighlight)]
@@ -1174,6 +1420,136 @@ namespace dnSpy.Text.Classification {
 		[Name(ThemeClassificationTypeNames.AppSettingsTextMatchHighlight)]
 		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
 		static ClassificationTypeDefinition AppSettingsTextMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentLine)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentLineClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentLineNoFocus)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentLineNoFocusClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexInactiveSelectedText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexInactiveSelectedTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLine0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLine0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLine1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLine1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLineGroup0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLineGroup0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexColumnLineGroup1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexColumnLineGroup1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexHighlightedValuesColumn)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexHighlightedValuesColumnClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexHighlightedAsciiColumn)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexHighlightedAsciiColumnClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexGlyphMargin)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexGlyphMarginClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentValueCell)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentValueCellClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexCurrentAsciiCell)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexCurrentAsciiCellClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.OutputWindowText)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition OutputWindowTextClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexFindMatchHighlightMarker)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexFindMatchHighlightMarkerClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexToolTipServiceField0)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexToolTipServiceField0ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexToolTipServiceField1)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexToolTipServiceField1ClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.HexToolTipServiceCurrentField)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition HexToolTipServiceCurrentFieldClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.ListFindMatchHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition ListFindMatchHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebuggerValueChangedHighlight)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebuggerValueChangedHighlightClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugExceptionName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugExceptionNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugStowedExceptionName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugStowedExceptionNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugReturnValueName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugReturnValueNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugVariableName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugVariableNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebugObjectIdName)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebugObjectIdNameClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebuggerDisplayAttributeEval)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebuggerDisplayAttributeEvalClassificationTypeDefinition;
+
+		[Export(typeof(ClassificationTypeDefinition))]
+		[Name(ThemeClassificationTypeNames.DebuggerNoStringQuotesEval)]
+		[BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+		static ClassificationTypeDefinition DebuggerNoStringQuotesEvalClassificationTypeDefinition;
 #pragma warning restore 0169
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1327,6 +1703,15 @@ namespace dnSpy.Text.Classification {
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
 		sealed class ValueType : ThemeClassificationFormatDefinition {
 			ValueType() : base(TextColor.ValueType) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Module)]
+		[Name(ThemeClassificationTypeNameKeys.Module)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class Module : ThemeClassificationFormatDefinition {
+			Module() : base(TextColor.Module) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -1951,12 +2336,12 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.Module)]
-		[Name(ThemeClassificationTypeNameKeys.Module)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AssemblyModule)]
+		[Name(ThemeClassificationTypeNameKeys.AssemblyModule)]
 		[UserVisible(true)]
 		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
-		sealed class Module : ThemeClassificationFormatDefinition {
-			Module() : base(TextColor.Module) { }
+		sealed class AssemblyModule : ThemeClassificationFormatDefinition {
+			AssemblyModule() : base(TextColor.AssemblyModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2419,6 +2804,24 @@ namespace dnSpy.Text.Classification {
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogTrace)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogTrace)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DebugLogTrace : ThemeClassificationFormatDefinition {
+			DebugLogTrace() : base(TextColor.DebugLogTrace) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugLogExtensionMessage)]
+		[Name(ThemeClassificationTypeNameKeys.DebugLogExtensionMessage)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DebugLogExtensionMessage : ThemeClassificationFormatDefinition {
+			DebugLogExtensionMessage() : base(TextColor.DebugLogExtensionMessage) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.LineNumber)]
 		[Name(ThemeClassificationTypeNameKeys.LineNumber)]
 		[UserVisible(true)]
@@ -2487,9 +2890,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedReference : ThemeMarkerFormatDefinition {
-			HighlightedReference() : base(TextColor.HighlightedReference) {
-				ZOrder = TextMarkerServiceZIndexes.HighlightedReference;
-			}
+			HighlightedReference() : base(TextColor.HighlightedReference) => ZOrder = TextMarkerServiceZIndexes.HighlightedReference;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2498,9 +2899,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedWrittenReference : ThemeMarkerFormatDefinition {
-			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) {
-				ZOrder = TextMarkerServiceZIndexes.HighlightedWrittenReference;
-			}
+			HighlightedWrittenReference() : base(TextColor.HighlightedWrittenReference) => ZOrder = TextMarkerServiceZIndexes.HighlightedWrittenReference;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2509,9 +2908,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class HighlightedDefinition : ThemeMarkerFormatDefinition {
-			HighlightedDefinition() : base(TextColor.HighlightedDefinition) {
-				ZOrder = TextMarkerServiceZIndexes.HighlightedDefinition;
-			}
+			HighlightedDefinition() : base(TextColor.HighlightedDefinition) => ZOrder = TextMarkerServiceZIndexes.HighlightedDefinition;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2556,9 +2953,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
 		sealed class ActiveStatementMarker : ThemeMarkerFormatDefinition {
-			ActiveStatementMarker() : base(TextColor.ActiveStatementMarker) {
-				ZOrder = TextMarkerServiceZIndexes.ActiveStatement;
-			}
+			ActiveStatementMarker() : base(TextColor.ActiveStatementMarker) => ZOrder = TextMarkerServiceZIndexes.ActiveStatement;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2595,6 +2990,402 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.Default)]
 		sealed class DisabledBreakpointStatementMarker : ThemeMarkerFormatDefinition {
 			DisabledBreakpointStatementMarker() : base(TextColor.DisabledBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedBreakpointStatement : ThemeClassificationFormatDefinition {
+			AdvancedBreakpointStatement() : base(TextColor.AdvancedBreakpointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedBreakpointStatementMarker() : base(TextColor.AdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedBreakpointStatementMarker() : base(TextColor.SelectedAdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedBreakpointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class DisabledAdvancedBreakpointStatement : ThemeClassificationFormatDefinition {
+			DisabledAdvancedBreakpointStatement() : base(TextColor.DisabledAdvancedBreakpointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledAdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledAdvancedBreakpointStatementMarker() : base(TextColor.DisabledAdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedDisabledAdvancedBreakpointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedDisabledAdvancedBreakpointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedDisabledAdvancedBreakpointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedDisabledAdvancedBreakpointStatementMarker() : base(TextColor.SelectedDisabledAdvancedBreakpointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class BreakpointWarningStatement : ThemeClassificationFormatDefinition {
+			BreakpointWarningStatement() : base(TextColor.BreakpointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			BreakpointWarningStatementMarker() : base(TextColor.BreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedBreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedBreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedBreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedBreakpointWarningStatementMarker() : base(TextColor.SelectedBreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class BreakpointErrorStatement : ThemeClassificationFormatDefinition {
+			BreakpointErrorStatement() : base(TextColor.BreakpointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.BreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			BreakpointErrorStatementMarker() : base(TextColor.BreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedBreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedBreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedBreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedBreakpointErrorStatementMarker() : base(TextColor.SelectedBreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedBreakpointWarningStatement : ThemeClassificationFormatDefinition {
+			AdvancedBreakpointWarningStatement() : base(TextColor.AdvancedBreakpointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedBreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedBreakpointWarningStatementMarker() : base(TextColor.AdvancedBreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedBreakpointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedBreakpointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedBreakpointWarningStatementMarker() : base(TextColor.SelectedAdvancedBreakpointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedBreakpointErrorStatement : ThemeClassificationFormatDefinition {
+			AdvancedBreakpointErrorStatement() : base(TextColor.AdvancedBreakpointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedBreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedBreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedBreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedBreakpointErrorStatementMarker() : base(TextColor.AdvancedBreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedBreakpointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedBreakpointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedBreakpointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedBreakpointErrorStatementMarker() : base(TextColor.SelectedAdvancedBreakpointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class TracepointStatement : ThemeClassificationFormatDefinition {
+			TracepointStatement() : base(TextColor.TracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class TracepointStatementMarker : ThemeMarkerFormatDefinition {
+			TracepointStatementMarker() : base(TextColor.TracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedTracepointStatementMarker() : base(TextColor.SelectedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledTracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledTracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class DisabledTracepointStatement : ThemeClassificationFormatDefinition {
+			DisabledTracepointStatement() : base(TextColor.DisabledTracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledTracepointStatementMarker() : base(TextColor.DisabledTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedDisabledTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedDisabledTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedDisabledTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedDisabledTracepointStatementMarker() : base(TextColor.SelectedDisabledTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedTracepointStatement : ThemeClassificationFormatDefinition {
+			AdvancedTracepointStatement() : base(TextColor.AdvancedTracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedTracepointStatementMarker() : base(TextColor.AdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedTracepointStatementMarker() : base(TextColor.SelectedAdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedTracepointStatement)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedTracepointStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class DisabledAdvancedTracepointStatement : ThemeClassificationFormatDefinition {
+			DisabledAdvancedTracepointStatement() : base(TextColor.DisabledAdvancedTracepointStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DisabledAdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.DisabledAdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class DisabledAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			DisabledAdvancedTracepointStatementMarker() : base(TextColor.DisabledAdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedDisabledAdvancedTracepointStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedDisabledAdvancedTracepointStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedDisabledAdvancedTracepointStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedDisabledAdvancedTracepointStatementMarker() : base(TextColor.SelectedDisabledAdvancedTracepointStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class TracepointWarningStatement : ThemeClassificationFormatDefinition {
+			TracepointWarningStatement() : base(TextColor.TracepointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class TracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			TracepointWarningStatementMarker() : base(TextColor.TracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedTracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedTracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedTracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedTracepointWarningStatementMarker() : base(TextColor.SelectedTracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class TracepointErrorStatement : ThemeClassificationFormatDefinition {
+			TracepointErrorStatement() : base(TextColor.TracepointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.TracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.TracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class TracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			TracepointErrorStatementMarker() : base(TextColor.TracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedTracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedTracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedTracepointErrorStatementMarker() : base(TextColor.SelectedTracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointWarningStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointWarningStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedTracepointWarningStatement : ThemeClassificationFormatDefinition {
+			AdvancedTracepointWarningStatement() : base(TextColor.AdvancedTracepointWarningStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedTracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedTracepointWarningStatementMarker() : base(TextColor.AdvancedTracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedTracepointWarningStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointWarningStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedTracepointWarningStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedTracepointWarningStatementMarker() : base(TextColor.SelectedAdvancedTracepointWarningStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointErrorStatement)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointErrorStatement)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.String)]
+		sealed class AdvancedTracepointErrorStatement : ThemeClassificationFormatDefinition {
+			AdvancedTracepointErrorStatement() : base(TextColor.AdvancedTracepointErrorStatement) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.AdvancedTracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.AdvancedTracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class AdvancedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			AdvancedTracepointErrorStatementMarker() : base(TextColor.AdvancedTracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.SelectedAdvancedTracepointErrorStatementMarker)]
+		[Name(ThemeClassificationTypeNameKeys.SelectedAdvancedTracepointErrorStatementMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class SelectedAdvancedTracepointErrorStatementMarker : ThemeMarkerFormatDefinition {
+			SelectedAdvancedTracepointErrorStatementMarker() : base(TextColor.SelectedAdvancedTracepointErrorStatementMarker) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BookmarkName)]
+		[Name(ThemeClassificationTypeNameKeys.BookmarkName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BookmarkName : ThemeClassificationFormatDefinition {
+			BookmarkName() : base(TextColor.BookmarkName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ActiveBookmarkName)]
+		[Name(ThemeClassificationTypeNameKeys.ActiveBookmarkName)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class ActiveBookmarkName : ThemeClassificationFormatDefinition {
+			ActiveBookmarkName() : base(TextColor.ActiveBookmarkName) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -2655,7 +3446,7 @@ namespace dnSpy.Text.Classification {
 		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexByteError)]
 		[Name(ThemeClassificationTypeNameKeys.HexByteError)]
 		[UserVisible(true)]
-		[Order(After = Priority.Default)]
+		[Order(After = Priority.High)]
 		sealed class HexByteError : ThemeClassificationFormatDefinition {
 			HexByteError() : base(TextColor.HexByteError) { }
 		}
@@ -2729,252 +3520,268 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class FindMatchHighlightMarker : ThemeMarkerFormatDefinition {
-			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) {
-				ZOrder = TextMarkerServiceZIndexes.FindMatch;
-			}
+			FindMatchHighlightMarker() : base(TextColor.FindMatchHighlightMarker) => ZOrder = TextMarkerServiceZIndexes.FindMatch;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerNamespace)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerNamespace)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureNamespace)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureNamespace)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerNamespace : ThemeMarkerFormatDefinition {
-			StructureVisualizerNamespace() : base(TextColor.StructureVisualizerNamespace) { }
+		sealed class BlockStructureNamespace : ThemeMarkerFormatDefinition {
+			BlockStructureNamespace() : base(TextColor.BlockStructureNamespace) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerType)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerType)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureType)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureType)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerType : ThemeMarkerFormatDefinition {
-			StructureVisualizerType() : base(TextColor.StructureVisualizerType) { }
+		sealed class BlockStructureType : ThemeMarkerFormatDefinition {
+			BlockStructureType() : base(TextColor.BlockStructureType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerModule)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerModule)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureModule)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureModule)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerModule : ThemeMarkerFormatDefinition {
-			StructureVisualizerModule() : base(TextColor.StructureVisualizerModule) { }
+		sealed class BlockStructureModule : ThemeMarkerFormatDefinition {
+			BlockStructureModule() : base(TextColor.BlockStructureModule) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerValueType)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerValueType)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureValueType)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureValueType)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerValueType : ThemeMarkerFormatDefinition {
-			StructureVisualizerValueType() : base(TextColor.StructureVisualizerValueType) { }
+		sealed class BlockStructureValueType : ThemeMarkerFormatDefinition {
+			BlockStructureValueType() : base(TextColor.BlockStructureValueType) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerInterface)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerInterface)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureInterface)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureInterface)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerInterface : ThemeMarkerFormatDefinition {
-			StructureVisualizerInterface() : base(TextColor.StructureVisualizerInterface) { }
+		sealed class BlockStructureInterface : ThemeMarkerFormatDefinition {
+			BlockStructureInterface() : base(TextColor.BlockStructureInterface) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerMethod)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerMethod)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureMethod)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureMethod)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerMethod : ThemeMarkerFormatDefinition {
-			StructureVisualizerMethod() : base(TextColor.StructureVisualizerMethod) { }
+		sealed class BlockStructureMethod : ThemeMarkerFormatDefinition {
+			BlockStructureMethod() : base(TextColor.BlockStructureMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerAccessor)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerAccessor)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureAccessor)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureAccessor)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerAccessor : ThemeMarkerFormatDefinition {
-			StructureVisualizerAccessor() : base(TextColor.StructureVisualizerAccessor) { }
+		sealed class BlockStructureAccessor : ThemeMarkerFormatDefinition {
+			BlockStructureAccessor() : base(TextColor.BlockStructureAccessor) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerAnonymousMethod)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerAnonymousMethod)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureAnonymousMethod)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureAnonymousMethod)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerAnonymousMethod : ThemeMarkerFormatDefinition {
-			StructureVisualizerAnonymousMethod() : base(TextColor.StructureVisualizerAnonymousMethod) { }
+		sealed class BlockStructureAnonymousMethod : ThemeMarkerFormatDefinition {
+			BlockStructureAnonymousMethod() : base(TextColor.BlockStructureAnonymousMethod) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerConstructor)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerConstructor)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureConstructor)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureConstructor)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerConstructor : ThemeMarkerFormatDefinition {
-			StructureVisualizerConstructor() : base(TextColor.StructureVisualizerConstructor) { }
+		sealed class BlockStructureConstructor : ThemeMarkerFormatDefinition {
+			BlockStructureConstructor() : base(TextColor.BlockStructureConstructor) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerDestructor)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerDestructor)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureDestructor)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureDestructor)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerDestructor : ThemeMarkerFormatDefinition {
-			StructureVisualizerDestructor() : base(TextColor.StructureVisualizerDestructor) { }
+		sealed class BlockStructureDestructor : ThemeMarkerFormatDefinition {
+			BlockStructureDestructor() : base(TextColor.BlockStructureDestructor) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerOperator)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerOperator)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureOperator)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureOperator)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerOperator : ThemeMarkerFormatDefinition {
-			StructureVisualizerOperator() : base(TextColor.StructureVisualizerOperator) { }
+		sealed class BlockStructureOperator : ThemeMarkerFormatDefinition {
+			BlockStructureOperator() : base(TextColor.BlockStructureOperator) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerConditional)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerConditional)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureConditional)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureConditional)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerConditional : ThemeMarkerFormatDefinition {
-			StructureVisualizerConditional() : base(TextColor.StructureVisualizerConditional) { }
+		sealed class BlockStructureConditional : ThemeMarkerFormatDefinition {
+			BlockStructureConditional() : base(TextColor.BlockStructureConditional) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLoop)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLoop)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureLoop)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureLoop)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerLoop : ThemeMarkerFormatDefinition {
-			StructureVisualizerLoop() : base(TextColor.StructureVisualizerLoop) { }
+		sealed class BlockStructureLoop : ThemeMarkerFormatDefinition {
+			BlockStructureLoop() : base(TextColor.BlockStructureLoop) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerProperty)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerProperty)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureProperty)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureProperty)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerProperty : ThemeMarkerFormatDefinition {
-			StructureVisualizerProperty() : base(TextColor.StructureVisualizerProperty) { }
+		sealed class BlockStructureProperty : ThemeMarkerFormatDefinition {
+			BlockStructureProperty() : base(TextColor.BlockStructureProperty) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerEvent)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerEvent)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureEvent)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureEvent)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerEvent : ThemeMarkerFormatDefinition {
-			StructureVisualizerEvent() : base(TextColor.StructureVisualizerEvent) { }
+		sealed class BlockStructureEvent : ThemeMarkerFormatDefinition {
+			BlockStructureEvent() : base(TextColor.BlockStructureEvent) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerTry)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerTry)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureTry)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureTry)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerTry : ThemeMarkerFormatDefinition {
-			StructureVisualizerTry() : base(TextColor.StructureVisualizerTry) { }
+		sealed class BlockStructureTry : ThemeMarkerFormatDefinition {
+			BlockStructureTry() : base(TextColor.BlockStructureTry) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerCatch)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerCatch)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureCatch)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureCatch)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerCatch : ThemeMarkerFormatDefinition {
-			StructureVisualizerCatch() : base(TextColor.StructureVisualizerCatch) { }
+		sealed class BlockStructureCatch : ThemeMarkerFormatDefinition {
+			BlockStructureCatch() : base(TextColor.BlockStructureCatch) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFilter)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFilter)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFilter)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFilter)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFilter : ThemeMarkerFormatDefinition {
-			StructureVisualizerFilter() : base(TextColor.StructureVisualizerFilter) { }
+		sealed class BlockStructureFilter : ThemeMarkerFormatDefinition {
+			BlockStructureFilter() : base(TextColor.BlockStructureFilter) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFinally)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFinally)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFinally)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFinally)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFinally : ThemeMarkerFormatDefinition {
-			StructureVisualizerFinally() : base(TextColor.StructureVisualizerFinally) { }
+		sealed class BlockStructureFinally : ThemeMarkerFormatDefinition {
+			BlockStructureFinally() : base(TextColor.BlockStructureFinally) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFault)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFault)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFault)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFault)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFault : ThemeMarkerFormatDefinition {
-			StructureVisualizerFault() : base(TextColor.StructureVisualizerFault) { }
+		sealed class BlockStructureFault : ThemeMarkerFormatDefinition {
+			BlockStructureFault() : base(TextColor.BlockStructureFault) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLock)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLock)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureLock)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureLock)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerLock : ThemeMarkerFormatDefinition {
-			StructureVisualizerLock() : base(TextColor.StructureVisualizerLock) { }
+		sealed class BlockStructureLock : ThemeMarkerFormatDefinition {
+			BlockStructureLock() : base(TextColor.BlockStructureLock) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerUsing)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerUsing)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureUsing)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureUsing)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerUsing : ThemeMarkerFormatDefinition {
-			StructureVisualizerUsing() : base(TextColor.StructureVisualizerUsing) { }
+		sealed class BlockStructureUsing : ThemeMarkerFormatDefinition {
+			BlockStructureUsing() : base(TextColor.BlockStructureUsing) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerFixed)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerFixed)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureFixed)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureFixed)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerFixed : ThemeMarkerFormatDefinition {
-			StructureVisualizerFixed() : base(TextColor.StructureVisualizerFixed) { }
+		sealed class BlockStructureFixed : ThemeMarkerFormatDefinition {
+			BlockStructureFixed() : base(TextColor.BlockStructureFixed) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerSwitch)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerSwitch)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureSwitch)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureSwitch)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerSwitch : ThemeMarkerFormatDefinition {
-			StructureVisualizerSwitch() : base(TextColor.StructureVisualizerSwitch) { }
+		sealed class BlockStructureSwitch : ThemeMarkerFormatDefinition {
+			BlockStructureSwitch() : base(TextColor.BlockStructureSwitch) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerCase)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerCase)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureCase)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureCase)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerCase : ThemeMarkerFormatDefinition {
-			StructureVisualizerCase() : base(TextColor.StructureVisualizerCase) { }
+		sealed class BlockStructureCase : ThemeMarkerFormatDefinition {
+			BlockStructureCase() : base(TextColor.BlockStructureCase) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerLocalFunction)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerLocalFunction)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureLocalFunction)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureLocalFunction)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerLocalFunction : ThemeMarkerFormatDefinition {
-			StructureVisualizerLocalFunction() : base(TextColor.StructureVisualizerLocalFunction) { }
+		sealed class BlockStructureLocalFunction : ThemeMarkerFormatDefinition {
+			BlockStructureLocalFunction() : base(TextColor.BlockStructureLocalFunction) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
-		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.StructureVisualizerOther)]
-		[Name(ThemeClassificationTypeNameKeys.StructureVisualizerOther)]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureOther)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureOther)]
 		[UserVisible(true)]
 		[Order(After = Priority.Default)]
-		sealed class StructureVisualizerOther : ThemeMarkerFormatDefinition {
-			StructureVisualizerOther() : base(TextColor.StructureVisualizerOther) { }
+		sealed class BlockStructureOther : ThemeMarkerFormatDefinition {
+			BlockStructureOther() : base(TextColor.BlockStructureOther) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureXml)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureXml)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BlockStructureXml : ThemeMarkerFormatDefinition {
+			BlockStructureXml() : base(TextColor.BlockStructureXml) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.BlockStructureXaml)]
+		[Name(ThemeClassificationTypeNameKeys.BlockStructureXaml)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class BlockStructureXaml : ThemeMarkerFormatDefinition {
+			BlockStructureXaml() : base(TextColor.BlockStructureXaml) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3037,9 +3844,7 @@ namespace dnSpy.Text.Classification {
 		[UserVisible(true)]
 		[Order(After = Priority.High)]
 		sealed class Url : ThemeClassificationFormatDefinition {
-			Url() : base(TextColor.Url) {
-				TextDecorations = System.Windows.TextDecorations.Underline;
-			}
+			Url() : base(TextColor.Url) => TextDecorations = System.Windows.TextDecorations.Underline;
 		}
 
 		[Export(typeof(EditorFormatDefinition))]
@@ -3202,6 +4007,244 @@ namespace dnSpy.Text.Classification {
 		[Order(After = Priority.High)]
 		sealed class AppSettingsTextMatchHighlight : ThemeMarkerFormatDefinition {
 			AppSettingsTextMatchHighlight() : base(TextColor.AppSettingsTextMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentLine)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentLine)]
+		[UserVisible(true)]
+		[Order(Before = Priority.Default)]
+		sealed class HexCurrentLine : ThemeClassificationFormatDefinition {
+			HexCurrentLine() : base(TextColor.HexCurrentLine) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentLineNoFocus)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentLineNoFocus)]
+		[UserVisible(true)]
+		[Order(Before = Priority.Default)]
+		sealed class HexCurrentLineNoFocus : ThemeClassificationFormatDefinition {
+			HexCurrentLineNoFocus() : base(TextColor.HexCurrentLineNoFocus) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexInactiveSelectedText)]
+		[Name(ThemeClassificationTypeNameKeys.HexInactiveSelectedText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexInactiveSelectedText : ThemeClassificationFormatDefinition {
+			HexInactiveSelectedText() : base(TextColor.HexInactiveSelectedText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLine0)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLine0)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLine0 : ThemeClassificationFormatDefinition {
+			HexColumnLine0() : base(TextColor.HexColumnLine0) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLine1)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLine1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLine1 : ThemeClassificationFormatDefinition {
+			HexColumnLine1() : base(TextColor.HexColumnLine1) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLineGroup0)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLineGroup0)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLineGroup0 : ThemeClassificationFormatDefinition {
+			HexColumnLineGroup0() : base(TextColor.HexColumnLineGroup0) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexColumnLineGroup1)]
+		[Name(ThemeClassificationTypeNameKeys.HexColumnLineGroup1)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexColumnLineGroup1 : ThemeClassificationFormatDefinition {
+			HexColumnLineGroup1() : base(TextColor.HexColumnLineGroup1) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexHighlightedValuesColumn)]
+		[Name(ThemeClassificationTypeNameKeys.HexHighlightedValuesColumn)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexHighlightedValuesColumn : ThemeClassificationFormatDefinition {
+			HexHighlightedValuesColumn() : base(TextColor.HexHighlightedValuesColumn) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexHighlightedAsciiColumn)]
+		[Name(ThemeClassificationTypeNameKeys.HexHighlightedAsciiColumn)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexHighlightedAsciiColumn : ThemeClassificationFormatDefinition {
+			HexHighlightedAsciiColumn() : base(TextColor.HexHighlightedAsciiColumn) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexGlyphMargin)]
+		[Name(ThemeClassificationTypeNameKeys.HexGlyphMargin)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexGlyphMargin : ThemeClassificationFormatDefinition {
+			HexGlyphMargin() : base(TextColor.HexGlyphMargin) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentValueCell)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentValueCell)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexCurrentValueCell : ThemeMarkerFormatDefinition {
+			HexCurrentValueCell() : base(TextColor.HexCurrentValueCell) => ZOrder = HexMarkerServiceZIndexes.CurrentValue;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexCurrentAsciiCell)]
+		[Name(ThemeClassificationTypeNameKeys.HexCurrentAsciiCell)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class HexCurrentAsciiCell : ThemeMarkerFormatDefinition {
+			HexCurrentAsciiCell() : base(TextColor.HexCurrentAsciiCell) => ZOrder = HexMarkerServiceZIndexes.CurrentValue;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.OutputWindowText)]
+		[Name(ThemeClassificationTypeNameKeys.OutputWindowText)]
+		[UserVisible(true)]
+		[Order(After = Priority.Default)]
+		sealed class OutputWindowText : ThemeClassificationFormatDefinition {
+			OutputWindowText() : base(TextColor.OutputWindowText) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexFindMatchHighlightMarker)]
+		[Name(ThemeClassificationTypeNameKeys.HexFindMatchHighlightMarker)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class HexFindMatchHighlightMarker : ThemeMarkerFormatDefinition {
+			HexFindMatchHighlightMarker() : base(TextColor.HexFindMatchHighlightMarker) => ZOrder = HexMarkerServiceZIndexes.FindMatch;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexToolTipServiceField0)]
+		[Name(ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
+		[UserVisible(true)]
+		[Order(After = Priority.High, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexFindMatchHighlightMarker, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
+		sealed class HexToolTipServiceField0 : ThemeMarkerFormatDefinition {
+			HexToolTipServiceField0() : base(TextColor.HexToolTipServiceField0) => ZOrder = HexMarkerServiceZIndexes.ToolTipField0;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexToolTipServiceField1)]
+		[Name(ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
+		[UserVisible(true)]
+		[Order(After = Priority.High, Before = ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
+		sealed class HexToolTipServiceField1 : ThemeMarkerFormatDefinition {
+			HexToolTipServiceField1() : base(TextColor.HexToolTipServiceField1) => ZOrder = HexMarkerServiceZIndexes.ToolTipField1;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.HexToolTipServiceCurrentField)]
+		[Name(ThemeClassificationTypeNameKeys.HexToolTipServiceCurrentField)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField0)]
+		[Order(After = ThemeClassificationTypeNameKeys.HexToolTipServiceField1)]
+		sealed class HexToolTipServiceCurrentField : ThemeMarkerFormatDefinition {
+			HexToolTipServiceCurrentField() : base(TextColor.HexToolTipServiceCurrentField) => ZOrder = HexMarkerServiceZIndexes.ToolTipCurrentField;
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.ListFindMatchHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.ListFindMatchHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class ListFindMatchHighlight : ThemeClassificationFormatDefinition {
+			ListFindMatchHighlight() : base(TextColor.ListFindMatchHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebuggerValueChangedHighlight)]
+		[Name(ThemeClassificationTypeNameKeys.DebuggerValueChangedHighlight)]
+		[UserVisible(true)]
+		[Order(After = Priority.High)]
+		sealed class DebuggerValueChangedHighlight : ThemeClassificationFormatDefinition {
+			DebuggerValueChangedHighlight() : base(TextColor.DebuggerValueChangedHighlight) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugExceptionName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugExceptionName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugExceptionName : ThemeClassificationFormatDefinition {
+			DebugExceptionName() : base(TextColor.DebugExceptionName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugStowedExceptionName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugStowedExceptionName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugStowedExceptionName : ThemeClassificationFormatDefinition {
+			DebugStowedExceptionName() : base(TextColor.DebugStowedExceptionName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugReturnValueName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugReturnValueName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugReturnValueName : ThemeClassificationFormatDefinition {
+			DebugReturnValueName() : base(TextColor.DebugReturnValueName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugVariableName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugVariableName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugVariableName : ThemeClassificationFormatDefinition {
+			DebugVariableName() : base(TextColor.DebugVariableName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebugObjectIdName)]
+		[Name(ThemeClassificationTypeNameKeys.DebugObjectIdName)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebugObjectIdName : ThemeClassificationFormatDefinition {
+			DebugObjectIdName() : base(TextColor.DebugObjectIdName) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebuggerDisplayAttributeEval)]
+		[Name(ThemeClassificationTypeNameKeys.DebuggerDisplayAttributeEval)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebuggerDisplayAttributeEval : ThemeClassificationFormatDefinition {
+			DebuggerDisplayAttributeEval() : base(TextColor.DebuggerDisplayAttributeEval) { }
+		}
+
+		[Export(typeof(EditorFormatDefinition))]
+		[ClassificationType(ClassificationTypeNames = ThemeClassificationTypeNames.DebuggerNoStringQuotesEval)]
+		[Name(ThemeClassificationTypeNameKeys.DebuggerNoStringQuotesEval)]
+		[UserVisible(true)]
+		[Order(After = ThemeClassificationTypeNameKeys.Identifier), Order(After = ThemeClassificationTypeNameKeys.Keyword)]
+		sealed class DebuggerNoStringQuotesEval : ThemeClassificationFormatDefinition {
+			DebuggerNoStringQuotesEval() : base(TextColor.DebuggerNoStringQuotesEval) { }
 		}
 
 		[Export(typeof(EditorFormatDefinition))]

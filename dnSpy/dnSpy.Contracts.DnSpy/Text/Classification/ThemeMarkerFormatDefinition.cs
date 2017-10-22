@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Constructor
 		/// </summary>
 		/// <param name="textColor">Color</param>
-		protected ThemeMarkerFormatDefinition(TextColor textColor) {
-			this.textColor = textColor;
-		}
+		protected ThemeMarkerFormatDefinition(TextColor textColor) => this.textColor = textColor;
 
 		/// <summary>
 		/// Creates a new <see cref="ResourceDictionary"/>

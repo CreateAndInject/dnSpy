@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,10 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
@@ -42,14 +43,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly TablesStreamVM tablesStreamVM;
 
-		public TablesStreamNode(HexDocument doc, TablesStream tblStream, IMetaData md)
-			: base((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset - 1) {
-			this.tablesStreamVM = new TablesStreamVM(this, doc, tblStream);
+		public TablesStreamNode(TablesStreamVM tablesStream)
+			: base(tablesStream.Span) {
+			tablesStreamVM = tablesStream;
 
-			this.newChildren = new List<TreeNodeData>();
-			foreach (var mdTable in tblStream.MDTables) {
-				if (mdTable.Rows != 0)
-					this.newChildren.Add(new MetaDataTableNode(doc, mdTable, md));
+			newChildren = new List<TreeNodeData>();
+			foreach (var mdTable in tablesStream.MetaDataTables) {
+				if (mdTable != null)
+					newChildren.Add(new MetaDataTableNode(mdTable));
 			}
 		}
 		List<TreeNodeData> newChildren;
@@ -60,11 +61,11 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			newChildren = null;
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
 
 			foreach (HexNode node in TreeNode.DataChildren)
-				node.OnDocumentModified(modifiedStart, modifiedEnd);
+				node.OnBufferChanged(changes);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
@@ -73,14 +74,6 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public MetaDataTableRecordNode FindTokenNode(uint token) {
 			var mdTblNode = (MetaDataTableNode)TreeNode.DataChildren.FirstOrDefault(a => ((MetaDataTableNode)a).TableInfo.Table == (Table)(token >> 24));
 			return mdTblNode?.FindTokenNode(token);
-		}
-
-		public MetaDataTableVM FindMetaDataTable(Table table) {
-			foreach (MetaDataTableNode node in TreeNode.DataChildren) {
-				if (node.TableInfo.Table == table)
-					return node.MetaDataTableVM;
-			}
-			return null;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,12 +30,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly HashSet<IAssembly> checkedContractsAssemblies;
 
 		public MetadataReferenceFinder(ModuleDef module, CancellationToken cancellationToken) {
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			this.module = module;
+			this.module = module ?? throw new ArgumentNullException(nameof(module));
 			this.cancellationToken = cancellationToken;
-			this.assemblies = new Dictionary<IAssembly, AssemblyDef>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
-			this.checkedContractsAssemblies = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
+			assemblies = new Dictionary<IAssembly, AssemblyDef>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
+			checkedContractsAssemblies = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 		}
 
 		public IEnumerable<ModuleDef> Find(IEnumerable<string> extraAssemblyReferences) {
@@ -52,8 +50,7 @@ namespace dnSpy.AsmEditor.Compiler {
 		void Initialize(IEnumerable<string> extraAssemblyReferences) {
 			foreach (var asm in GetAssemblies(module, extraAssemblyReferences)) {
 				cancellationToken.ThrowIfCancellationRequested();
-				AssemblyDef otherAsm;
-				if (!assemblies.TryGetValue(asm, out otherAsm))
+				if (!assemblies.TryGetValue(asm, out var otherAsm))
 					assemblies[asm] = asm;
 				else if (asm.Version > otherAsm.Version)
 					assemblies[asm] = asm;

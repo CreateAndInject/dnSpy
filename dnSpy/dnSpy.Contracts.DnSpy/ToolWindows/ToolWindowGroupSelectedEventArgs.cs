@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <param name="selected">Selected tab group or null</param>
 		/// <param name="unselected">Unselected tab group or null</param>
 		public ToolWindowGroupSelectedEventArgs(IToolWindowGroup selected, IToolWindowGroup unselected) {
-			this.Selected = selected;
-			this.Unselected = unselected;
+			Selected = selected;
+			Unselected = unselected;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,9 +43,7 @@ namespace dnSpy.Text.Editor {
 		readonly IEditorFormatMapService editorFormatMapService;
 
 		[ImportingConstructor]
-		CurrentLineHighlighterWpfTextViewCreationListener(IEditorFormatMapService editorFormatMapService) {
-			this.editorFormatMapService = editorFormatMapService;
-		}
+		CurrentLineHighlighterWpfTextViewCreationListener(IEditorFormatMapService editorFormatMapService) => this.editorFormatMapService = editorFormatMapService;
 
 		public void TextViewCreated(IWpfTextView textView) =>
 			textView.Properties.GetOrCreateSingletonProperty(() => new CurrentLineHighlighter(textView, editorFormatMapService.GetEditorFormatMap(textView)));
@@ -77,13 +75,9 @@ namespace dnSpy.Text.Editor {
 		bool enabled;
 
 		public CurrentLineHighlighter(IWpfTextView wpfTextView, IEditorFormatMap editorFormatMap) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
-			this.wpfTextView = wpfTextView;
-			this.editorFormatMap = editorFormatMap;
-			this.currentLineHighlighterElement = new CurrentLineHighlighterElement();
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
+			currentLineHighlighterElement = new CurrentLineHighlighterElement();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			UpdateEnableState();

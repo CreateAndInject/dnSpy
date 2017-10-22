@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -93,27 +93,27 @@ namespace dnSpy.Themes {
 			var guid = root.Attribute("guid");
 			if (guid == null || string.IsNullOrEmpty(guid.Value))
 				throw new Exception("Missing or empty guid attribute");
-			this.Guid = new Guid(guid.Value);
+			Guid = new Guid(guid.Value);
 
 			var name = root.Attribute("name");
-			this.Name = name == null ? string.Empty : (string)name;
+			Name = name == null ? string.Empty : (string)name;
 
 			var menuName = root.Attribute("menu-name");
 			if (menuName == null || string.IsNullOrEmpty(menuName.Value))
 				throw new Exception("Missing or empty menu-name attribute");
-			this.MenuName = menuName.Value;
+			MenuName = menuName.Value;
 
 			var hcName = root.Attribute("is-high-contrast");
-			this.IsHighContrast = hcName != null && (bool)hcName;
+			IsHighContrast = hcName != null && (bool)hcName;
 
 			var darkThemeName = root.Attribute("is-dark");
-			this.IsDark = darkThemeName != null && (bool)darkThemeName;
+			IsDark = darkThemeName != null && (bool)darkThemeName;
 
 			var lightThemeName = root.Attribute("is-light");
-			this.IsLight = lightThemeName != null && (bool)lightThemeName;
+			IsLight = lightThemeName != null && (bool)lightThemeName;
 
 			var sort = root.Attribute("order");
-			this.Order = sort == null ? 1 : (double)sort;
+			Order = sort == null ? 1 : (double)sort;
 
 			for (int i = 0; i < hlColors.Length; i++)
 				hlColors[i] = new Color(colorInfos[i]);
@@ -355,8 +355,7 @@ namespace dnSpy.Themes {
 		}
 
 		static ColorType ToColorType(string name) {
-			ColorType type;
-			if (nameToColorType.TryGetValue(name, out type))
+			if (nameToColorType.TryGetValue(name, out var type))
 				return type;
 			Debug.Fail(string.Format("Invalid color found: {0}", name));
 			return ColorType.LastUI;

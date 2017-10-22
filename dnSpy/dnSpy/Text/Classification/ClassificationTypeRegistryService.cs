@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -51,7 +51,7 @@ namespace dnSpy.Text.Classification {
 
 			public ClassificationTypeCreator(ClassificationTypeRegistryService owner, IEnumerable<Lazy<ClassificationTypeDefinition, IClassificationTypeDefinitionMetadata>> classificationTypeDefinitions) {
 				this.owner = owner;
-				this.rawClassificationTypes = new Dictionary<string, RawClassificationType>();
+				rawClassificationTypes = new Dictionary<string, RawClassificationType>();
 				foreach (var md in classificationTypeDefinitions.Select(a => a.Metadata)) {
 					var type = md.Name;
 					Debug.Assert(type != null);
@@ -70,8 +70,7 @@ namespace dnSpy.Text.Classification {
 			}
 
 			IClassificationType TryGet(string type) {
-				IClassificationType classificationType;
-				owner.toClassificationType.TryGetValue(type, out classificationType);
+				owner.toClassificationType.TryGetValue(type, out var classificationType);
 				return classificationType;
 			}
 
@@ -85,8 +84,7 @@ namespace dnSpy.Text.Classification {
 				if (recurse > MAX_RECURSE)
 					return null;
 
-				RawClassificationType rawCt;
-				bool b = rawClassificationTypes.TryGetValue(type, out rawCt);
+				bool b = rawClassificationTypes.TryGetValue(type, out var rawCt);
 				Debug.Assert(b);
 				if (!b)
 					return null;
@@ -109,11 +107,11 @@ namespace dnSpy.Text.Classification {
 
 		[ImportingConstructor]
 		ClassificationTypeRegistryService([ImportMany] IEnumerable<Lazy<ClassificationTypeDefinition, IClassificationTypeDefinitionMetadata>> classificationTypeDefinitions) {
-			this.toClassificationType = new Dictionary<string, IClassificationType>();
-			this.transientNameToType = new Dictionary<string, IClassificationType>();
+			toClassificationType = new Dictionary<string, IClassificationType>();
+			transientNameToType = new Dictionary<string, IClassificationType>();
 			new ClassificationTypeCreator(this, classificationTypeDefinitions);
-			this.transientClassificationType = GetClassificationType(TRANSIENT_NAME);
-			if (this.transientClassificationType == null)
+			transientClassificationType = GetClassificationType(TRANSIENT_NAME);
+			if (transientClassificationType == null)
 				throw new InvalidOperationException();
 		}
 
@@ -144,8 +142,7 @@ namespace dnSpy.Text.Classification {
 
 			Array.Sort(bts, (a, b) => a.Classification.CompareTo(b.Classification));
 			var name = GetTransientName(bts);
-			IClassificationType ct;
-			if (transientNameToType.TryGetValue(name, out ct))
+			if (transientNameToType.TryGetValue(name, out var ct))
 				return ct;
 
 			ct = new ClassificationType(name, baseTypes);
@@ -164,8 +161,7 @@ namespace dnSpy.Text.Classification {
 		}
 
 		public IClassificationType GetClassificationType(string type) {
-			IClassificationType ct;
-			toClassificationType.TryGetValue(type, out ct);
+			toClassificationType.TryGetValue(type, out var ct);
 			return ct;
 		}
 	}

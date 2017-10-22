@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,20 +32,19 @@ namespace dnSpy.Menus {
 		readonly List<GuidObject> guidObjects;
 
 		public MenuItemContext(Guid menuGuid, bool openedFromKeyboard, GuidObject creatorObject, IEnumerable<GuidObject> guidObjects) {
-			this.MenuGuid = menuGuid;
-			this.OpenedFromKeyboard = openedFromKeyboard;
+			MenuGuid = menuGuid;
+			OpenedFromKeyboard = openedFromKeyboard;
 			this.guidObjects = new List<GuidObject>();
 			this.guidObjects.Add(creatorObject);
 			if (guidObjects != null)
 				this.guidObjects.AddRange(guidObjects);
-			this.state = new Dictionary<object, object>();
+			state = new Dictionary<object, object>();
 		}
 
 		public T GetOrCreateState<T>(object key, Func<T> createState) where T : class {
 			Debug.Assert(key != null);
-			object o;
 			T value;
-			if (state.TryGetValue(key, out o)) {
+			if (state.TryGetValue(key, out object o)) {
 				value = o as T;
 				Debug.Assert(o == null || value != null);
 				return value;
@@ -61,7 +60,7 @@ namespace dnSpy.Menus {
 				if (o.Object is T)
 					return (T)o.Object;
 			}
-			return default(T);
+			return default;
 		}
 
 		public void Dispose() {
@@ -73,6 +72,7 @@ namespace dnSpy.Menus {
 			// eg. IDocumentViewer. Those instances could throw ObjectDisposedException
 			guidObjects.Clear();
 			guidObjects.Add(new GuidObject(Guid.Empty, disposedObject));
+			state.Clear();
 		}
 		static readonly object disposedObject = new object();
 	}

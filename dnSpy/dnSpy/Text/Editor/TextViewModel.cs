@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,13 +35,9 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public TextViewModel(ITextDataModel textDataModel, ITextBuffer editBuffer) {
-			if (textDataModel == null)
-				throw new ArgumentNullException(nameof(textDataModel));
-			if (editBuffer == null)
-				throw new ArgumentNullException(nameof(editBuffer));
 			Properties = new PropertyCollection();
-			DataModel = textDataModel;
-			EditBuffer = editBuffer;
+			DataModel = textDataModel ?? throw new ArgumentNullException(nameof(textDataModel));
+			EditBuffer = editBuffer ?? throw new ArgumentNullException(nameof(editBuffer));
 		}
 
 		public SnapshotPoint GetNearestPointInVisualBuffer(SnapshotPoint editBufferPoint) => editBufferPoint;

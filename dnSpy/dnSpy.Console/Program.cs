@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -87,44 +87,31 @@ namespace dnSpy_Console {
 		public ConsoleColorPair? GetColor(TextColor? color) {
 			if (color == null)
 				return null;
-			ConsoleColorPair ccPair;
-			return colors.TryGetValue(color.Value, out ccPair) ? ccPair : (ConsoleColorPair?)null;
+			return colors.TryGetValue(color.Value, out var ccPair) ? ccPair : (ConsoleColorPair?)null;
 		}
 	}
 
 	sealed class ConsoleColorizerOutput : IDecompilerOutput {
 		readonly ColorProvider colorProvider;
 		readonly TextWriter writer;
-		readonly string indentationString;
-		int indentation;
+		readonly Indenter indenter;
 		bool addIndent = true;
 		int position;
 
 		public int Length => position;
-		public int NextPosition => position + (addIndent ? indentation * indentationString.Length : 0);
+		public int NextPosition => position + (addIndent ? indenter.String.Length : 0);
 
 		bool IDecompilerOutput.UsesCustomData => false;
 
-		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, string indentationString = "\t") {
-			if (writer == null)
-				throw new ArgumentNullException(nameof(writer));
-			if (colorProvider == null)
-				throw new ArgumentNullException(nameof(colorProvider));
-			if (indentationString == null)
-				throw new ArgumentNullException(nameof(indentationString));
-			this.writer = writer;
-			this.colorProvider = colorProvider;
-			this.indentationString = indentationString;
+		public ConsoleColorizerOutput(TextWriter writer, ColorProvider colorProvider, Indenter indenter) {
+			this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
+			this.colorProvider = colorProvider ?? throw new ArgumentNullException(nameof(colorProvider));
+			this.indenter = indenter ?? throw new ArgumentNullException(nameof(indenter));
 		}
 
 		void IDecompilerOutput.AddCustomData<TData>(string id, TData data) { }
-		public void IncreaseIndent() => indentation++;
-
-		public void DecreaseIndent() {
-			Debug.Assert(indentation > 0);
-			if (indentation > 0)
-				indentation--;
-		}
+		public void IncreaseIndent() => indenter.IncreaseIndent();
+		public void DecreaseIndent() => indenter.DecreaseIndent();
 
 		public void WriteLine() {
 			var nlArray = newLineArray;
@@ -138,9 +125,9 @@ namespace dnSpy_Console {
 			if (!addIndent)
 				return;
 			addIndent = false;
-			for (int i = 0; i < indentation; i++)
-				writer.Write(indentationString);
-			position += indentationString.Length * indentation;
+			var s = indenter.String;
+			writer.Write(s);
+			position += s.Length;
 		}
 
 		void AddText(string text, object color) {
@@ -207,25 +194,25 @@ namespace dnSpy_Console {
 		static readonly char PATHS_SEP = Path.PathSeparator;
 
 		public DnSpyDecompiler() {
-			this.files = new List<string>();
-			this.asmPaths = new List<string>();
-			this.userGacPaths = new List<string>();
-			this.gacFiles = new List<string>();
-			this.decompilationContext = new DecompilationContext();
-			this.moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
-			this.assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
-			this.assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
-			this.assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe
-			this.assemblyResolver.EnableTypeDefCache = true;
-			this.bamlDecompiler = TryLoadBamlDecompiler();
-			this.decompileBaml = bamlDecompiler != null;
-			this.reservedOptions = GetReservedOptions();
-			this.colorizeOutput = !Console.IsOutputRedirected;
+			files = new List<string>();
+			asmPaths = new List<string>();
+			userGacPaths = new List<string>();
+			gacFiles = new List<string>();
+			decompilationContext = new DecompilationContext();
+			moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
+			assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
+			assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
+			assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe
+			assemblyResolver.EnableTypeDefCache = true;
+			bamlDecompiler = TryLoadBamlDecompiler();
+			decompileBaml = bamlDecompiler != null;
+			reservedOptions = GetReservedOptions();
+			colorizeOutput = !Console.IsOutputRedirected;
 
 			var langs = new List<IDecompiler>();
 			langs.AddRange(GetAllLanguages());
 			langs.Sort((a, b) => a.OrderUI.CompareTo(b.OrderUI));
-			this.allLanguages = langs.ToArray();
+			allLanguages = langs.ToArray();
 		}
 
 		static IEnumerable<IDecompiler> GetAllLanguages() {
@@ -265,7 +252,7 @@ namespace dnSpy_Console {
 		static T TryCreateType<T>(string asmName, string typeFullName) {
 			var asm = TryLoad(asmName);
 			var type = asm?.GetType(typeFullName);
-			return type == null ? default(T) : (T)Activator.CreateInstance(type);
+			return type == null ? default : (T)Activator.CreateInstance(type);
 		}
 
 		public int Run(string[] args) {
@@ -349,7 +336,7 @@ namespace dnSpy_Console {
 			new UsageInfo("--no-baml", null, dnSpy_Console_Resources.CmdLineDescription_NoBAML),
 			new UsageInfo("--no-color", null, dnSpy_Console_Resources.CmdLineDescription_NoColor),
 			new UsageInfo("--spaces", "N", dnSpy_Console_Resources.CmdLineDescription_Spaces),
-			new UsageInfo("--vs", "N", string.Format(dnSpy_Console_Resources.CmdLineDescription_VSVersion, 2015)),
+			new UsageInfo("--vs", "N", string.Format(dnSpy_Console_Resources.CmdLineDescription_VSVersion, 2017)),
 			new UsageInfo("--project-guid", "N", dnSpy_Console_Resources.CmdLineDescription_ProjectGUID),
 			new UsageInfo("-t", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_Type1),
 			new UsageInfo("--type", dnSpy_Console_Resources.CmdLineName, dnSpy_Console_Resources.CmdLineDescription_Type2),
@@ -390,8 +377,7 @@ namespace dnSpy_Console {
 			var list = new List<List<IDecompiler>>();
 			var dict = new Dictionary<object, List<IDecompiler>>();
 			foreach (var lang in AllLanguages) {
-				List<IDecompiler> opts;
-				if (!dict.TryGetValue(lang.Settings, out opts)) {
+				if (!dict.TryGetValue(lang.Settings, out var opts)) {
 					dict.Add(lang.Settings, opts = new List<IDecompiler>());
 					list.Add(opts);
 				}
@@ -459,7 +445,7 @@ namespace dnSpy_Console {
 
 			bool canParseCommands = true;
 			IDecompiler lang = null;
-			Dictionary<string, Tuple<IDecompilerOption, Action<string>>> langDict = null;
+			Dictionary<string, (IDecompilerOption setOption, Action<string> setOptionValue)> langDict = null;
 			for (int i = 0; i < args.Length; i++) {
 				if (lang == null) {
 					lang = GetLanguage();
@@ -565,6 +551,7 @@ namespace dnSpy_Console {
 						case 2012: projectVersion = ProjectVersion.VS2012; break;
 						case 2013: projectVersion = ProjectVersion.VS2013; break;
 						case 2015: projectVersion = ProjectVersion.VS2015; break;
+						case 2017: projectVersion = ProjectVersion.VS2017; break;
 						default: throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidVSVersion, vsVer));
 						}
 						break;
@@ -625,14 +612,14 @@ namespace dnSpy_Console {
 						break;
 
 					default:
-						Tuple<IDecompilerOption, Action<string>> tuple;
+						(IDecompilerOption option, Action<string> setOptionValue) tuple;
 						if (langDict.TryGetValue(arg, out tuple)) {
-							bool hasArg = tuple.Item1.Type != typeof(bool);
+							bool hasArg = tuple.option.Type != typeof(bool);
 							if (hasArg && next == null)
 								throw new ErrorException(dnSpy_Console_Resources.MissingOptionArgument);
 							if (hasArg)
 								i++;
-							tuple.Item2(next);
+							tuple.setOptionValue(next);
 							break;
 						}
 
@@ -645,8 +632,7 @@ namespace dnSpy_Console {
 		}
 
 		static int ParseInt32(string s) {
-			string error;
-			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out error);
+			var v = SimpleTypeConverter.ParseInt32(s, int.MinValue, int.MaxValue, out string error);
 			if (!string.IsNullOrEmpty(error))
 				throw new ErrorException(error);
 			return v;
@@ -654,8 +640,8 @@ namespace dnSpy_Console {
 
 		static string ParseString(string s) => s;
 
-		Dictionary<string, Tuple<IDecompilerOption, Action<string>>> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
-			var dict = new Dictionary<string, Tuple<IDecompilerOption, Action<string>>>();
+		Dictionary<string, (IDecompilerOption option, Action<string> setOptionValue)> CreateDecompilerOptionsDictionary(IDecompiler decompiler) {
+			var dict = new Dictionary<string, (IDecompilerOption, Action<string>)>();
 
 			if (decompiler == null)
 				return dict;
@@ -663,14 +649,14 @@ namespace dnSpy_Console {
 			foreach (var tmp in decompiler.Settings.Options) {
 				var opt = tmp;
 				if (opt.Type == typeof(bool)) {
-					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = true));
-					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = Tuple.Create(opt, new Action<string>(a => opt.Value = false));
-					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = Tuple.Create(opt, new Action<string>(a => opt.Value = false));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = true));
+					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = (opt, new Action<string>(a => opt.Value = false));
+					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = (opt, new Action<string>(a => opt.Value = false));
 				}
 				else if (opt.Type == typeof(int))
-					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseInt32(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseInt32(a)));
 				else if (opt.Type == typeof(string))
-					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseString(a)));
+					dict[GetOptionName(opt)] = (opt, new Action<string>(a => opt.Value = ParseString(a)));
 				else
 					Debug.Fail($"Unsupported type: {opt.Type}");
 			}
@@ -720,9 +706,9 @@ namespace dnSpy_Console {
 				var writer = Console.Out;
 				IDecompilerOutput output;
 				if (colorizeOutput)
-					output = new ConsoleColorizerOutput(writer, CreateColorProvider(), GetIndentationString());
+					output = new ConsoleColorizerOutput(writer, CreateColorProvider(), GetIndenter());
 				else
-					output = new TextWriterDecompilerOutput(writer, GetIndentationString());
+					output = new TextWriterDecompilerOutput(writer, GetIndenter());
 
 				var lang = GetLanguage();
 				if (member is MethodDef)
@@ -750,8 +736,7 @@ namespace dnSpy_Console {
 				options.NumberOfThreads = numThreads;
 				options.ProjectModules.AddRange(files);
 				options.UserGACPaths.AddRange(userGacPaths);
-				string indentationString = GetIndentationString();
-				options.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter, indentationString);
+				options.CreateDecompilerOutput = textWriter => new TextWriterDecompilerOutput(textWriter, GetIndenter());
 				if (createSlnFile && !string.IsNullOrEmpty(slnName))
 					options.SolutionFilename = slnName;
 				var creator = new MSBuildProjectCreator(options);
@@ -759,18 +744,17 @@ namespace dnSpy_Console {
 			}
 		}
 
-		string GetIndentationString() {
+		Indenter GetIndenter() {
 			if (spaces <= 0)
-				return "\t";
-			return new string(' ', spaces);
+				return new Indenter(4, 4, true);
+			return new Indenter(spaces, spaces, false);
 		}
 
-		static TypeDef FindType(ModuleDef module, string name) {
-			return FindTypeFullName(module, name, StringComparer.Ordinal) ??
-				FindTypeFullName(module, name, StringComparer.OrdinalIgnoreCase) ??
-				FindTypeName(module, name, StringComparer.Ordinal) ??
-				FindTypeName(module, name, StringComparer.OrdinalIgnoreCase);
-		}
+		static TypeDef FindType(ModuleDef module, string name) =>
+			FindTypeFullName(module, name, StringComparer.Ordinal) ??
+			FindTypeFullName(module, name, StringComparer.OrdinalIgnoreCase) ??
+			FindTypeName(module, name, StringComparer.Ordinal) ??
+			FindTypeName(module, name, StringComparer.OrdinalIgnoreCase);
 
 		static TypeDef FindTypeFullName(ModuleDef module, string name, StringComparer comparer) {
 			var sb = new StringBuilder();
@@ -844,7 +828,7 @@ namespace dnSpy_Console {
 			var oldFindExactMatch = assemblyResolver.FindExactMatch;
 			assemblyResolver.FindExactMatch = false;
 			foreach (var asmName in gacFiles) {
-				var asm = this.assemblyResolver.Resolve(new AssemblyNameInfo(asmName), null);
+				var asm = assemblyResolver.Resolve(new AssemblyNameInfo(asmName), null);
 				if (asm == null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.CouldNotResolveGacFileX, asmName));
 				yield return CreateProjectModuleOptions(asm.ManifestModule);
@@ -973,8 +957,7 @@ namespace dnSpy_Console {
 		}
 
 		IDecompiler GetLanguage() {
-			Guid guid;
-			bool hasGuid = Guid.TryParse(language, out guid);
+			bool hasGuid = Guid.TryParse(language, out var guid);
 			return AllLanguages.FirstOrDefault(a => {
 				if (StringComparer.OrdinalIgnoreCase.Equals(language, a.UniqueNameUI))
 					return true;
@@ -1011,6 +994,7 @@ namespace dnSpy_Console {
 			provider.Add(TextColor.Enum, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.Interface, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.ValueType, ConsoleColor.Green, null);
+			provider.Add(TextColor.Module, ConsoleColor.DarkMagenta, null);
 			provider.Add(TextColor.TypeGenericParameter, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.MethodGenericParameter, ConsoleColor.Magenta, null);
 			provider.Add(TextColor.InstanceMethod, ConsoleColor.DarkYellow, null);
@@ -1043,7 +1027,6 @@ namespace dnSpy_Console {
 			provider.Add(TextColor.XmlDocCommentName, ConsoleColor.DarkGreen, null);
 			provider.Add(TextColor.XmlDocCommentProcessingInstruction, ConsoleColor.DarkGreen, null);
 			provider.Add(TextColor.XmlDocCommentText, ConsoleColor.DarkGreen, null);
-			provider.Add(TextColor.Module, ConsoleColor.DarkGreen, null);
 			provider.Add(TextColor.Error, ConsoleColor.Red, null);
 			return provider;
 		}

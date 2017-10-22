@@ -29,13 +29,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class FieldNode : EntityNode {
 		readonly FieldDef analyzedField;
 
-		public FieldNode(FieldDef analyzedField) {
-			if (analyzedField == null)
-				throw new ArgumentNullException(nameof(analyzedField));
-			this.analyzedField = analyzedField;
-		}
+		public FieldNode(FieldDef analyzedField) => this.analyzedField = analyzedField ?? throw new ArgumentNullException(nameof(analyzedField));
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedField);
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) {

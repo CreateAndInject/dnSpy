@@ -1,9 +1,10 @@
 {
 	"dependencies": {
-		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.25824-RC"
+		"System.ValueTuple": "4.4.0",
+		"Microsoft.VisualStudio.Text.UI.Wpf": "15.0.26201"
 	},
 	"frameworks": {
-		"net46": { }
+		"net462": { }
 	},
 	"runtimes": {
 		"win": { }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,8 +42,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		static ICustomLineNumberMargin GetMargin(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			ICustomLineNumberMargin margin;
-			if (!textView.Properties.TryGetProperty(Key, out margin))
+			if (!textView.Properties.TryGetProperty(Key, out ICustomLineNumberMargin margin))
 				throw new InvalidOperationException("No custom line number margin was found");
 			return margin;
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,8 +59,7 @@ namespace dnSpy.Analyzer {
 			if (nodes == null || nodes.Length != 1)
 				return null;
 
-			var tokenNode = nodes[0] as IMDTokenNode;
-			if (tokenNode != null && tokenNode.Reference != null) {
+			if (nodes[0] is IMDTokenNode tokenNode && tokenNode.Reference != null) {
 				if (!analyzerService.Value.CanFollowNode(nodes[0], useCodeRef))
 					return null;
 				return nodes[0];
@@ -118,9 +117,7 @@ namespace dnSpy.Analyzer {
 		readonly Lazy<IAnalyzerService> analyzerService;
 
 		[ImportingConstructor]
-		CopyCtxMenuCommand(Lazy<IAnalyzerService> analyzerService) {
-			this.analyzerService = analyzerService;
-		}
+		CopyCtxMenuCommand(Lazy<IAnalyzerService> analyzerService) => this.analyzerService = analyzerService;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		public override bool IsEnabled(IMenuItemContext context) => CanExecuteInternal(analyzerService);
@@ -134,8 +131,8 @@ namespace dnSpy.Analyzer {
 			foreach (var t in GetNodes(analyzerService.Value.TreeView, items)) {
 				if (count > 0)
 					sb.Append(Environment.NewLine);
-				sb.Append(new string('\t', t.Item1));
-				sb.Append(t.Item2.ToString());
+				sb.Append(new string('\t', t.level));
+				sb.Append(t.node.ToString());
 				count++;
 			}
 			if (count > 1)
@@ -153,12 +150,12 @@ namespace dnSpy.Analyzer {
 			public int Index;
 			public readonly IList<ITreeNode> Nodes;
 			public State(ITreeNode node, int level) {
-				this.Level = level;
-				this.Nodes = node.Children;
+				Level = level;
+				Nodes = node.Children;
 			}
 		}
 
-		static IEnumerable<Tuple<int, TreeNodeData>> GetNodes(ITreeView treeView, IEnumerable<TreeNodeData> nodes) {
+		static IEnumerable<(int level, TreeNodeData node)> GetNodes(ITreeView treeView, IEnumerable<TreeNodeData> nodes) {
 			var hash = new HashSet<TreeNodeData>(nodes);
 			var stack = new Stack<State>();
 			stack.Push(new State(treeView.Root, 0));
@@ -168,7 +165,7 @@ namespace dnSpy.Analyzer {
 					continue;
 				var child = state.Nodes[state.Index++];
 				if (hash.Contains(child.Data))
-					yield return Tuple.Create(state.Level, child.Data);
+					yield return (state.Level, child.Data);
 				stack.Push(state);
 				stack.Push(new State(child, state.Level + 1));
 			}
@@ -180,9 +177,7 @@ namespace dnSpy.Analyzer {
 		readonly AnalyzerSettingsImpl analyzerSettings;
 
 		[ImportingConstructor]
-		ShowTokensCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) {
-			this.analyzerSettings = analyzerSettings;
-		}
+		ShowTokensCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) => this.analyzerSettings = analyzerSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.ShowToken;
@@ -194,9 +189,7 @@ namespace dnSpy.Analyzer {
 		readonly AnalyzerSettingsImpl analyzerSettings;
 
 		[ImportingConstructor]
-		SyntaxHighlightCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) {
-			this.analyzerSettings = analyzerSettings;
-		}
+		SyntaxHighlightCtxMenuCommand(AnalyzerSettingsImpl analyzerSettings) => this.analyzerSettings = analyzerSettings;
 
 		public override bool IsVisible(IMenuItemContext context) => context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
 		public override bool IsChecked(IMenuItemContext context) => analyzerSettings.SyntaxHighlight;

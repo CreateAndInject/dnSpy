@@ -42,6 +42,7 @@ namespace dnSpy.Decompiler {
 		public abstract DecompilerSettingsBase Settings { get; }
 		public abstract string FileExtension { get; }
 		public virtual string ProjectFileExtension => null;
+		public virtual MetadataTextColorProvider MetadataTextColorProvider => CSharpMetadataTextColorProvider.Instance;
 
 		public void WriteName(ITextColorWriter output, TypeDef type) =>
 			FormatTypeName(TextColorWriterToDecompilerOutput.Create(output), type);
@@ -66,9 +67,9 @@ namespace dnSpy.Decompiler {
 			this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Namespace_Types);
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
-				this.WriteCommentBegin(output, true);
+				WriteCommentBegin(output, true);
 				output.Write(IdentifierEscaper.Escape(type.Name), type, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
-				this.WriteCommentEnd(output, true);
+				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
 		}
@@ -81,17 +82,28 @@ namespace dnSpy.Decompiler {
 		protected void WriteAssembly(AssemblyDef asm, IDecompilerOutput output, DecompilationContext ctx) {
 			DecompileInternal(asm, output, ctx);
 			output.WriteLine();
-			this.PrintEntryPoint(asm.ManifestModule, output);
+			PrintEntryPoint(asm.ManifestModule, output);
 			var peImage = TryGetPEImage(asm.ManifestModule);
-			if (peImage != null) {
-				this.WriteCommentBegin(output, true);
-				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+			if (peImage != null)
+				WriteTimestampComment(output, peImage);
+			output.WriteLine();
+		}
+
+		void WriteTimestampComment(IDecompilerOutput output, IPEImage peImage) {
+			WriteCommentBegin(output, true);
+			output.Write(dnSpy_Decompiler_Resources.Decompile_Timestamp, BoxedTextColor.Comment);
+			output.Write(" ", BoxedTextColor.Comment);
+			uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+			if (ts < 0x80000000) {
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(dnSpy_Decompiler_Resources.Decompile_Timestamp, ts, dateString), BoxedTextColor.Comment);
-				this.WriteCommentEnd(output, true);
-				output.WriteLine();
+				output.Write($"{ts:X8} ({dateString})", BoxedTextColor.Comment);
 			}
+			else {
+				output.Write(dnSpy_Decompiler_Resources.UnknownValue, BoxedTextColor.Comment);
+				output.Write($" ({ts:X8})", BoxedTextColor.Comment);
+			}
+			WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 
@@ -99,12 +111,12 @@ namespace dnSpy.Decompiler {
 			DecompileInternal(mod, output, ctx);
 			output.WriteLine();
 			if (mod.Types.Count > 0) {
-				this.WriteCommentBegin(output, true);
+				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Decompiler_Resources.Decompile_GlobalType + " ", BoxedTextColor.Comment);
 				output.Write(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, DecompilerReferenceFlags.None, BoxedTextColor.Comment);
 				output.WriteLine();
 			}
-			this.PrintEntryPoint(mod, output);
+			PrintEntryPoint(mod, output);
 			this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mod));
 			if (!mod.IsILOnly) {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
@@ -114,15 +126,8 @@ namespace dnSpy.Decompiler {
 				this.WriteCommentLine(output, dnSpy_Decompiler_Resources.Decompile_Runtime + " " + runtimeName);
 			}
 			var peImage = TryGetPEImage(mod);
-			if (peImage != null) {
-				this.WriteCommentBegin(output, true);
-				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
-				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
-				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(dnSpy_Decompiler_Resources.Decompile_Timestamp, ts, dateString), BoxedTextColor.Comment);
-				this.WriteCommentEnd(output, true);
-				output.WriteLine();
-			}
+			if (peImage != null)
+				WriteTimestampComment(output, peImage);
 			output.WriteLine();
 		}
 
@@ -146,8 +151,7 @@ namespace dnSpy.Decompiler {
 			var ep = GetEntryPoint(mod);
 			if (ep is uint)
 				this.WriteCommentLine(output, string.Format(dnSpy_Decompiler_Resources.Decompile_NativeEntryPoint, (uint)ep));
-			else if (ep is MethodDef) {
-				var epMethod = (MethodDef)ep;
+			else if (ep is MethodDef epMethod) {
 				WriteCommentBegin(output, true);
 				output.Write(dnSpy_Decompiler_Resources.Decompile_EntryPoint + " ", BoxedTextColor.Comment);
 				if (epMethod.DeclaringType != null) {
@@ -168,8 +172,7 @@ namespace dnSpy.Decompiler {
 					return (uint)rva;
 
 				var manEp = module.ManagedEntryPoint;
-				var ep = manEp as MethodDef;
-				if (ep != null)
+				if (manEp is MethodDef ep)
 					return ep;
 
 				var file = manEp as FileDef;
@@ -213,19 +216,20 @@ namespace dnSpy.Decompiler {
 			if (type == null)
 				return;
 			if (includeNamespace)
-				output.Write(IdentifierEscaper.Escape(type.FullName), TextColorHelper.GetColor(type));
+				output.Write(IdentifierEscaper.Escape(type.FullName), MetadataTextColorProvider.GetColor(type));
 			else
-				output.Write(IdentifierEscaper.Escape(type.Name), TextColorHelper.GetColor(type));
+				output.Write(IdentifierEscaper.Escape(type.Name), MetadataTextColorProvider.GetColor(type));
 		}
 
+		protected const FormatterOptions DefaultFormatterOptions = FormatterOptions.Default | FormatterOptions.ShowParameterLiteralValues;
 		public virtual void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(member);
-		public virtual void WriteToolTip(ITextColorWriter output, IVariable variable, string name) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable, name);
+			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteToolTip(member);
+		public virtual void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
+			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteToolTip(variable);
 		public virtual void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
-			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteNamespaceToolTip(@namespace);
-		public virtual void Write(ITextColorWriter output, IMemberRef member, SimplePrinterFlags flags) =>
-			new SimpleCSharpPrinter(output, flags).Write(member);
+			new CSharpFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
+		public virtual void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
+			new CSharpFormatter(output, flags, null).Write(member);
 
 		protected static string GetName(IVariable variable, string name) {
 			if (!string.IsNullOrWhiteSpace(name))
@@ -239,13 +243,13 @@ namespace dnSpy.Decompiler {
 		protected virtual void FormatPropertyName(IDecompilerOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)
 				throw new ArgumentNullException(nameof(property));
-			output.Write(IdentifierEscaper.Escape(property.Name), TextColorHelper.GetColor(property));
+			output.Write(IdentifierEscaper.Escape(property.Name), MetadataTextColorProvider.GetColor(property));
 		}
 
 		protected virtual void FormatTypeName(IDecompilerOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
-			output.Write(IdentifierEscaper.Escape(type.Name), TextColorHelper.GetColor(type));
+			output.Write(IdentifierEscaper.Escape(type.Name), MetadataTextColorProvider.GetColor(type));
 		}
 
 		public virtual bool ShowMember(IMemberRef member) => true;
@@ -253,8 +257,6 @@ namespace dnSpy.Decompiler {
 		protected static string GetRuntimeDisplayName(ModuleDef module) => TargetFrameworkInfo.Create(module).ToString();
 		public virtual bool CanDecompile(DecompilationType decompilationType) => false;
 
-		public virtual void Decompile(DecompilationType decompilationType, object data) {
-			throw new NotImplementedException();
-		}
+		public virtual void Decompile(DecompilationType decompilationType, object data) => throw new NotImplementedException();
 	}
 }

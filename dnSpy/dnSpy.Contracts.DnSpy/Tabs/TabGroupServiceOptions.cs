@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,21 +65,17 @@ namespace dnSpy.Contracts.Tabs {
 		/// Constructor
 		/// </summary>
 		/// <param name="tabGroupGuid">See <see cref="TabGroupGuid"/></param>
-		public TabGroupServiceOptions(Guid tabGroupGuid) {
-			this.TabGroupGuid = tabGroupGuid;
-		}
+		public TabGroupServiceOptions(Guid tabGroupGuid) => TabGroupGuid = tabGroupGuid;
 
 		/// <summary>
 		/// Clones this instance
 		/// </summary>
 		/// <returns></returns>
-		public TabGroupServiceOptions Clone() {
-			return new TabGroupServiceOptions {
-				TabControlStyle = TabControlStyle,
-				TabItemStyle = TabItemStyle,
-				TabGroupGuid = TabGroupGuid,
-				InitializeContextMenu = InitializeContextMenu,
-			};
-		}
+		public TabGroupServiceOptions Clone() => new TabGroupServiceOptions {
+			TabControlStyle = TabControlStyle,
+			TabItemStyle = TabItemStyle,
+			TabGroupGuid = TabGroupGuid,
+			InitializeContextMenu = InitializeContextMenu,
+		};
 	}
 }

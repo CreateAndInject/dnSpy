@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,9 +37,7 @@ namespace dnSpy.Text.Editor {
 		readonly IScrollMapFactoryService scrollMapFactoryService;
 
 		[ImportingConstructor]
-		VerticalScrollBarMarginProvider(IScrollMapFactoryService scrollMapFactoryService) {
-			this.scrollMapFactoryService = scrollMapFactoryService;
-		}
+		VerticalScrollBarMarginProvider(IScrollMapFactoryService scrollMapFactoryService) => this.scrollMapFactoryService = scrollMapFactoryService;
 
 		public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer) =>
 			new VerticalScrollBarMargin(scrollMapFactoryService, wpfTextViewHost);
@@ -59,10 +57,8 @@ namespace dnSpy.Text.Editor {
 		public VerticalScrollBarMargin(IScrollMapFactoryService scrollMapFactoryService, IWpfTextViewHost wpfTextViewHost) {
 			if (scrollMapFactoryService == null)
 				throw new ArgumentNullException(nameof(scrollMapFactoryService));
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			this.wpfTextViewHost = wpfTextViewHost;
-			this.scrollMap = scrollMapFactoryService.Create(wpfTextViewHost.TextView, true);
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
+			scrollMap = scrollMapFactoryService.Create(wpfTextViewHost.TextView, true);
 			IsVisibleChanged += VerticalScrollBarMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			SetResourceReference(StyleProperty, typeof(ScrollBar));

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,8 +37,8 @@ namespace dnSpy.Text.Editor {
 
 			public MouseHoverHelper(WpfTextView owner) {
 				this.owner = owner;
-				this.handlers = new List<MouseHoverHandler>();
-				this.timer = new DispatcherTimer(DispatcherPriority.Normal, owner.Dispatcher);
+				handlers = new List<MouseHoverHandler>();
+				timer = new DispatcherTimer(DispatcherPriority.Normal, owner.Dispatcher);
 				timer.Tick += Timer_Tick;
 				owner.MouseDown += WpfTextView_MouseDown;
 				owner.MouseLeftButtonDown += WpfTextView_MouseLeftButtonDown;
@@ -56,7 +56,7 @@ namespace dnSpy.Text.Editor {
 				if (e.LeftButton != MouseButtonState.Released || e.RightButton != MouseButtonState.Released || e.MiddleButton != MouseButtonState.Released)
 					return;
 
-				var loc = MouseLocation.TryCreateTextOnly(owner, e);
+				var loc = MouseLocation.TryCreateTextOnly(owner, e, fullLineHeight: false);
 				int? newPosition;
 
 				if (loc == null)
@@ -218,9 +218,7 @@ namespace dnSpy.Text.Editor {
 				const int MIN_DELAY_MILLISECS = 50;
 
 				public MouseHoverHandler(EventHandler<MouseHoverEventArgs> handler) {
-					if (handler == null)
-						throw new ArgumentNullException(nameof(handler));
-					Handler = handler;
+					Handler = handler ?? throw new ArgumentNullException(nameof(handler));
 					var attr = handler.Method.GetCustomAttributes(typeof(MouseHoverAttribute), false).FirstOrDefault() as MouseHoverAttribute;
 					DelayTicks = Math.Max(MIN_DELAY_MILLISECS, attr?.Delay ?? DEFAULT_DELAY_MILLISECS) * 10000L;
 				}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -42,9 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		[ExportAutoLoaded]
 		sealed class BodyUtilsInit : IAutoLoaded {
 			[ImportingConstructor]
-			BodyUtilsInit([ImportMany] IEnumerable<ISimpleILPrinter> simpleILPrinters) {
-				BodyUtils.simpleILPrinter = simpleILPrinters.OrderBy(a => a.Order).FirstOrDefault() ?? new DummyPrinter();
-			}
+			BodyUtilsInit([ImportMany] IEnumerable<ISimpleILPrinter> simpleILPrinters) => BodyUtils.simpleILPrinter = simpleILPrinters.OrderBy(a => a.Order).FirstOrDefault() ?? new DummyPrinter();
 
 			sealed class DummyPrinter : ISimpleILPrinter {
 				public double Order => 0;
@@ -56,32 +54,24 @@ namespace dnSpy.AsmEditor.MethodBody {
 					return true;
 				}
 
-				public void Write(IDecompilerOutput output, TypeSig type) {
-					Write(output, type);
-				}
+				public void Write(IDecompilerOutput output, TypeSig type) => Write(output, type);
 
-				public void Write(IDecompilerOutput output, MethodSig sig) {
-					Write(output, sig);
-				}
+				public void Write(IDecompilerOutput output, MethodSig sig) => Write(output, sig);
 
-				void Write(IDecompilerOutput output, object value) {
-					output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedTextColor.Text);
-				}
+				void Write(IDecompilerOutput output, object value) => output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedTextColor.Text);
 			}
 		}
 
-		public static bool IsNull(object op) {
-			return op == null ||
-				op == NullParameter ||
-				op == InstructionVM.Null ||
-				op == LocalVM.Null;
-		}
+		public static bool IsNull(object op) =>
+			op == null ||
+			op == NullParameter ||
+			op == InstructionVM.Null ||
+			op == LocalVM.Null;
 
 		public static object TryGetVM(Dictionary<object, object> ops, object objModel) {
 			if (objModel == null)
 				return null;
-			object objVm;
-			if (!ops.TryGetValue(objModel, out objVm))
+			if (!ops.TryGetValue(objModel, out object objVm))
 				return objModel;
 			return objVm;
 		}
@@ -89,15 +79,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public static object TryGetModel(Dictionary<object, object> ops, object objVm) {
 			if (IsNull(objVm))
 				return null;
-			object objModel;
-			if (!ops.TryGetValue(objVm, out objModel))
+			if (!ops.TryGetValue(objVm, out object objModel))
 				return objVm;
 			return objModel;
 		}
 
 		public static object ToOperandVM(Dictionary<object, object> ops, object operand) {
-			var targets = operand as IList<Instruction>;
-			if (targets != null) {
+			if (operand is IList<Instruction> targets) {
 				var newTargets = new InstructionVM[targets.Count];
 				for (int i = 0; i < newTargets.Length; i++)
 					newTargets[i] = (InstructionVM)TryGetVM(ops, (object)targets[i] ?? InstructionVM.Null);
@@ -108,8 +96,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public static object ToOperandModel(Dictionary<object, object> ops, object operand) {
-			var targets = operand as IList<InstructionVM>;
-			if (targets != null) {
+			if (operand is IList<InstructionVM> targets) {
 				var newTargets = new Instruction[targets.Count];
 				for (int i = 0; i < newTargets.Length; i++)
 					newTargets[i] = TryGetModel(ops, targets[i]) as Instruction;
@@ -344,7 +331,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		static T ReadList<T>(IList<T> list, int index) {
 			if (list == null || index < 0 || index >= list.Count)
-				return default(T);
+				return default;
 			return list[index];
 		}
 
@@ -546,22 +533,19 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 			}
 
-			var mr = obj as IMemberRef;
-			if (mr != null) {
+			if (obj is IMemberRef mr) {
 				if (simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), mr))
 					return;
 			}
 
-			var local = obj as LocalVM;
-			if (local != null) {
+			if (obj is LocalVM local) {
 				output.Write(BoxedTextColor.Local, IdentifierEscaper.Escape(GetLocalName(local.Name, local.Index)));
 				output.WriteSpace();
 				output.WriteLocalParameterIndex(local.Index);
 				return;
 			}
 
-			var parameter = obj as Parameter;
-			if (parameter != null) {
+			if (obj is Parameter parameter) {
 				if (parameter.IsHiddenThisParameter)
 					output.Write(BoxedTextColor.Keyword, "this");
 				else {
@@ -572,8 +556,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 			}
 
-			var instr = obj as InstructionVM;
-			if (instr != null) {
+			if (obj is InstructionVM instr) {
 				if ((flags & WriteObjectFlags.ShortInstruction) != 0)
 					output.WriteShort(instr);
 				else
@@ -581,14 +564,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 			}
 
-			var instrs = obj as IList<InstructionVM>;
-			if (instrs != null) {
+			if (obj is IList<InstructionVM> instrs) {
 				output.Write(instrs);
 				return;
 			}
 
-			var methodSig = obj as MethodSig;
-			if (methodSig != null) {
+			if (obj is MethodSig methodSig) {
 				simpleILPrinter.Write(TextColorWriterToDecompilerOutput.Create(output), methodSig);
 				return;
 			}

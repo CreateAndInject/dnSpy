@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,8 +30,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		readonly Dictionary<string, ModuleDef> openedModules;
 
 		public SatelliteAssemblyFinder() {
-			this.cultures = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(a => a.Name), StringComparer.OrdinalIgnoreCase);
-			this.openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
+			cultures = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(a => a.Name), StringComparer.OrdinalIgnoreCase);
+			openedModules = new Dictionary<string, ModuleDef>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		bool IsValidCulture(string name) => !string.IsNullOrEmpty(name) && cultures.Contains(name);
@@ -60,7 +60,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			baseDirs.Add(baseDir);
 			//TODO: Add all privatePath dirs found in app.config
 			foreach (var bd in baseDirs) {
-				foreach (var dir in GetDirectories(baseDir)) {
+				foreach (var dir in GetDirectories(bd)) {
 					var name = Path.GetFileName(dir);
 					if (!IsValidCulture(name))
 						continue;
@@ -92,8 +92,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		AssemblyDef TryOpenAssembly(string filename) {
 			lock (openedModules) {
-				ModuleDef mod;
-				if (openedModules.TryGetValue(filename, out mod))
+				if (openedModules.TryGetValue(filename, out var mod))
 					return mod.Assembly;
 				openedModules[filename] = null;
 				if (!File.Exists(filename))

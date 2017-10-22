@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Text.CodeEditor {
 		readonly Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>[] codeEditorOptionsDefinitions;
 
 		[ImportingConstructor]
-		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) {
-			this.codeEditorOptionsDefinitions = codeEditorOptionsDefinitions.ToArray();
-		}
+		ContentTypeOptionDefinitionProvider([ImportMany] IEnumerable<Lazy<CodeEditorOptionsDefinition, ICodeEditorOptionsDefinitionMetadata>> codeEditorOptionsDefinitions) => this.codeEditorOptionsDefinitions = codeEditorOptionsDefinitions.ToArray();
 
 		IEnumerable<ICodeEditorOptionsDefinitionMetadata> GetOptionsDefinitions() {
 			foreach (var lz in codeEditorOptionsDefinitions)
@@ -74,7 +72,6 @@ namespace dnSpy.Text.CodeEditor {
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultWpfViewOptions.EnableMouseWheelZoomId, md.MouseWheelZoom);
 				yield return new OptionDefinition<bool>(md.ContentType, DefaultTextViewHostOptions.ZoomControlId, md.ZoomControl);
 				yield return new OptionDefinition<double>(md.ContentType, DefaultWpfViewOptions.ZoomLevelId, md.ZoomLevel);
-
 			}
 		}
 

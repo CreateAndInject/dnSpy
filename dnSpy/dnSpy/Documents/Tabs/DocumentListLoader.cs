@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.Tabs {
 
 			public Disable_SaveCurrentDocumentsToList(DocumentListLoader documentListLoader) {
 				this.documentListLoader = documentListLoader;
-				this.oldValue = documentListLoader.disable_SaveCurrentDocumentsToList;
+				oldValue = documentListLoader.disable_SaveCurrentDocumentsToList;
 				documentListLoader.disable_SaveCurrentDocumentsToList = true;
 			}
 
@@ -181,7 +181,7 @@ namespace dnSpy.Documents.Tabs {
 			}
 			NotifyAfterLoad(isReload);
 
-			// The documentss in the TV is loaded with a delay so make sure we delay before restoring
+			// The documents in the TV is loaded with a delay so make sure we delay before restoring
 			// or the code that tries to find the nodes might fail to find them.
 			disableLoadAndReload = true;
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {

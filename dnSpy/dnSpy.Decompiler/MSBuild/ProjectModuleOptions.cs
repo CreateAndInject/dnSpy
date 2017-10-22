@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,7 +25,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 
 namespace dnSpy.Decompiler.MSBuild {
-	public sealed class ProjectModuleOptions {
+	sealed class ProjectModuleOptions {
 		/// <summary>
 		/// Module
 		/// </summary>
@@ -79,19 +79,13 @@ namespace dnSpy.Decompiler.MSBuild {
 		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>> DecompileBaml;
 
 		public ProjectModuleOptions(ModuleDef module, IDecompiler decompiler, DecompilationContext decompilationContext) {
-			if (decompiler == null)
-				throw new ArgumentNullException(nameof(decompiler));
-			if (decompilationContext == null)
-				throw new ArgumentNullException(nameof(decompilationContext));
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			this.Module = module;
-			this.Decompiler = decompiler;
-			this.DecompilationContext = decompilationContext;
-			this.ProjectGuid = Guid.NewGuid();
-			this.UnpackResources = true;
-			this.CreateResX = true;
-			this.DecompileXaml = true;
+			Module = module ?? throw new ArgumentNullException(nameof(module));
+			Decompiler = decompiler ?? throw new ArgumentNullException(nameof(decompiler));
+			DecompilationContext = decompilationContext ?? throw new ArgumentNullException(nameof(decompilationContext));
+			ProjectGuid = Guid.NewGuid();
+			UnpackResources = true;
+			CreateResX = true;
+			DecompileXaml = true;
 		}
 	}
 }

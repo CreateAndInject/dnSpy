@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,11 +28,7 @@ namespace dnSpy.BamlDecompiler {
 	struct XamlOutputCreator {
 		readonly XamlOutputOptions options;
 
-		public XamlOutputCreator(XamlOutputOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
-		}
+		public XamlOutputCreator(XamlOutputOptions options) => this.options = options ?? throw new ArgumentNullException(nameof(options));
 
 		public string CreateText(XDocument document) {
 			if (options == null)

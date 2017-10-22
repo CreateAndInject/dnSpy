@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
 		readonly IDsDocumentService documentService;
 
-		public OpenAssembly(IDsDocumentService documentService) {
-			this.documentService = documentService;
-		}
+		public OpenAssembly(IDsDocumentService documentService) => this.documentService = documentService;
 
 		public IDsDocument Open() => Open(false).FirstOrDefault();
 		public IDsDocument[] OpenMany() => Open(true);

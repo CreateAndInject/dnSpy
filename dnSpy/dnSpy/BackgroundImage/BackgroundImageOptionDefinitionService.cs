@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,11 +22,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.BackgroundImage;
+using dnSpy.Contracts.Hex.Editor;
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace dnSpy.BackgroundImage {
 	interface IBackgroundImageOptionDefinitionService {
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView);
+		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfTextView);
 		Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>[] AllSettings { get; }
 	}
 
@@ -37,14 +39,20 @@ namespace dnSpy.BackgroundImage {
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>[] AllSettings => backgroundImageOptionDefinitions;
 
 		[ImportingConstructor]
-		BackgroundImageOptionDefinitionService([ImportMany] IEnumerable<Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>> backgroundImageOptionDefinitions) {
-			this.backgroundImageOptionDefinitions = backgroundImageOptionDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
-		}
+		BackgroundImageOptionDefinitionService([ImportMany] IEnumerable<Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata>> backgroundImageOptionDefinitions) => this.backgroundImageOptionDefinitions = backgroundImageOptionDefinitions.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(IWpfTextView wpfTextView) {
-			foreach (var lazy in backgroundImageOptionDefinitions) {
-				if (lazy.Value.IsSupported(wpfTextView))
-					return lazy;
+			foreach (var lz in backgroundImageOptionDefinitions) {
+				if (lz.Value.IsSupported(wpfTextView))
+					return lz;
+			}
+			throw new InvalidOperationException();
+		}
+
+		public Lazy<IBackgroundImageOptionDefinition, IBackgroundImageOptionDefinitionMetadata> GetOptionDefinition(WpfHexView wpfTextView) {
+			foreach (var lz in backgroundImageOptionDefinitions) {
+				if ((lz.Value as IBackgroundImageOptionDefinition2)?.IsSupported(wpfTextView) == true)
+					return lz;
 			}
 			throw new InvalidOperationException();
 		}

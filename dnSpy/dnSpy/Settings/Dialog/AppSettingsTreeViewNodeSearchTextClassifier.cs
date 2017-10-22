@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Settings.Dialog {
 		readonly IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType;
 
 		[ImportingConstructor]
-		AppSettingsTreeViewNodeSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			appSettingsTreeViewNodeMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTreeViewNodeMatchHighlight);
-		}
+		AppSettingsTreeViewNodeSearchTextClassifierProvider(IThemeClassificationTypeService themeClassificationTypeService) => appSettingsTreeViewNodeMatchHighlightClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.AppSettingsTreeViewNodeMatchHighlight);
 
 		public ITextClassifier Create(IContentType contentType) => new AppSettingsTreeViewNodeSearchTextClassifier(appSettingsTreeViewNodeMatchHighlightClassificationType);
 	}
@@ -43,11 +41,7 @@ namespace dnSpy.Settings.Dialog {
 	sealed class AppSettingsTreeViewNodeSearchTextClassifier : ITextClassifier {
 		readonly IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType;
 
-		public AppSettingsTreeViewNodeSearchTextClassifier(IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType) {
-			if (appSettingsTreeViewNodeMatchHighlightClassificationType == null)
-				throw new ArgumentNullException(nameof(appSettingsTreeViewNodeMatchHighlightClassificationType));
-			this.appSettingsTreeViewNodeMatchHighlightClassificationType = appSettingsTreeViewNodeMatchHighlightClassificationType;
-		}
+		public AppSettingsTreeViewNodeSearchTextClassifier(IClassificationType appSettingsTreeViewNodeMatchHighlightClassificationType) => this.appSettingsTreeViewNodeMatchHighlightClassificationType = appSettingsTreeViewNodeMatchHighlightClassificationType ?? throw new ArgumentNullException(nameof(appSettingsTreeViewNodeMatchHighlightClassificationType));
 
 		public IEnumerable<TextClassificationTag> GetTags(TextClassifierContext context) {
 			var tvContext = context as AppSettingsTreeViewNodeClassifierContext;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -73,7 +73,7 @@ namespace dnSpy.Documents.Tabs {
 		}
 
 		TabContentImpl CreateNewTab(ITabGroup tabGroup) {
-			var impl = new TabContentImpl(this, documentTabUIContextLocatorProvider.Create(), referenceDocumentTabContentProviders, defaultDocumentTabContentProviders);
+			var impl = new TabContentImpl(this, documentTabUIContextLocatorProvider.Create(), referenceDocumentTabContentProviders, defaultDocumentTabContentProviders, referenceHandlers);
 			tabGroup.Add(impl);
 			return impl;
 		}
@@ -153,29 +153,31 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDecompilationCache decompilationCache;
 		readonly Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>[] referenceDocumentTabContentProviders;
 		readonly Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>[] defaultDocumentTabContentProviders;
+		readonly Lazy<IReferenceHandler, IReferenceHandlerMetadata>[] referenceHandlers;
 
 		[ImportingConstructor]
-		DocumentTabService(IDocumentTabUIContextLocatorProvider documentTabUIContextLocatorProvider, DocumentTreeView documentTreeView, ITabServiceProvider tabServiceProvider, IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTabServiceSettings documentTabServiceSettings, IWpfFocusService wpfFocusService, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>> referenceDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>> defaultDocumentTabContentProviders) {
-			this.Settings = documentTabServiceSettings;
+		DocumentTabService(IDocumentTabUIContextLocatorProvider documentTabUIContextLocatorProvider, DocumentTreeView documentTreeView, ITabServiceProvider tabServiceProvider, IDocumentTabContentFactoryService documentTabContentFactoryService, IDocumentTabServiceSettings documentTabServiceSettings, IWpfFocusService wpfFocusService, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceDocumentTabContentProvider, IReferenceDocumentTabContentProviderMetadata>> referenceDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IDefaultDocumentTabContentProvider, IDefaultDocumentTabContentProviderMetadata>> defaultDocumentTabContentProviders, [ImportMany] IEnumerable<Lazy<IReferenceHandler, IReferenceHandlerMetadata>> referenceHandlers) {
+			Settings = documentTabServiceSettings;
 			this.documentTabUIContextLocatorProvider = documentTabUIContextLocatorProvider;
 			this.documentTabContentFactoryService = documentTabContentFactoryService;
 			this.wpfFocusService = wpfFocusService;
 			this.decompilationCache = decompilationCache;
 			this.referenceDocumentTabContentProviders = referenceDocumentTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
 			this.defaultDocumentTabContentProviders = defaultDocumentTabContentProviders.OrderBy(a => a.Metadata.Order).ToArray();
+			this.referenceHandlers = referenceHandlers.OrderBy(a => a.Metadata.Order).ToArray();
 			var tvElem = documentTreeView.TreeView.UIObject;
 			tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
 			isTreeViewVisible = tvElem.IsVisible;
-			this.DocumentTreeView = documentTreeView;
-			this.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
-			this.DocumentTreeView.SelectionChanged += DocumentTreeView_SelectionChanged;
-			this.DocumentTreeView.NodesTextChanged += DocumentTreeView_NodesTextChanged;
-			this.DocumentTreeView.NodeActivated += DocumentTreeView_NodeActivated;
-			this.DocumentTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
-			this.tabService = tabServiceProvider.Create();
-			this.TabGroupService = this.tabService.Create(new TabGroupServiceOptions(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID));
-			this.TabGroupService.TabSelectionChanged += TabGroupService_TabSelectionChanged;
-			this.TabGroupService.TabGroupSelectionChanged += TabGroupService_TabGroupSelectionChanged;
+			DocumentTreeView = documentTreeView;
+			DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
+			DocumentTreeView.SelectionChanged += DocumentTreeView_SelectionChanged;
+			DocumentTreeView.NodesTextChanged += DocumentTreeView_NodesTextChanged;
+			DocumentTreeView.NodeActivated += DocumentTreeView_NodeActivated;
+			DocumentTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
+			tabService = tabServiceProvider.Create();
+			TabGroupService = tabService.Create(new TabGroupServiceOptions(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID));
+			TabGroupService.TabSelectionChanged += TabGroupService_TabSelectionChanged;
+			TabGroupService.TabGroupSelectionChanged += TabGroupService_TabGroupSelectionChanged;
 		}
 
 		void TreeView_NodeRemoved(object sender, TreeViewNodeRemovedEventArgs e) {
@@ -191,7 +193,7 @@ namespace dnSpy.Documents.Tabs {
 		void OnNodeRemoved(DsDocumentNode node) {
 			var hash = GetSelfAndDsDocumentNodeChildren(node);
 			foreach (TabContentImpl tab in VisibleFirstTabs)
-				tab.OnNodesRemoved(hash, () => this.CreateTabContent(Array.Empty<DocumentTreeNodeData>()));
+				tab.OnNodesRemoved(hash, () => CreateTabContent(Array.Empty<DocumentTreeNodeData>()));
 			decompilationCache.Clear(new HashSet<IDsDocument>(hash.Select(a => a.Document)));
 		}
 
@@ -200,8 +202,7 @@ namespace dnSpy.Documents.Tabs {
 				hash = new HashSet<DsDocumentNode>();
 			hash.Add(node);
 			foreach (var c in node.TreeNode.DataChildren) {
-				var documentNode = c as DsDocumentNode;
-				if (documentNode != null)
+				if (c is DsDocumentNode documentNode)
 					GetSelfAndDsDocumentNodeChildren(documentNode, hash);
 			}
 			return hash;
@@ -248,8 +249,7 @@ namespace dnSpy.Documents.Tabs {
 		void DocumentTreeView_NodeActivated(object sender, DocumentTreeNodeActivatedEventArgs e) {
 			e.Handled = true;
 
-			var asmRefNode = e.Node as AssemblyReferenceNode;
-			if (asmRefNode != null) {
+			if (e.Node is AssemblyReferenceNode asmRefNode) {
 				var asm = DocumentTreeView.DocumentService.Resolve(asmRefNode.AssemblyRef, asmRefNode.GetModule());
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var asmNode = DocumentTreeView.FindNode(asm);
@@ -259,8 +259,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			}
 
-			var derivedTypeNode = e.Node as DerivedTypeNode;
-			if (derivedTypeNode != null) {
+			if (e.Node is DerivedTypeNode derivedTypeNode) {
 				var td = derivedTypeNode.TypeDef;
 				Debug.Assert(td != null);
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
@@ -271,8 +270,7 @@ namespace dnSpy.Documents.Tabs {
 				return;
 			}
 
-			var baseTypeNode = e.Node as BaseTypeNode;
-			if (baseTypeNode != null) {
+			if (e.Node is BaseTypeNode baseTypeNode) {
 				var tdr = baseTypeNode.TypeDefOrRef;
 				Debug.Assert(tdr != null);
 				var td = tdr?.ScopeType.ResolveTypeDef();
@@ -604,8 +602,8 @@ namespace dnSpy.Documents.Tabs {
 
 			public ReloadAllHelper(DocumentTabService documentTabService) {
 				this.documentTabService = documentTabService;
-				this.originalDocuments = new HashSet<IDsDocument>(documentTabService.DocumentTreeView.DocumentService.GetDocuments(), new DsDocumentComparer());
-				this.old_disable_DocumentCollectionChanged = documentTabService.disable_DocumentCollectionChanged;
+				originalDocuments = new HashSet<IDsDocument>(documentTabService.DocumentTreeView.DocumentService.GetDocuments(), new DsDocumentComparer());
+				old_disable_DocumentCollectionChanged = documentTabService.disable_DocumentCollectionChanged;
 				documentTabService.disable_DocumentCollectionChanged = true;
 			}
 

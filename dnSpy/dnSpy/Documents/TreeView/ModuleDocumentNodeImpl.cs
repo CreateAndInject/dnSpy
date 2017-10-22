@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,9 +50,8 @@ namespace dnSpy.Documents.TreeView {
 
 			var nsDict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var td in Document.ModuleDef.Types) {
-				List<TypeDef> list;
 				var ns = UTF8String.ToSystemStringOrEmpty(td.Namespace);
-				if (!nsDict.TryGetValue(ns, out list))
+				if (!nsDict.TryGetValue(ns, out var list))
 					nsDict.Add(ns, list = new List<TypeDef>());
 				list.Add(td);
 			}

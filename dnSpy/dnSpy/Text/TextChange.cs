@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -50,14 +50,10 @@ namespace dnSpy.Text {
 		public string OldText => oldText.Text;
 
 		public TextChange(int offset, ITextSource oldText, ITextSource newText) {
-			if (oldText == null)
-				throw new ArgumentNullException(nameof(oldText));
-			if (newText == null)
-				throw new ArgumentNullException(nameof(newText));
-			this.oldOffset = offset;
-			this.newOffset = offset;
-			this.oldText = oldText;
-			this.newText = newText;
+			oldOffset = offset;
+			newOffset = offset;
+			this.oldText = oldText ?? throw new ArgumentNullException(nameof(oldText));
+			this.newText = newText ?? throw new ArgumentNullException(nameof(newText));
 		}
 
 		public TextChange(int offset, string oldText, string newText) {
@@ -67,8 +63,8 @@ namespace dnSpy.Text {
 				throw new ArgumentNullException(nameof(oldText));
 			if (newText == null)
 				throw new ArgumentNullException(nameof(newText));
-			this.oldOffset = offset;
-			this.newOffset = offset;
+			oldOffset = offset;
+			newOffset = offset;
 			this.oldText = new StringTextSource(oldText);
 			this.newText = new StringTextSource(newText);
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,11 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Event;
+using dnSpy.AsmEditor.Field;
+using dnSpy.AsmEditor.Method;
+using dnSpy.AsmEditor.Property;
+using dnSpy.AsmEditor.Types;
 using Emit = dnlib.DotNet.Emit;
 
 namespace dnSpy.AsmEditor.Compiler {
@@ -33,35 +38,52 @@ namespace dnSpy.AsmEditor.Compiler {
 	/// This is a new type that got imported into the target module
 	/// </summary>
 	sealed class NewImportedType : ImportedType {
-		public NewImportedType(TypeDef targetType) {
-			TargetType = targetType;
+		public NewImportedType(TypeDef targetType) => TargetType = targetType;
+	}
+
+	struct EditedProperty {
+		public PropertyDef OriginalProperty { get; }
+		public PropertyDefOptions PropertyDefOptions { get; }
+		public EditedProperty(PropertyDef originalProperty, PropertyDefOptions propertyDefOptions) {
+			OriginalProperty = originalProperty;
+			PropertyDefOptions = propertyDefOptions;
 		}
 	}
 
-	/// <summary>
-	/// An edited method body
-	/// </summary>
-	struct EditedMethodBody {
-		/// <summary>
-		/// Original method
-		/// </summary>
+	struct EditedEvent {
+		public EventDef OriginalEvent { get; }
+		public EventDefOptions EventDefOptions { get; }
+		public EditedEvent(EventDef originalEvent, EventDefOptions eventDefOptions) {
+			OriginalEvent = originalEvent;
+			EventDefOptions = eventDefOptions;
+		}
+	}
+
+	struct EditedMethod {
 		public MethodDef OriginalMethod { get; }
-
-		/// <summary>
-		/// New method body
-		/// </summary>
 		public Emit.MethodBody NewBody { get; }
+		public MethodDefOptions MethodDefOptions { get; }
 
-		/// <summary>
-		/// New <see cref="MethodImplAttributes"/> value
-		/// </summary>
-		public MethodImplAttributes ImplAttributes { get; }
-
-		public EditedMethodBody(MethodDef originalMethod, Emit.MethodBody newBody, MethodImplAttributes implAttributes) {
+		public EditedMethod(MethodDef originalMethod, Emit.MethodBody newBody, MethodDefOptions methodDefOptions) {
 			OriginalMethod = originalMethod;
 			NewBody = newBody;
-			ImplAttributes = implAttributes;
+			MethodDefOptions = methodDefOptions;
 		}
+	}
+
+	struct EditedField {
+		public FieldDef OriginalField { get; }
+		public FieldDefOptions FieldDefOptions { get; }
+		public EditedField(FieldDef originalField, FieldDefOptions fieldDefOptions) {
+			OriginalField = originalField;
+			FieldDefOptions = fieldDefOptions;
+		}
+	}
+
+	enum MergeKind {
+		Rename,
+		Merge,
+		Edit,
 	}
 
 	/// <summary>
@@ -69,20 +91,34 @@ namespace dnSpy.AsmEditor.Compiler {
 	/// more members that must be included in the existing type
 	/// </summary>
 	sealed class MergedImportedType : ImportedType {
-		internal bool RenameDuplicates { get; }
+		internal MergeKind MergeKind { get; }
 
 		public bool IsEmpty =>
-			NewNestedTypes.Count == 0 &&
+			TargetType.IsGlobalModuleType &&
+			NewOrExistingNestedTypes.Count == 0 &&
 			NewProperties.Count == 0 &&
 			NewEvents.Count == 0 &&
 			NewMethods.Count == 0 &&
 			NewFields.Count == 0 &&
-			EditedMethodBodies.Count == 0;
+			EditedProperties.Count == 0 &&
+			EditedEvents.Count == 0 &&
+			EditedMethods.Count == 0 &&
+			EditedFields.Count == 0 &&
+			DeletedNestedTypes.Count == 0 &&
+			DeletedProperties.Count == 0 &&
+			DeletedEvents.Count == 0 &&
+			DeletedMethods.Count == 0 &&
+			DeletedFields.Count == 0;
 
 		/// <summary>
-		/// New nested types that must be added to <see cref="ImportedType.TargetType"/>
+		/// New type properties
 		/// </summary>
-		public List<ImportedType> NewNestedTypes { get; } = new List<ImportedType>();
+		public TypeDefOptions NewTypeDefOptions { get; }
+
+		/// <summary>
+		/// New or existing nested types that must be added to <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<ImportedType> NewOrExistingNestedTypes { get; } = new List<ImportedType>();
 
 		/// <summary>
 		/// New properties that must be added to <see cref="ImportedType.TargetType"/>
@@ -105,13 +141,54 @@ namespace dnSpy.AsmEditor.Compiler {
 		public List<FieldDef> NewFields { get; } = new List<FieldDef>();
 
 		/// <summary>
-		/// New method bodies that must be updated
+		/// Edited properties
 		/// </summary>
-		public List<EditedMethodBody> EditedMethodBodies { get; } = new List<EditedMethodBody>();
+		public List<EditedProperty> EditedProperties { get; } = new List<EditedProperty>();
 
-		public MergedImportedType(TypeDef targetType, bool renameDuplicates) {
+		/// <summary>
+		/// Edited events
+		/// </summary>
+		public List<EditedEvent> EditedEvents { get; } = new List<EditedEvent>();
+
+		/// <summary>
+		/// Edited methods
+		/// </summary>
+		public List<EditedMethod> EditedMethods { get; } = new List<EditedMethod>();
+
+		/// <summary>
+		/// Edited fields
+		/// </summary>
+		public List<EditedField> EditedFields { get; } = new List<EditedField>();
+
+		/// <summary>
+		/// Deleted nested types that must be removed from <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<TypeDef> DeletedNestedTypes { get; } = new List<TypeDef>();
+
+		/// <summary>
+		/// Deleted properties that must be removed from <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<PropertyDef> DeletedProperties { get; } = new List<PropertyDef>();
+
+		/// <summary>
+		/// Deleted events that must be removed from <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<EventDef> DeletedEvents { get; } = new List<EventDef>();
+
+		/// <summary>
+		/// Deleted methods that must be removed from <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<MethodDef> DeletedMethods { get; } = new List<MethodDef>();
+
+		/// <summary>
+		/// Deleted fields that must be removed from <see cref="ImportedType.TargetType"/>
+		/// </summary>
+		public List<FieldDef> DeletedFields { get; } = new List<FieldDef>();
+
+		public MergedImportedType(TypeDef targetType, MergeKind mergeKind) {
 			TargetType = targetType;
-			RenameDuplicates = renameDuplicates;
+			MergeKind = mergeKind;
+			NewTypeDefOptions = new TypeDefOptions();
 		}
 	}
 }

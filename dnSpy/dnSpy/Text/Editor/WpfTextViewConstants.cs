@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,5 +24,10 @@ namespace dnSpy.Text.Editor {
 		/// max horizontal scrolling distance or when moving caret horizontally.
 		/// </summary>
 		public const double EXTRA_HORIZONTAL_WIDTH = 200;
+
+		/// <summary>
+		/// Same as <see cref="EXTRA_HORIZONTAL_WIDTH"/> but used by the horizontal scroll bar
+		/// </summary>
+		public const double EXTRA_HORIZONTAL_SCROLLBAR_WIDTH = EXTRA_HORIZONTAL_WIDTH;
 	}
 }

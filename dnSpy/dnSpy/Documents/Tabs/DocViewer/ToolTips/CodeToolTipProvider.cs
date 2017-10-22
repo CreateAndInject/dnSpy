@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -44,20 +44,12 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly bool syntaxHighlight;
 
 		public CodeToolTipProvider(IWpfTextView wpfTextView, IDotNetImageService dotNetImageService, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, bool syntaxHighlight) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			if (dotNetImageService == null)
-				throw new ArgumentNullException(nameof(dotNetImageService));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			this.wpfTextView = wpfTextView;
-			this.dotNetImageService = dotNetImageService;
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
 			this.syntaxHighlight = syntaxHighlight;
-			this.writers = new List<CodeToolTipWriter>();
+			writers = new List<CodeToolTipWriter>();
 			CreateNewOutput();
 		}
 
@@ -98,24 +90,19 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		public void SetImage(object @ref) => Image = TryGetImageReference(@ref);
 
 		ImageReference? TryGetImageReference(object @ref) {
-			var td = @ref as TypeDef;
-			if (td != null)
+			if (@ref is TypeDef td)
 				return dotNetImageService.GetImageReference(td);
 
-			var md = @ref as MethodDef;
-			if (md != null)
+			if (@ref is MethodDef md)
 				return dotNetImageService.GetImageReference(md);
 
-			var pd = @ref as PropertyDef;
-			if (pd != null)
+			if (@ref is PropertyDef pd)
 				return dotNetImageService.GetImageReference(pd);
 
-			var ed = @ref as EventDef;
-			if (ed != null)
+			if (@ref is EventDef ed)
 				return dotNetImageService.GetImageReference(ed);
 
-			var fd = @ref as FieldDef;
-			if (fd != null)
+			if (@ref is FieldDef fd)
 				return dotNetImageService.GetImageReference(fd);
 
 			if (@ref is NamespaceReference)
@@ -123,9 +110,9 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 
 			if (@ref is GenericParam)
 				return dotNetImageService.GetImageReferenceGenericParameter();
-			if (@ref is Local)
+			if (@ref is Local || @ref is SourceLocal)
 				return dotNetImageService.GetImageReferenceLocal();
-			if (@ref is Parameter)
+			if (@ref is Parameter || @ref is SourceParameter)
 				return dotNetImageService.GetImageReferenceParameter();
 			if (@ref is IType)
 				return dotNetImageService.GetImageReferenceType();

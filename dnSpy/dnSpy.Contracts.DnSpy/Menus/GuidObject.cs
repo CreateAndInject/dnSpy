@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,21 +33,21 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of object (eg. <see cref="MenuConstants.GUIDOBJ_HEXBOX_GUID"/>)</param>
+		/// <param name="guid">Guid of object (eg. <see cref="MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID"/>)</param>
 		/// <param name="obj">Object</param>
 		public GuidObject(string guid, object obj) {
-			this.Object = obj;
-			this.Guid = new Guid(guid);
+			Object = obj;
+			Guid = new Guid(guid);
 		}
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="guid">Guid of object (eg. <see cref="MenuConstants.GUIDOBJ_HEXBOX_GUID"/>)</param>
+		/// <param name="guid">Guid of object (eg. <see cref="MenuConstants.GUIDOBJ_WPF_TEXTVIEW_GUID"/>)</param>
 		/// <param name="obj">Object</param>
 		public GuidObject(Guid guid, object obj) {
-			this.Object = obj;
-			this.Guid = guid;
+			Object = obj;
+			Guid = guid;
 		}
 	}
 }

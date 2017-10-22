@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -46,9 +46,7 @@ namespace dnSpy.Text.Editor {
 		readonly IWpfTextViewHost wpfTextViewHost;
 
 		public HorizontalScrollBarMargin(IWpfTextViewHost wpfTextViewHost) {
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			this.wpfTextViewHost = wpfTextViewHost;
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
 			IsVisibleChanged += HorizontalScrollBarMargin_IsVisibleChanged;
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			SetResourceReference(StyleProperty, typeof(ScrollBar));
@@ -102,7 +100,7 @@ namespace dnSpy.Text.Editor {
 			Value = wpfTextViewHost.TextView.ViewportLeft;
 		}
 
-		void UpdateMaximum() => Maximum = IsWordWrap ? 0 : Math.Max(wpfTextViewHost.TextView.ViewportLeft, wpfTextViewHost.TextView.MaxTextRightCoordinate - wpfTextViewHost.TextView.ViewportWidth + WpfTextViewConstants.EXTRA_HORIZONTAL_WIDTH);
+		void UpdateMaximum() => Maximum = IsWordWrap ? 0 : Math.Max(wpfTextViewHost.TextView.ViewportLeft, wpfTextViewHost.TextView.MaxTextRightCoordinate - wpfTextViewHost.TextView.ViewportWidth + WpfTextViewConstants.EXTRA_HORIZONTAL_SCROLLBAR_WIDTH);
 
 		bool hasRegisteredEvents;
 		void RegisterEvents() {

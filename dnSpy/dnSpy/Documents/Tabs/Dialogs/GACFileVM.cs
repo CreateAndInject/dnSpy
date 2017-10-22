@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -70,7 +70,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly GacFileInfo gacFileInfo;
 
 		public GACFileVM(OpenFromGACVM owner, GacFileInfo gacFileInfo) {
-			this.Owner = owner;
+			Owner = owner;
 			this.gacFileInfo = gacFileInfo;
 		}
 

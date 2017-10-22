@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,7 +32,7 @@ namespace dnSpy.Language.Intellisense {
 
 			public CommandTargetFilter(IntellisenseSessionStack owner) {
 				this.owner = owner;
-				this.wpfTextView = owner.wpfTextView as IDsWpfTextView;
+				wpfTextView = owner.wpfTextView as IDsWpfTextView;
 				Debug.Assert(wpfTextView != null);
 			}
 

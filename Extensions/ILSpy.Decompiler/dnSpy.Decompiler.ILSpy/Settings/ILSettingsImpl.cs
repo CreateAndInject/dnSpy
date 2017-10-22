@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,14 +33,15 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		ILSettingsImpl(ISettingsService settingsService) {
 			this.settingsService = settingsService;
 
-			this.disableSave = true;
+			disableSave = true;
 			var sect = settingsService.GetOrCreateSection(SETTINGS_GUID);
-			this.ShowILComments = sect.Attribute<bool?>(nameof(ShowILComments)) ?? this.ShowILComments;
-			this.ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? this.ShowXmlDocumentation;
-			this.ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? this.ShowTokenAndRvaComments;
-			this.ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? this.ShowILBytes;
-			this.SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? this.SortMembers;
-			this.disableSave = false;
+			ShowILComments = sect.Attribute<bool?>(nameof(ShowILComments)) ?? ShowILComments;
+			ShowXmlDocumentation = sect.Attribute<bool?>(nameof(ShowXmlDocumentation)) ?? ShowXmlDocumentation;
+			ShowTokenAndRvaComments = sect.Attribute<bool?>(nameof(ShowTokenAndRvaComments)) ?? ShowTokenAndRvaComments;
+			ShowILBytes = sect.Attribute<bool?>(nameof(ShowILBytes)) ?? ShowILBytes;
+			SortMembers = sect.Attribute<bool?>(nameof(SortMembers)) ?? SortMembers;
+			ShowPdbInfo = sect.Attribute<bool?>(nameof(ShowPdbInfo)) ?? ShowPdbInfo;
+			disableSave = false;
 		}
 		readonly bool disableSave;
 
@@ -54,6 +55,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 			sect.Attribute(nameof(ShowTokenAndRvaComments), ShowTokenAndRvaComments);
 			sect.Attribute(nameof(ShowILBytes), ShowILBytes);
 			sect.Attribute(nameof(SortMembers), SortMembers);
+			sect.Attribute(nameof(ShowPdbInfo), ShowPdbInfo);
 		}
 	}
 }

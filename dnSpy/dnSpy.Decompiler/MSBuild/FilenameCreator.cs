@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,15 +34,15 @@ namespace dnSpy.Decompiler.MSBuild {
 		public FilenameCreator(string baseDir) {
 			Debug.Assert(Path.IsPathRooted(baseDir));
 			this.baseDir = baseDir;
-			this.defaultNamespace = string.Empty;
-			this.usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			defaultNamespace = string.Empty;
+			usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		public FilenameCreator(string baseDir, string defaultNamespace) {
 			Debug.Assert(Path.IsPathRooted(baseDir));
 			this.baseDir = baseDir;
 			this.defaultNamespace = defaultNamespace;
-			this.usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 		}
 
 		public string Create(string fileExt, string fullName) {
@@ -127,8 +127,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		public string CreateFromNamespaceFilename(string @namespace, string filename) {
 			var fileExt = FileUtils.GetExtension(filename);
 			var relPath = filename.Substring(0, filename.Length - fileExt.Length);
-			string ns, filenameNoExt;
-			ExtractNamespace(relPath, out ns, out filenameNoExt);
+			ExtractNamespace(relPath, out string ns, out string filenameNoExt);
 			if (!string.IsNullOrEmpty(ns)) {
 				if (string.IsNullOrEmpty(@namespace))
 					@namespace = ns;

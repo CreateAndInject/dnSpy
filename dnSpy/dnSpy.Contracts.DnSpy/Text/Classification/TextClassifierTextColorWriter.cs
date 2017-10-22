@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,6 +33,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		public string Text => sb.ToString();
 
 		/// <summary>
+		/// Gets the text length
+		/// </summary>
+		public int Length => sb.Length;
+
+		/// <summary>
 		/// Gets the colors
 		/// </summary>
 		public List<SpanData<object>> Colors => colors;
@@ -44,8 +49,8 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// Constructor
 		/// </summary>
 		public TextClassifierTextColorWriter() {
-			this.colors = new List<SpanData<object>>();
-			this.sb = new StringBuilder();
+			colors = new List<SpanData<object>>();
+			sb = new StringBuilder();
 		}
 
 		/// <inheritdoc/>

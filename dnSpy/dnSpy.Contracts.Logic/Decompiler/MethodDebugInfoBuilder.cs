@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,7 +28,11 @@ namespace dnSpy.Contracts.Decompiler {
 	public sealed class MethodDebugInfoBuilder {
 		readonly MethodDef method;
 		readonly List<SourceStatement> statements;
-		readonly SourceLocal[] locals;
+
+		/// <summary>
+		/// Gets the scope builder
+		/// </summary>
+		public MethodDebugScopeBuilder Scope { get; }
 
 		/// <summary>
 		/// Start of method (eg. position of the first character of the modifier or return type)
@@ -40,18 +44,29 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		public int? EndPosition { get; set; }
 
+		readonly int decompilerOptionsVersion;
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
-		/// <param name="locals">Locals or null</param>
-		public MethodDebugInfoBuilder(MethodDef method, SourceLocal[] locals = null) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
-			this.method = method;
-			this.statements = new List<SourceStatement>();
-			this.locals = locals ?? Array.Empty<SourceLocal>();
+		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method) {
+			this.decompilerOptionsVersion = decompilerOptionsVersion;
+			this.method = method ?? throw new ArgumentNullException(nameof(method));
+			statements = new List<SourceStatement>();
+			Scope = new MethodDebugScopeBuilder();
+			Scope.Span = BinSpan.FromBounds(0, (uint)method.Body.GetCodeSize());
 		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
+		/// <param name="method">Method</param>
+		/// <param name="locals">Locals</param>
+		public MethodDebugInfoBuilder(int decompilerOptionsVersion, MethodDef method, SourceLocal[] locals)
+			: this(decompilerOptionsVersion, method) => Scope.Locals.AddRange(locals);
 
 		/// <summary>
 		/// Adds a <see cref="SourceStatement"/>
@@ -69,7 +84,7 @@ namespace dnSpy.Contracts.Decompiler {
 				methodSpan = TextSpan.FromBounds(StartPosition.Value, EndPosition.Value);
 			else
 				methodSpan = null;
-			return new MethodDebugInfo(method, statements.ToArray(), locals, methodSpan);
+			return new MethodDebugInfo(decompilerOptionsVersion, method, statements.ToArray(), Scope.ToScope(), methodSpan);
 		}
 	}
 }

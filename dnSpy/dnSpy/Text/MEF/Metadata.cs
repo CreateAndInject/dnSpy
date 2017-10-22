@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -92,13 +92,6 @@ namespace dnSpy.Text.MEF {
 	}
 
 	public interface IContentTypeDefinitionMetadata {
-		[DefaultValue(null)]
-		IEnumerable<string> BaseDefinition { get; }
-
-		string Name { get; }
-	}
-
-	public interface ITextEditorFormatDefinitionMetadata {
 		[DefaultValue(null)]
 		IEnumerable<string> BaseDefinition { get; }
 

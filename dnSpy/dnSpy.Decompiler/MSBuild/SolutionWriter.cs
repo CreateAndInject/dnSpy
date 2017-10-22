@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,18 +47,18 @@ namespace dnSpy.Decompiler.MSBuild {
 			});
 			this.filename = filename;
 
-			this.configs = new List<string>();
-			this.configs.Add("Debug");
-			this.configs.Add("Release");
+			configs = new List<string>();
+			configs.Add("Debug");
+			configs.Add("Release");
 
 			var hash = new HashSet<string>(projects.Select(a => a.Platform));
-			this.platforms = new List<string>(hash.Count);
-			this.platforms.Add("Any CPU");
+			platforms = new List<string>(hash.Count);
+			platforms.Add("Any CPU");
 			hash.Remove("AnyCPU");
 			if (hash.Count > 0)
-				this.platforms.Add("Mixed Platforms");
+				platforms.Add("Mixed Platforms");
 			foreach (var p in hash)
-				this.platforms.Add(p);
+				platforms.Add(p);
 		}
 
 		public void Write() {
@@ -108,6 +108,37 @@ namespace dnSpy.Decompiler.MSBuild {
 					// 2015.2 = 14.0.25123.0
 					// 2015.3 = 14.0.25420.1
 					writer.Write("VisualStudioVersion = 14.0.23107.0" + crlf);
+					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
+					break;
+
+				case ProjectVersion.VS2017:
+					writer.Write("Microsoft Visual Studio Solution File, Format Version 12.00" + crlf);
+					writer.Write("# Visual Studio 15" + crlf);
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes-v15.0
+					// 2017 RTW = 15.0.26228.4 (March 7, 2017)
+					// 2017 RTW = 15.0.26228.9 (March 14, 2017)
+					// 2017 RTW = 15.0.26228.10 (March 28, 2017)
+					// 2017 RTW = 15.0.26228.12 (March 31, 2017)
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes-v15.1
+					// 2017 15.1 = 15.0.26403.0 (April 5, 2017)
+					// 2017 15.1 = 15.0.26403.3 (April 10, 2017)
+					// 2017 15.1 = 15.0.26403.7 (April 17, 2017)
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes-v15.2
+					// 2017 15.2 = 15.0.26430.4 (May 10, 2017)
+					// 2017 15.2 = 15.0.26430.6 (May 12, 2017)
+					// 2017 15.2 = 15.0.26430.12 (May 30, 2017)
+					// 2017 15.2 = 15.0.26430.13 (June 9, 2017)
+					// 2017 15.2 = 15.0.26430.14 (June 21, 2017)
+					// 2017 15.2 = 15.0.26430.15 (July 6, 2017)
+					// 2017 15.2 = 15.0.26430.16 (July 17, 2017)
+					// https://www.visualstudio.com/en-us/news/releasenotes/vs2017-relnotes
+					// 2017 15.3 = 15.0.26730.3 (August 14, 2017)
+					// 2017 15.3.1 = 15.0.26730.8 (August 18, 2017)
+					// 2017 15.3.2 = 15.0.26730.10 (August 22, 2017)
+					// 2017 15.3.3 = 15.0.26730.12 (August 29, 2017)
+					// 2017 15.3.4 = 15.0.26730.15 (September 12, 2017)
+					// 2017 15.3.5 = 15.0.26730.16 (September 19, 2017)
+					writer.Write("VisualStudioVersion = 15.0.26228.4" + crlf);
 					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
 					break;
 

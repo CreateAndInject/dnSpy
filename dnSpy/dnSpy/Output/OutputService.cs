@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,6 +25,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -32,7 +33,9 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Output;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Utilities;
 using dnSpy.Output.Settings;
 using dnSpy.Properties;
 using dnSpy.Text.Editor;
@@ -62,6 +65,10 @@ namespace dnSpy.Output {
 	sealed class OutputService : ViewModelBase, IOutputServiceInternal {
 		public ICommand ClearAllCommand => new RelayCommand(a => ClearAll(), a => CanClearAll);
 		public ICommand SaveCommand => new RelayCommand(a => SaveText(), a => CanSaveText);
+
+		public string ClearAllToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_ClearAll_ToolTip, dnSpy_Resources.ShortCutKeyCtrlL);
+		public string SaveToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_Save_ToolTip, dnSpy_Resources.ShortCutKeyCtrlS);
+		public string WordWrapToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.Output_WordWrap_ToolTip, dnSpy_Resources.ShortCutKeyCtrlECtrlW);
 
 		public bool WordWrap {
 			get { return (outputWindowOptionsService.Default.WordWrapStyle & WordWrapStyles.WordWrap) != 0; }
@@ -122,16 +129,17 @@ namespace dnSpy.Output {
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
 			this.logEditorProvider = logEditorProvider;
 			this.outputServiceSettingsImpl = outputServiceSettingsImpl;
-			this.prevSelectedGuid = outputServiceSettingsImpl.SelectedGuid;
+			prevSelectedGuid = outputServiceSettingsImpl.SelectedGuid;
 			this.pickSaveFilename = pickSaveFilename;
 			this.menuService = menuService;
-			this.outputBuffers = new ObservableCollection<OutputBufferVM>();
-			this.outputBuffers.CollectionChanged += OutputBuffers_CollectionChanged;
+			outputBuffers = new ObservableCollection<OutputBufferVM>();
+			outputBuffers.CollectionChanged += OutputBuffers_CollectionChanged;
 
 			var listeners = outputServiceListeners.OrderBy(a => a.Metadata.Order).ToArray();
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
 				foreach (var lazy in outputServiceListeners) {
 					var l = lazy.Value;
+					(l as IOutputServiceListener2)?.Initialize(this);
 				}
 			}));
 		}
@@ -179,7 +187,7 @@ namespace dnSpy.Output {
 			};
 			logEditorOptions.ExtraRoles.Add(PredefinedDsTextViewRoles.OutputTextPane);
 			var logEditor = logEditorProvider.Create(logEditorOptions);
-			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, Constants.Output);
+			logEditor.TextView.Options.SetOptionValue(DefaultWpfViewOptions.AppearanceCategory, AppearanceCategoryConstants.OutputWindow);
 
 			// Prevent toolwindow's ctx menu from showing up when right-clicking in the left margin
 			menuService.InitializeContextMenu(logEditor.TextViewHost.HostControl, Guid.NewGuid());
@@ -196,8 +204,7 @@ namespace dnSpy.Output {
 
 		IEnumerable<GuidObject> CreateGuidObjects(GuidObjectsProviderArgs args) {
 			yield return new GuidObject(MenuConstants.GUIDOBJ_OUTPUT_SERVICE_GUID, this);
-			var vm = SelectedOutputBufferVM as IOutputTextPane;
-			if (vm != null)
+			if (SelectedOutputBufferVM is IOutputTextPane vm)
 				yield return new GuidObject(MenuConstants.GUIDOBJ_ACTIVE_OUTPUT_TEXTPANE_GUID, vm);
 		}
 
@@ -216,7 +223,7 @@ namespace dnSpy.Output {
 			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
 			Debug.Assert(vm != null);
 			if (vm != null)
-				this.SelectedOutputBufferVM = vm;
+				SelectedOutputBufferVM = vm;
 		}
 
 		public bool CanCopy => SelectedOutputBufferVM?.CanCopy == true;
@@ -240,7 +247,7 @@ namespace dnSpy.Output {
 			if (filename == null)
 				return;
 			try {
-				File.WriteAllText(filename, vm.GetText());
+				File.WriteAllText(filename, vm.GetText(), Encoding.UTF8);
 			}
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,9 +29,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>[] documentTabUIContextProviders;
 
 		[ImportingConstructor]
-		DocumentTabUIContextLocatorProvider([ImportMany] IEnumerable<Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>> documentTabUIContextProviders) {
-			this.documentTabUIContextProviders = documentTabUIContextProviders.OrderBy(a => a.Metadata.Order).ToArray();
-		}
+		DocumentTabUIContextLocatorProvider([ImportMany] IEnumerable<Lazy<IDocumentTabUIContextProvider, IDocumentTabUIContextProviderMetadata>> documentTabUIContextProviders) => this.documentTabUIContextProviders = documentTabUIContextProviders.OrderBy(a => a.Metadata.Order).ToArray();
 
 		public IDocumentTabUIContextLocator Create() => new DocumentTabUIContextLocator(documentTabUIContextProviders);
 	}

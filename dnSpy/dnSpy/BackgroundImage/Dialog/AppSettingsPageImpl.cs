@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -191,36 +191,30 @@ namespace dnSpy.BackgroundImage.Dialog {
 		readonly IPickDirectory pickDirectory;
 
 		public AppSettingsPageImpl(IBackgroundImageSettingsService backgroundImageSettingsService, IPickFilename pickFilename, IPickDirectory pickDirectory, ImageSettingsInfo[] settings) {
-			if (backgroundImageSettingsService == null)
-				throw new ArgumentNullException(nameof(backgroundImageSettingsService));
-			if (pickFilename == null)
-				throw new ArgumentNullException(nameof(pickFilename));
-			if (pickDirectory == null)
-				throw new ArgumentNullException(nameof(pickDirectory));
 			if (settings == null)
 				throw new ArgumentNullException(nameof(settings));
 			if (settings.Length == 0)
 				throw new ArgumentException();
 			Debug.Assert(settings.All(a => a.Lazy.Value.UserVisible));
-			this.backgroundImageSettingsService = backgroundImageSettingsService;
-			this.pickFilename = pickFilename;
-			this.pickDirectory = pickDirectory;
-			this.Settings = new ObservableCollection<Settings>(settings.OrderBy(a => a.Lazy.Value.UIOrder).Select(a => new Settings(a)));
-			this.stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem.RawSettings.Stretch = (Stretch)stretchVM.SelectedItem);
-			this.stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM.SelectedItem);
-			this.imagePlacementVM = new EnumListVM(imagePlacementList, (a, b) => currentItem.RawSettings.ImagePlacement = (ImagePlacement)imagePlacementVM.SelectedItem);
-			this.opacityVM = new DoubleVM(a => { if (!opacityVM.HasError) currentItem.RawSettings.Opacity = FilterOpacity(opacityVM.Value); });
-			this.horizontalOffsetVM = new DoubleVM(a => { if (!horizontalOffsetVM.HasError) currentItem.RawSettings.HorizontalOffset = FilterOffset(horizontalOffsetVM.Value); });
-			this.verticalOffsetVM = new DoubleVM(a => { if (!verticalOffsetVM.HasError) currentItem.RawSettings.VerticalOffset = FilterOffset(verticalOffsetVM.Value); });
-			this.leftMarginWidthPercentVM = new DoubleVM(a => { if (!leftMarginWidthPercentVM.HasError) currentItem.RawSettings.LeftMarginWidthPercent = FilterMarginPercent(leftMarginWidthPercentVM.Value); });
-			this.rightMarginWidthPercentVM = new DoubleVM(a => { if (!rightMarginWidthPercentVM.HasError) currentItem.RawSettings.RightMarginWidthPercent = FilterMarginPercent(rightMarginWidthPercentVM.Value); });
-			this.topMarginHeightPercentVM = new DoubleVM(a => { if (!topMarginHeightPercentVM.HasError) currentItem.RawSettings.TopMarginHeightPercent = FilterMarginPercent(topMarginHeightPercentVM.Value); });
-			this.bottomMarginHeightPercentVM = new DoubleVM(a => { if (!bottomMarginHeightPercentVM.HasError) currentItem.RawSettings.BottomMarginHeightPercent = FilterMarginPercent(bottomMarginHeightPercentVM.Value); });
-			this.maxHeightVM = new DoubleVM(a => { if (!maxHeightVM.HasError) currentItem.RawSettings.MaxHeight = FilterLength(maxHeightVM.Value); });
-			this.maxWidthVM = new DoubleVM(a => { if (!maxWidthVM.HasError) currentItem.RawSettings.MaxWidth = FilterLength(maxWidthVM.Value); });
-			this.zoomVM = new DoubleVM(a => { if (!zoomVM.HasError) currentItem.RawSettings.Zoom = FilterZoom(zoomVM.Value); });
-			this.intervalVM = new DefaultConverterVM<TimeSpan>(a => { if (!intervalVM.HasError) currentItem.RawSettings.Interval = intervalVM.Value; });
-			CurrentItem = this.Settings.FirstOrDefault(a => a.Id == backgroundImageSettingsService.LastSelectedId) ?? this.Settings[0];
+			this.backgroundImageSettingsService = backgroundImageSettingsService ?? throw new ArgumentNullException(nameof(backgroundImageSettingsService));
+			this.pickFilename = pickFilename ?? throw new ArgumentNullException(nameof(pickFilename));
+			this.pickDirectory = pickDirectory ?? throw new ArgumentNullException(nameof(pickDirectory));
+			Settings = new ObservableCollection<Settings>(settings.OrderBy(a => a.Lazy.Value.UIOrder).Select(a => new Settings(a)));
+			stretchVM = new EnumListVM(EnumVM.Create(false, typeof(Stretch)), (a, b) => currentItem.RawSettings.Stretch = (Stretch)stretchVM.SelectedItem);
+			stretchDirectionVM = new EnumListVM(stretchDirectionList, (a, b) => currentItem.RawSettings.StretchDirection = (StretchDirection)stretchDirectionVM.SelectedItem);
+			imagePlacementVM = new EnumListVM(imagePlacementList, (a, b) => currentItem.RawSettings.ImagePlacement = (ImagePlacement)imagePlacementVM.SelectedItem);
+			opacityVM = new DoubleVM(a => { if (!opacityVM.HasError) currentItem.RawSettings.Opacity = FilterOpacity(opacityVM.Value); });
+			horizontalOffsetVM = new DoubleVM(a => { if (!horizontalOffsetVM.HasError) currentItem.RawSettings.HorizontalOffset = FilterOffset(horizontalOffsetVM.Value); });
+			verticalOffsetVM = new DoubleVM(a => { if (!verticalOffsetVM.HasError) currentItem.RawSettings.VerticalOffset = FilterOffset(verticalOffsetVM.Value); });
+			leftMarginWidthPercentVM = new DoubleVM(a => { if (!leftMarginWidthPercentVM.HasError) currentItem.RawSettings.LeftMarginWidthPercent = FilterMarginPercent(leftMarginWidthPercentVM.Value); });
+			rightMarginWidthPercentVM = new DoubleVM(a => { if (!rightMarginWidthPercentVM.HasError) currentItem.RawSettings.RightMarginWidthPercent = FilterMarginPercent(rightMarginWidthPercentVM.Value); });
+			topMarginHeightPercentVM = new DoubleVM(a => { if (!topMarginHeightPercentVM.HasError) currentItem.RawSettings.TopMarginHeightPercent = FilterMarginPercent(topMarginHeightPercentVM.Value); });
+			bottomMarginHeightPercentVM = new DoubleVM(a => { if (!bottomMarginHeightPercentVM.HasError) currentItem.RawSettings.BottomMarginHeightPercent = FilterMarginPercent(bottomMarginHeightPercentVM.Value); });
+			maxHeightVM = new DoubleVM(a => { if (!maxHeightVM.HasError) currentItem.RawSettings.MaxHeight = FilterLength(maxHeightVM.Value); });
+			maxWidthVM = new DoubleVM(a => { if (!maxWidthVM.HasError) currentItem.RawSettings.MaxWidth = FilterLength(maxWidthVM.Value); });
+			zoomVM = new DoubleVM(a => { if (!zoomVM.HasError) currentItem.RawSettings.Zoom = FilterZoom(zoomVM.Value); });
+			intervalVM = new DefaultConverterVM<TimeSpan>(a => { if (!intervalVM.HasError) currentItem.RawSettings.Interval = intervalVM.Value; });
+			CurrentItem = Settings.FirstOrDefault(a => a.Id == backgroundImageSettingsService.LastSelectedId) ?? Settings[0];
 		}
 
 		static double FilterMarginPercent(double value) {
@@ -342,10 +336,10 @@ namespace dnSpy.BackgroundImage.Dialog {
 		public string Images { get; set; }
 
 		public Settings(ImageSettingsInfo info) {
-			this.RawSettings = info.RawSettings;
-			this.Id = info.Lazy.Value.Id;
-			this.Name = info.Lazy.Value.DisplayName;
-			this.Images = string.Join(Environment.NewLine, RawSettings.Images);
+			RawSettings = info.RawSettings;
+			Id = info.Lazy.Value.Id;
+			Name = info.Lazy.Value.DisplayName;
+			Images = string.Join(Environment.NewLine, RawSettings.Images);
 			if (Images.Length != 0)
 				Images += Environment.NewLine;
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,9 +26,7 @@ namespace dnSpy.Controls {
 		public List<GridLength> RowsCols { get; }
 		public bool IsHorizontal { get; set; }
 
-		public StackedContentState() {
-			this.RowsCols = new List<GridLength>();
-		}
+		public StackedContentState() => RowsCols = new List<GridLength>();
 	}
 
 	static class StackedContentStateSerializer {

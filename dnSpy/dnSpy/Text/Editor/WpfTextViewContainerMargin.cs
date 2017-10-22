@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,13 +38,11 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(wpfTextViewMarginProviderCollectionProvider));
 			if (wpfTextViewHost == null)
 				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			this.name = name;
+			this.name = name ?? throw new ArgumentNullException(nameof(name));
 			this.isHorizontal = isHorizontal;
-			this.margins = Array.Empty<WpfTextViewMarginInfo>();
-			this.wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionProvider.Create(wpfTextViewHost, this, name);
-			this.wpfTextViewMarginProviderCollection.MarginsChanged += WpfTextViewMarginProviderCollection_MarginsChanged;
+			margins = Array.Empty<WpfTextViewMarginInfo>();
+			wpfTextViewMarginProviderCollection = wpfTextViewMarginProviderCollectionProvider.Create(wpfTextViewHost, this, name);
+			wpfTextViewMarginProviderCollection.MarginsChanged += WpfTextViewMarginProviderCollection_MarginsChanged;
 			UpdateMarginChildren();
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,7 @@ using System.Windows.Input;
 
 namespace dnSpy.Controls {
 	sealed class SysMenuButton : ButtonBase {
-		static SysMenuButton() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(SysMenuButton), new FrameworkPropertyMetadata(typeof(SysMenuButton)));
-		}
+		static SysMenuButton() => DefaultStyleKeyProperty.OverrideMetadata(typeof(SysMenuButton), new FrameworkPropertyMetadata(typeof(SysMenuButton)));
 
 		public SysMenuButton() {
 		}

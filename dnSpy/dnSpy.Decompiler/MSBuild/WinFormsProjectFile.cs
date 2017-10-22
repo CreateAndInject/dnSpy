@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		public DecompilationContext DecompilationContext => decompilationContext;
 
 		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, IDecompiler decompiler, Func<TextWriter, IDecompilerOutput> createDecompilerOutput)
-			: base(type, filename, decompilationContext, decompiler, createDecompilerOutput) {
-			this.SubType = "Form";
-		}
+			: base(type, filename, decompilationContext, decompiler, createDecompilerOutput) => SubType = "Form";
 
 		protected override void Decompile(DecompileContext ctx, IDecompilerOutput output) {
 			if (!decompiler.CanDecompile(DecompilationType.PartialType))

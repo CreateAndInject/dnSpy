@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,7 +34,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		public EventNodeCreator(ModuleDocumentNode modNode, TypeNode ownerNode, EventDef @event) {
 			this.ownerNode = ownerNode;
-			this.eventNode = modNode.Context.DocumentTreeView.Create(@event);
+			eventNode = modNode.Context.DocumentTreeView.Create(@event);
 		}
 
 		IEnumerable<MethodDef> GetMethods() {

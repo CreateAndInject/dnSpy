@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,7 +54,7 @@ namespace dnSpy.Text.Editor {
 		readonly GlyphTextViewMarkerGlyphTagger glyphTextViewMarkerGlyphTagTagger;
 		readonly GlyphTextViewMarkerGlyphTextMarkerTagger glyphTextViewMarkerGlyphTextMarkerTagTagger;
 		readonly GlyphTextViewMarkerClassificationTagger glyphTextViewMarkerClassificationTagTagger;
-		IMethodOffsetSpanMap methodOffsetSpanMap;
+		IDotNetSpanMap dotNetSpanMap;
 		readonly MarkerAndSpanCollection markerAndSpanCollection;
 		readonly IEditorFormatMap editorFormatMap;
 		readonly List<MarkerElement> markerElements;
@@ -81,6 +81,7 @@ namespace dnSpy.Text.Editor {
 			public int SelectedMarkersInDocumentCount {
 				get { return selectedMarkersInDocumentCount; }
 				set {
+					Debug.Assert(value >= 0);
 					if (selectedMarkersInDocumentCount == value)
 						return;
 					var oldValue = selectedMarkersInDocumentCount;
@@ -92,25 +93,36 @@ namespace dnSpy.Text.Editor {
 			int selectedMarkersInDocumentCount;
 
 			public MarkerAndSpanCollection(GlyphTextViewMarkerService owner) {
-				this.allMarkers = new List<IGlyphTextMarkerImpl>();
-				this.inDocMarkers = new Dictionary<IGlyphTextMarkerImpl, Span>();
+				allMarkers = new List<IGlyphTextMarkerImpl>();
+				inDocMarkers = new Dictionary<IGlyphTextMarkerImpl, Span>();
 				this.owner = owner;
 			}
 
-			public void UpdateSpans(IMethodOffsetSpanMap map) {
+			public void UpdateSpans(IDotNetSpanMap map) {
 				inDocMarkers.Clear();
 				SelectedMarkersInDocumentCount = 0;
 				if (map != null) {
 					var allMarkers = this.allMarkers;
 					for (int i = 0; i < allMarkers.Count; i++) {
-						var methodMarker = allMarkers[i] as IGlyphTextMethodMarkerImpl;
-						if (methodMarker != null) {
-							var span = map.ToSpan(methodMarker.Method, methodMarker.ILOffset);
+						Span? span;
+						switch (allMarkers[i]) {
+						case IGlyphTextMethodMarkerImpl methodMarker:
+							span = map.ToSpan(methodMarker.Method.Module, methodMarker.Method.Token, methodMarker.ILOffset);
 							if (span != null) {
 								inDocMarkers.Add(methodMarker, span.Value);
 								if (methodMarker.SelectedMarkerTypeName != null)
 									SelectedMarkersInDocumentCount++;
 							}
+							break;
+
+						case IGlyphTextDotNetTokenMarkerImpl tokenMarker:
+							span = map.ToSpan(tokenMarker.Module, tokenMarker.Token);
+							if (span != null) {
+								inDocMarkers.Add(tokenMarker, span.Value);
+								if (tokenMarker.SelectedMarkerTypeName != null)
+									SelectedMarkersInDocumentCount++;
+							}
+							break;
 						}
 					}
 				}
@@ -141,9 +153,10 @@ namespace dnSpy.Text.Editor {
 				for (int i = 0; i < allMarkers.Count; i++) {
 					if (allMarkers[i] == marker) {
 						allMarkers.RemoveAt(i);
-						inDocMarkers.Remove(marker);
-						if (marker.SelectedMarkerTypeName != null)
-							SelectedMarkersInDocumentCount--;
+						if (inDocMarkers.Remove(marker)) {
+							if (marker.SelectedMarkerTypeName != null)
+								SelectedMarkersInDocumentCount--;
+						}
 						return true;
 					}
 				}
@@ -156,15 +169,22 @@ namespace dnSpy.Text.Editor {
 					var marker = allMarkers[i];
 					if (markers.Contains(marker)) {
 						allMarkers.RemoveAt(i);
-						inDocMarkers.Remove(marker);
-						if (marker.SelectedMarkerTypeName != null)
-							SelectedMarkersInDocumentCount--;
+						if (inDocMarkers.Remove(marker)) {
+							if (marker.SelectedMarkerTypeName != null)
+								SelectedMarkersInDocumentCount--;
+						}
 						removed++;
 						if (removed >= markers.Count)
 							break;
 					}
 				}
 				return removed > 0;
+			}
+
+			public Span? GetSpan(IGlyphTextMarkerImpl marker) {
+				if (inDocMarkers.TryGetValue(marker, out var span))
+					return span;
+				return null;
 			}
 
 			public void Dispose() {
@@ -174,27 +194,24 @@ namespace dnSpy.Text.Editor {
 		}
 
 		GlyphTextViewMarkerService(IGlyphTextMarkerServiceImpl glyphTextMarkerServiceImpl, IWpfTextView wpfTextView) {
-			if (glyphTextMarkerServiceImpl == null)
-				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
-			this.onRemovedDelegate = OnRemoved;
-			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl;
-			this.TextView = wpfTextView;
-			this.markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.GlyphTextMarker);
-			this.markerAndSpanCollection = new MarkerAndSpanCollection(this);
-			this.markerElements = new List<MarkerElement>();
-			this.editorFormatMap = glyphTextMarkerServiceImpl.EditorFormatMapService.GetEditorFormatMap(wpfTextView);
-			this.glyphTextViewMarkerGlyphTagTagger = GlyphTextViewMarkerGlyphTagger.GetOrCreate(this);
-			this.glyphTextViewMarkerGlyphTextMarkerTagTagger = GlyphTextViewMarkerGlyphTextMarkerTagger.GetOrCreate(this);
-			this.glyphTextViewMarkerClassificationTagTagger = GlyphTextViewMarkerClassificationTagger.GetOrCreate(this);
-			this.useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
+			onRemovedDelegate = OnRemoved;
+			this.glyphTextMarkerServiceImpl = glyphTextMarkerServiceImpl ?? throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
+			TextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			markerLayer = wpfTextView.GetAdornmentLayer(PredefinedDsAdornmentLayers.GlyphTextMarker);
+			markerAndSpanCollection = new MarkerAndSpanCollection(this);
+			markerElements = new List<MarkerElement>();
+			editorFormatMap = glyphTextMarkerServiceImpl.EditorFormatMapService.GetEditorFormatMap(wpfTextView);
+			glyphTextViewMarkerGlyphTagTagger = GlyphTextViewMarkerGlyphTagger.GetOrCreate(this);
+			glyphTextViewMarkerGlyphTextMarkerTagTagger = GlyphTextViewMarkerGlyphTextMarkerTagger.GetOrCreate(this);
+			glyphTextViewMarkerClassificationTagTagger = GlyphTextViewMarkerClassificationTagger.GetOrCreate(this);
+			useReducedOpacityForHighContrast = wpfTextView.Options.GetOptionValue(DefaultWpfViewOptions.UseReducedOpacityForHighContrastOptionId);
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.LayoutChanged += WpfTextView_LayoutChanged;
 			wpfTextView.Options.OptionChanged += Options_OptionChanged;
 			glyphTextMarkerServiceImpl.MarkerAdded += GlyphTextMarkerServiceImpl_MarkerAdded;
 			glyphTextMarkerServiceImpl.MarkerRemoved += GlyphTextMarkerServiceImpl_MarkerRemoved;
 			glyphTextMarkerServiceImpl.MarkersRemoved += GlyphTextMarkerServiceImpl_MarkersRemoved;
+			glyphTextMarkerServiceImpl.GetGlyphTextMarkerAndSpan += GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan;
 			editorFormatMap.FormatMappingChanged += EditorFormatMap_FormatMappingChanged;
 		}
 
@@ -288,11 +305,9 @@ namespace dnSpy.Text.Editor {
 		bool glyphTextMarkerTagAggregatorWasNull;
 
 		internal void AddGlyphTextMarkerListener(IGlyphTextMarkerListener listener) {
-			if (listener == null)
-				throw new ArgumentNullException(nameof(listener));
 			if (glyphTextMarkerListener != null)
 				throw new InvalidOperationException("Only one instance is supported");
-			glyphTextMarkerListener = listener;
+			glyphTextMarkerListener = listener ?? throw new ArgumentNullException(nameof(listener));
 		}
 
 		internal void RemoveGlyphTextMarkerListener(IGlyphTextMarkerListener listener) {
@@ -337,16 +352,12 @@ namespace dnSpy.Text.Editor {
 			public MarkerElement(SnapshotSpan span, string formatType, string type, string selectedType, int zIndex, Geometry geometry) {
 				if (span.Snapshot == null)
 					throw new ArgumentException();
-				if (type == null)
-					throw new ArgumentNullException(nameof(type));
-				if (geometry == null)
-					throw new ArgumentNullException(nameof(geometry));
 				Span = span;
 				FormatType = formatType;
-				Type = type;
+				Type = type ?? throw new ArgumentNullException(nameof(type));
 				SelectedType = selectedType;
 				ZIndex = zIndex;
-				this.geometry = geometry;
+				this.geometry = geometry ?? throw new ArgumentNullException(nameof(geometry));
 				Panel.SetZIndex(this, zIndex);
 			}
 
@@ -560,8 +571,7 @@ namespace dnSpy.Text.Editor {
 				throw new ArgumentNullException(nameof(glyphTextMarkerServiceImpl));
 			if (wpfTextView == null)
 				throw new ArgumentNullException(nameof(wpfTextView));
-			GlyphTextViewMarkerService service;
-			if (wpfTextView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out service))
+			if (wpfTextView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out GlyphTextViewMarkerService service))
 				return service;
 			service = new GlyphTextViewMarkerService(glyphTextMarkerServiceImpl, wpfTextView);
 			wpfTextView.TextBuffer.Properties.AddProperty(typeof(GlyphTextViewMarkerService), service);
@@ -572,17 +582,17 @@ namespace dnSpy.Text.Editor {
 		public static IGlyphTextViewMarkerService TryGet(ITextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			GlyphTextViewMarkerService service;
-			textView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out service);
+			textView.TextBuffer.Properties.TryGetProperty(typeof(GlyphTextViewMarkerService), out GlyphTextViewMarkerService service);
 			return service;
 		}
 
 		void IGlyphTextViewMarkerService.SetMethodOffsetSpanMap(IMethodOffsetSpanMap map) {
-			if (methodOffsetSpanMap == map)
+			if (dotNetSpanMap == map)
 				return;
-			methodOffsetSpanMap = map;
+			dotNetSpanMap = map as IDotNetSpanMap;
+			Debug.Assert((map == null) == (dotNetSpanMap == null));
 			if (markerAndSpanCollection.Count != 0) {
-				markerAndSpanCollection.UpdateSpans(methodOffsetSpanMap);
+				markerAndSpanCollection.UpdateSpans(dotNetSpanMap);
 				InvalidateEverything();
 			}
 		}
@@ -598,16 +608,7 @@ namespace dnSpy.Text.Editor {
 		void Refresh(IGlyphTextMarkerImpl marker) {
 			if (!marker.TextViewFilter(TextView))
 				return;
-			var methodMarker = marker as IGlyphTextMethodMarkerImpl;
-			if (methodMarker != null) {
-				Refresh(methodMarker);
-				return;
-			}
 
-			Debug.Fail("Unknown marker type: " + marker.GetType());
-		}
-
-		void Refresh(IGlyphTextMethodMarkerImpl marker) {
 			var span = GetSnapshotSpan(marker);
 			if (span == null)
 				return;
@@ -615,29 +616,26 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void Refresh(IGlyphTextMarker marker, SnapshotSpan span) {
-			if (!TextView.TextViewLines.FormattedSpan.IntersectsWith(span))
-				return;
-			if (marker.GlyphImageReference != null)
+			bool visible = TextView.TextViewLines.FormattedSpan.IntersectsWith(span);
+			if (visible && marker.GlyphImageReference != null)
 				glyphTextViewMarkerGlyphTagTagger.RaiseTagsChanged(span);
 			if (marker.ClassificationType != null)
 				glyphTextViewMarkerClassificationTagTagger.RaiseTagsChanged(span);
-			if (marker.MarkerTypeName != null)
+			if (visible && marker.MarkerTypeName != null)
 				glyphTextViewMarkerGlyphTextMarkerTagTagger.RaiseTagsChanged(span);
 		}
 
 		SnapshotSpan? GetSnapshotSpan(IGlyphTextMarker marker) {
-			var methodMarker = marker as IGlyphTextMethodMarker;
-			if (methodMarker != null)
-				return GetSnapshotSpan(methodMarker);
-
-			Debug.Fail("Unknown marker type: " + marker.GetType());
-			return null;
-		}
-
-		SnapshotSpan? GetSnapshotSpan(IGlyphTextMethodMarker marker) {
-			if (methodOffsetSpanMap == null)
+			Span? span;
+			if (marker is IGlyphTextMethodMarker methodMarker)
+				span = dotNetSpanMap?.ToSpan(methodMarker.Method.Module, methodMarker.Method.Token, methodMarker.ILOffset);
+			else if (marker is IGlyphTextDotNetTokenMarker tokenMarker)
+				span = dotNetSpanMap?.ToSpan(tokenMarker.Module, tokenMarker.Token);
+			else {
+				Debug.Fail("Unknown marker type: " + marker.GetType());
 				return null;
-			var span = methodOffsetSpanMap.ToSpan(marker.Method, marker.ILOffset);
+			}
+
 			if (span == null)
 				return null;
 			var snapshot = TextView.TextSnapshot;
@@ -687,6 +685,32 @@ namespace dnSpy.Text.Editor {
 			else {
 				foreach (var marker in e.Markers)
 					Refresh(marker);
+			}
+		}
+
+		void GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan(object sender, GetGlyphTextMarkerAndSpanEventArgs e) {
+			if (e.TextView != TextView)
+				return;
+			e.Result = GetGlyphTextMarkerAndSpan(e.Span);
+		}
+
+		GlyphTextMarkerAndSpan[] GetGlyphTextMarkerAndSpan(SnapshotSpan span) {
+			List<GlyphTextMarkerAndSpan> result = null;
+			foreach (var info in GetMarkers(new NormalizedSnapshotSpanCollection(span), startOfSpanOnly: false)) {
+				if (result == null)
+					result = new List<GlyphTextMarkerAndSpan>();
+				result.Add(new GlyphTextMarkerAndSpan(info.Marker, info.Span));
+			}
+			if (result == null)
+				return Array.Empty<GlyphTextMarkerAndSpan>();
+			else {
+				result.Sort((a, b) => {
+					var c = a.Span.Start.Position - b.Span.Start.Position;
+					if (c != 0)
+						return c;
+					return a.Span.Span.Length - b.Span.Span.Length;
+				});
+				return result.ToArray();
 			}
 		}
 
@@ -787,19 +811,23 @@ namespace dnSpy.Text.Editor {
 			return Array.Empty<IGlyphTextMarkerImpl>();
 		}
 
+		internal SnapshotSpan GetSpan(IGlyphTextMarker marker) {
+			if (marker == null)
+				throw new ArgumentNullException(nameof(marker));
+			var impl = marker as IGlyphTextMarkerImpl;
+			if (impl == null)
+				throw new ArgumentException();
+			var span = markerAndSpanCollection.GetSpan(impl) ?? new Span(0, 0);
+			var snapshot = TextView.TextSnapshot;
+			if (span.End <= snapshot.Length)
+				return new SnapshotSpan(snapshot, span);
+			return new SnapshotSpan(snapshot, 0, 0);
+		}
+
 		internal IWpfTextViewLine GetVisibleLine(IGlyphTextMarkerImpl marker) {
 			if (marker == null)
 				throw new ArgumentNullException(nameof(marker));
 
-			var methodMarker = marker as IGlyphTextMethodMarkerImpl;
-			if (methodMarker != null)
-				return GetVisibleLine(methodMarker);
-
-			Debug.Fail("Unknown marker type: " + marker.GetType());
-			return null;
-		}
-
-		IWpfTextViewLine GetVisibleLine(IGlyphTextMethodMarkerImpl marker) {
 			var span = GetSnapshotSpan(marker);
 			if (span == null)
 				return null;
@@ -819,6 +847,7 @@ namespace dnSpy.Text.Editor {
 			glyphTextMarkerServiceImpl.MarkerAdded -= GlyphTextMarkerServiceImpl_MarkerAdded;
 			glyphTextMarkerServiceImpl.MarkerRemoved -= GlyphTextMarkerServiceImpl_MarkerRemoved;
 			glyphTextMarkerServiceImpl.MarkersRemoved -= GlyphTextMarkerServiceImpl_MarkersRemoved;
+			glyphTextMarkerServiceImpl.GetGlyphTextMarkerAndSpan -= GlyphTextMarkerServiceImpl_GetGlyphTextMarkerAndSpan;
 			editorFormatMap.FormatMappingChanged -= EditorFormatMap_FormatMappingChanged;
 			Debug.Assert(glyphTextMarkerTagAggregator != null);
 			if (glyphTextMarkerTagAggregator != null) {

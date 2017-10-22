@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		double IZoomable.ZoomValue => ScriptContent.ZoomLevel / 100.0;
 
 		public ScriptToolWindowContent(Guid contentGuid) {
-			this.Guid = contentGuid;
+			Guid = contentGuid;
 		}
 
 		public override void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {

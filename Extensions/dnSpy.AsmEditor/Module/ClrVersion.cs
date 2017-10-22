@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Module {
 		CLR20,
 
 		/// <summary>
-		/// .NET Framework 4 - 4.6
+		/// .NET Framework 4 - 4.7
 		/// </summary>
 		CLR40,
 

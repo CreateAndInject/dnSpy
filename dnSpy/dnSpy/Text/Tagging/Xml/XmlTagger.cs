@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ namespace dnSpy.Text.Tagging.Xml {
 		readonly XmlTaggerClassificationTypes xmlTaggerClassificationTypes;
 
 		[ImportingConstructor]
-		XmlTaggerProvider(XmlTaggerClassificationTypes xmlTaggerClassificationTypes) {
-			this.xmlTaggerClassificationTypes = xmlTaggerClassificationTypes;
-		}
+		XmlTaggerProvider(XmlTaggerClassificationTypes xmlTaggerClassificationTypes) => this.xmlTaggerClassificationTypes = xmlTaggerClassificationTypes;
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag => new XmlTagger(xmlTaggerClassificationTypes) as ITagger<T>;
 	}

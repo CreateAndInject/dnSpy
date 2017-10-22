@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,25 +37,25 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public List<Instruction> Instructions = new List<Instruction>();
 		public List<ExceptionHandler> ExceptionHandlers = new List<ExceptionHandler>();
 		public List<Local> Locals = new List<Local>();
-		public PdbScope Scope;//TODO: Use this
+		public PdbMethod PdbMethod;//TODO: Use this
 
 		public CilBodyOptions() {
 		}
 
 		public CilBodyOptions(CilBody body, RVA headerRva, FileOffset headerFileOffset, RVA rva, FileOffset fileOffset) {
-			this.KeepOldMaxStack = body.KeepOldMaxStack;
-			this.InitLocals = body.InitLocals;
-			this.HeaderSize = body.HeaderSize;
-			this.MaxStack = body.MaxStack;
-			this.LocalVarSigTok = body.LocalVarSigTok;
-			this.HeaderRVA = headerRva;
-			this.HeaderFileOffset = headerFileOffset;
-			this.RVA = rva;
-			this.FileOffset = fileOffset;
-			this.Instructions.AddRange(body.Instructions);
-			this.ExceptionHandlers.AddRange(body.ExceptionHandlers);
-			this.Locals.AddRange(body.Variables);
-			this.Scope = body.Scope;
+			KeepOldMaxStack = body.KeepOldMaxStack;
+			InitLocals = body.InitLocals;
+			HeaderSize = body.HeaderSize;
+			MaxStack = body.MaxStack;
+			LocalVarSigTok = body.LocalVarSigTok;
+			HeaderRVA = headerRva;
+			HeaderFileOffset = headerFileOffset;
+			RVA = rva;
+			FileOffset = fileOffset;
+			Instructions.AddRange(body.Instructions);
+			ExceptionHandlers.AddRange(body.ExceptionHandlers);
+			Locals.AddRange(body.Variables);
+			PdbMethod = body.PdbMethod;
 		}
 
 		public CilBody CopyTo(CilBody body) {
@@ -69,8 +69,8 @@ namespace dnSpy.AsmEditor.MethodBody {
 			body.ExceptionHandlers.Clear();
 			body.ExceptionHandlers.AddRange(ExceptionHandlers);
 			body.Variables.Clear();
-			body.Variables.AddRange(this.Locals);
-			body.Scope = this.Scope;
+			body.Variables.AddRange(Locals);
+			body.PdbMethod = PdbMethod;
 			body.UpdateInstructionOffsets();
 			return body;
 		}

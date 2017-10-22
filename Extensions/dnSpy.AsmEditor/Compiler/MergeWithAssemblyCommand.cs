@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ using dnSpy.Contracts.MVVM;
 namespace dnSpy.AsmEditor.Compiler {
 	[DebuggerDisplay("{Description}")]
 	sealed class MergeWithAssemblyCommand : EditCodeCommandBase {
-		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 13)]
+		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCUMENTS_ASMED_ILED, Order = 19.999)]
 		sealed class DocumentsCommand : DocumentsContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(AsmEditorContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 43)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 49.999)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -76,7 +76,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(AsmEditorContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 13)]
+		[ExportMenuItem(Header = "res:MergeWithAssemblyCommand", Icon = DsImagesAttribute.Assembly, Group = MenuConstants.GROUP_CTX_DOCVIEWER_ASMED_ILED, Order = 19.999)]
 		sealed class CodeCommand : NodesCodeContextMenuHandler {
 			readonly Lazy<IUndoCommandService> undoCommandService;
 			readonly Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider;
@@ -96,20 +96,22 @@ namespace dnSpy.AsmEditor.Compiler {
 			public override void Execute(CodeContext context) => MergeWithAssemblyCommand.Execute(pickFilename, addUpdatedNodesHelperProvider, undoCommandService, appService, context.Nodes);
 		}
 
-		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1;
+		static bool CanExecute(DocumentTreeNodeData[] nodes) => nodes.Length == 1 && GetModuleNode(nodes[0]) != null;
+
+		static ModuleDocumentNode GetModuleNode(DocumentTreeNodeData node) {
+			if (node is AssemblyDocumentNode asmNode) {
+				asmNode.TreeNode.EnsureChildrenLoaded();
+				return asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
+			}
+			else
+				return node.GetModuleNode();
+		}
 
 		static void Execute(IPickFilename pickFilename, Lazy<IAddUpdatedNodesHelperProvider> addUpdatedNodesHelperProvider, Lazy<IUndoCommandService> undoCommandService, IAppService appService, DocumentTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var asmNode = nodes[0] as AssemblyDocumentNode;
-			ModuleDocumentNode modNode;
-			if (asmNode != null) {
-				asmNode.TreeNode.EnsureChildrenLoaded();
-				modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as ModuleDocumentNode;
-			}
-			else
-				modNode = nodes[0].GetModuleNode();
+			var modNode = GetModuleNode(nodes[0]);
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				return;
@@ -133,7 +135,7 @@ namespace dnSpy.AsmEditor.Compiler {
 				}
 			}
 
-			var importer = new ModuleImporter(module);
+			var importer = new ModuleImporter(module, EditCodeVM.makeEverythingPublic);
 			try {
 				importer.Import(result.Value.RawBytes, result.Value.DebugFile, ModuleImporterOptions.None);
 			}

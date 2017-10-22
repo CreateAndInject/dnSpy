@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -54,16 +54,12 @@ namespace dnSpy.Text.Editor {
 		ICustomLineNumberMarginOwner owner;
 
 		public CustomLineNumberMarginImpl(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider)
-			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
-			CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
-		}
+			: base(PredefinedDsMarginNames.CustomLineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => CustomLineNumberMargin.SetMargin(wpfTextViewHost.TextView, this);
 
 		void ICustomLineNumberMargin.SetOwner(ICustomLineNumberMarginOwner owner) {
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
 			if (this.owner != null)
 				throw new InvalidOperationException();
-			this.owner = owner;
+			this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
 			if (Visibility == Visibility.Visible)
 				owner.OnVisible();
 			RefreshMargin();

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -66,9 +66,7 @@ namespace dnSpy.Text.Formatting {
 			readonly bool removeExtraTextLineVerticalPixels;
 
 			public LineTransformProvider(ILineTransformSource[] lineTransformSources, bool removeExtraTextLineVerticalPixels) {
-				if (lineTransformSources == null)
-					throw new ArgumentNullException(nameof(lineTransformSources));
-				this.lineTransformSources = lineTransformSources;
+				this.lineTransformSources = lineTransformSources ?? throw new ArgumentNullException(nameof(lineTransformSources));
 				this.removeExtraTextLineVerticalPixels = removeExtraTextLineVerticalPixels;
 			}
 

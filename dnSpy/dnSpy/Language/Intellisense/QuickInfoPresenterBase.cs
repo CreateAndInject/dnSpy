@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,10 +30,8 @@ namespace dnSpy.Language.Intellisense {
 		protected readonly QuickInfoPresenterControl control;
 
 		protected QuickInfoPresenterBase(IQuickInfoSession session) {
-			if (session == null)
-				throw new ArgumentNullException(nameof(session));
-			this.session = session;
-			this.control = new QuickInfoPresenterControl { DataContext = this };
+			this.session = session ?? throw new ArgumentNullException(nameof(session));
+			control = new QuickInfoPresenterControl { DataContext = this };
 			session.Dismissed += Session_Dismissed;
 		}
 

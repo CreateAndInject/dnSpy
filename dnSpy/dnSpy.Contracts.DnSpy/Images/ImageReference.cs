@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Images {
 		/// <summary>
 		/// Gets an <see cref="ImageReference"/> which isn't referencing any image
 		/// </summary>
-		public static readonly ImageReference None = default(ImageReference);
+		public static readonly ImageReference None = default;
 
 		/// <summary>
 		/// true if it's the default instance
@@ -53,10 +53,8 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="assembly">Assembly of image or null if <paramref name="name"/> is a pack: URI</param>
 		/// <param name="name">Name of image</param>
 		public ImageReference(Assembly assembly, string name) {
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			this.Assembly = assembly;
-			this.Name = name;
+			Assembly = assembly;
+			Name = name ?? throw new ArgumentNullException(nameof(name));
 		}
 
 		/// <summary>
@@ -66,7 +64,7 @@ namespace dnSpy.Contracts.Images {
 		/// <param name="result">Result</param>
 		/// <returns></returns>
 		public static bool TryParse(string value, out ImageReference result) {
-			result = default(ImageReference);
+			result = default;
 			if (value == null)
 				return false;
 			if (value == string.Empty)

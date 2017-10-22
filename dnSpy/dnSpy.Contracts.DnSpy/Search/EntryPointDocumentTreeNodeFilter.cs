@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Search {
 		/// <param name="module">Module</param>
 		public EntryPointDocumentTreeNodeFilter(ModuleDef module) {
 			this.module = module;
-			this.assembly = module.Assembly;
+			assembly = module.Assembly;
 		}
 
 #pragma warning disable 1591 // Missing XML comment for publicly visible type or member

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Text.Editor;
+using dnSpy.Contracts.Text.Editor.OptionsExtensionMethods;
 using dnSpy.Text.Formatting;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
@@ -52,21 +53,15 @@ namespace dnSpy.Text.Editor {
 		double lineNumberTextRight;
 
 		protected LineNumberMarginBase(string marginName, IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, ITextFormatterProvider textFormatterProvider) {
-			if (marginName == null)
-				throw new ArgumentNullException(nameof(marginName));
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
 			if (classificationFormatMapService == null)
 				throw new ArgumentNullException(nameof(classificationFormatMapService));
-			if (textFormatterProvider == null)
-				throw new ArgumentNullException(nameof(textFormatterProvider));
-			this.identityTagToLine = new Dictionary<object, Line>();
-			this.marginName = marginName;
-			this.wpfTextViewHost = wpfTextViewHost;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(wpfTextViewHost.TextView);
-			this.textLayer = new Layer();
-			this.textFormatterProvider = textFormatterProvider;
-			this.Children.Add(textLayer);
+			identityTagToLine = new Dictionary<object, Line>();
+			this.marginName = marginName ?? throw new ArgumentNullException(nameof(marginName));
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(wpfTextViewHost.TextView);
+			textLayer = new Layer();
+			this.textFormatterProvider = textFormatterProvider ?? throw new ArgumentNullException(nameof(textFormatterProvider));
+			Children.Add(textLayer);
 			wpfTextViewHost.TextView.Options.OptionChanged += Options_OptionChanged;
 			IsVisibleChanged += LineNumberMargin_IsVisibleChanged;
 			ClipToBounds = true;
@@ -92,7 +87,7 @@ namespace dnSpy.Text.Editor {
 		}
 
 		void UpdateForceClearTypeIfNeeded() =>
-			TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, wpfTextViewHost.TextView.Options, classificationFormatMap);
+			TextFormattingUtilities.UpdateForceClearTypeIfNeeded(this, wpfTextViewHost.TextView.Options.IsForceClearTypeIfNeededEnabled(), classificationFormatMap);
 
 		void LineNumberMargin_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible) {
@@ -165,15 +160,13 @@ namespace dnSpy.Text.Editor {
 				return;
 
 			foreach (var viewLine in newOrReformattedLines) {
-				Line line;
-				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
+				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line)) {
 					identityTagToLine.Remove(viewLine.IdentityTag);
 					line.Dispose();
 				}
 			}
 			foreach (var viewLine in translatedLines) {
-				Line line;
-				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out line)) {
+				if (identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line)) {
 					identityTagToLine.Remove(viewLine.IdentityTag);
 					line.Dispose();
 				}
@@ -185,8 +178,7 @@ namespace dnSpy.Text.Editor {
 				if (lineNumber == null)
 					continue;
 
-				Line line;
-				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out line) || line.Number != lineNumber)
+				if (!identityTagToLine.TryGetValue(viewLine.IdentityTag, out var line) || line.Number != lineNumber)
 					line = CreateLine(viewLine, lineNumberState, lineNumber.Value);
 				else
 					identityTagToLine.Remove(viewLine.IdentityTag);
@@ -229,7 +221,9 @@ namespace dnSpy.Text.Editor {
 			if (brush.CanFreeze)
 				brush.Freeze();
 			Background = brush;
+#pragma warning disable 0618 // Type or member is obsolete
 			var ft = new FormattedText("8", defaultProps.CultureInfo, FlowDirection.LeftToRight, defaultProps.Typeface, defaultProps.FontRenderingEmSize, defaultProps.ForegroundBrush, null, textFormattingMode);
+#pragma warning restore 0618 // Type or member is obsolete
 			currentMaxLineDigits = GetMaxLineDigits();
 			int maxLineNumberValue = Math.Min(int.MaxValue, (int)(Math.Pow(10, currentMaxLineDigits) - 1));
 			// Just in case non-digits are part of the string, calculate max string length
@@ -305,10 +299,8 @@ namespace dnSpy.Text.Editor {
 			public Line(int number, TextLine textLine, double right, double top) {
 				if (number <= 0)
 					throw new ArgumentOutOfRangeException(nameof(number));
-				if (textLine == null)
-					throw new ArgumentNullException(nameof(textLine));
 				Number = number;
-				this.textLine = textLine;
+				this.textLine = textLine ?? throw new ArgumentNullException(nameof(textLine));
 				this.right = right;
 				this.top = top;
 			}
@@ -342,9 +334,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 
-			public LineCollection() {
-				this.lines = new List<LineInfo>();
-			}
+			public LineCollection() => lines = new List<LineInfo>();
 
 			protected override int VisualChildrenCount => lines.Count;
 			protected override Visual GetVisualChild(int index) => lines[index].Visual;
@@ -371,7 +361,7 @@ namespace dnSpy.Text.Editor {
 			readonly LineCollection lineCollection;
 
 			public Layer() {
-				this.lineCollection = new LineCollection();
+				lineCollection = new LineCollection();
 				Children.Add(lineCollection);
 			}
 
@@ -397,12 +387,8 @@ namespace dnSpy.Text.Editor {
 			readonly TextRunProperties textRunProperties;
 
 			public LineNumberSource(string text, TextRunProperties textRunProperties) {
-				if (text == null)
-					throw new ArgumentNullException(nameof(text));
-				if (textRunProperties == null)
-					throw new ArgumentNullException(nameof(textRunProperties));
-				this.text = text;
-				this.textRunProperties = textRunProperties;
+				this.text = text ?? throw new ArgumentNullException(nameof(text));
+				this.textRunProperties = textRunProperties ?? throw new ArgumentNullException(nameof(textRunProperties));
 			}
 
 			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) =>

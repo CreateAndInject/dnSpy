@@ -28,12 +28,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExposedByNode : SearchNode {
 		readonly TypeDef analyzedType;
 
-		public TypeExposedByNode(TypeDef analyzedType) {
-			if (analyzedType == null)
-				throw new ArgumentNullException(nameof(analyzedType));
-
-			this.analyzedType = analyzedType;
-		}
+		public TypeExposedByNode(TypeDef analyzedType) => this.analyzedType = analyzedType ?? throw new ArgumentNullException(nameof(analyzedType));
 
 		protected override void Write(ITextColorWriter output, IDecompiler decompiler) =>
 			output.Write(BoxedTextColor.Text, dnSpy_Analyzer_Resources.ExposedByTreeNode);
@@ -47,7 +42,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedType.IsEnum && type == analyzedType)
 				yield break;
 
-			if (!this.Context.Decompiler.ShowMember(type))
+			if (!Context.Decompiler.ShowMember(type))
 				yield break;
 
 			foreach (FieldDef field in type.Fields) {

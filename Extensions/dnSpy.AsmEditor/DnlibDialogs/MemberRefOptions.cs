@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,18 +31,18 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public MemberRefOptions(MemberRef mr) {
-			this.Class = mr.Class;
-			this.Name = mr.Name;
-			this.Signature = mr.Signature;
-			this.CustomAttributes.AddRange(mr.CustomAttributes);
+			Class = mr.Class;
+			Name = mr.Name;
+			Signature = mr.Signature;
+			CustomAttributes.AddRange(mr.CustomAttributes);
 		}
 
 		public MemberRef CopyTo(MemberRef mr) {
-			mr.Class = this.Class;
-			mr.Name = this.Name ?? UTF8String.Empty;
-			mr.Signature = this.Signature;
+			mr.Class = Class;
+			mr.Name = Name ?? UTF8String.Empty;
+			mr.Signature = Signature;
 			mr.CustomAttributes.Clear();
-			mr.CustomAttributes.AddRange(this.CustomAttributes);
+			mr.CustomAttributes.AddRange(CustomAttributes);
 			return mr;
 		}
 

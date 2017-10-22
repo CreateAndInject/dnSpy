@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -65,7 +65,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			else if (re.ResourceData.Code >= ResourceTypeCode.UserTypes)
 				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
 			else {
-				var vs = this.ValueString;
+				var vs = ValueString;
 				yield return new ResourceData(re.Name, token => ResourceUtilities.StringToStream(vs));
 			}
 		}

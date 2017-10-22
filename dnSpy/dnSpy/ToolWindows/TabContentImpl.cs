@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -138,9 +138,9 @@ namespace dnSpy.ToolWindows {
 		readonly TabElementZoomer elementZoomer;
 
 		public TabContentImpl(ToolWindowGroup owner, ToolWindowContent content) {
-			this.elementZoomer = new TabElementZoomer();
+			elementZoomer = new TabElementZoomer();
 			this.owner = owner;
-			this.Content = content;
+			Content = content;
 			AddEvents();
 		}
 
@@ -223,14 +223,12 @@ namespace dnSpy.ToolWindows {
 		void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
 		void AddEvents() {
-			var npc = Content as INotifyPropertyChanged;
-			if (npc != null)
+			if (Content is INotifyPropertyChanged npc)
 				npc.PropertyChanged += ToolWindowContent_PropertyChanged;
 		}
 
 		void RemoveEvents() {
-			var npc = Content as INotifyPropertyChanged;
-			if (npc != null)
+			if (Content is INotifyPropertyChanged npc)
 				npc.PropertyChanged -= ToolWindowContent_PropertyChanged;
 		}
 

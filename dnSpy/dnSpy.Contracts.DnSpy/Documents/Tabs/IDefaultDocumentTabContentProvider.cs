@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -47,9 +47,7 @@ namespace dnSpy.Contracts.Documents.Tabs {
 	public sealed class ExportDefaultDocumentTabContentProviderAttribute : ExportAttribute, IDefaultDocumentTabContentProviderMetadata {
 		/// <summary>Constructor</summary>
 		public ExportDefaultDocumentTabContentProviderAttribute()
-			: base(typeof(IDefaultDocumentTabContentProvider)) {
-			Order = double.MaxValue;
-		}
+			: base(typeof(IDefaultDocumentTabContentProvider)) => Order = double.MaxValue;
 
 		/// <summary>
 		/// Order of this instance, eg. <see cref="DefaultDocumentTabContentProviderConstants.DEFAULT_HANDLER"/>

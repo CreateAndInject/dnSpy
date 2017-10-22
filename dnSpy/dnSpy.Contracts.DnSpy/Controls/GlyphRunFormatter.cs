@@ -36,28 +36,27 @@ namespace dnSpy.Contracts.Controls {
 	}
 
 	static class TextFormatterFactory {
-		public static ITextFormatter Create(DependencyObject owner, bool useNewFormatter) {
+		static readonly GlyphRunFormatter GlyphRunFormatter_Ideal = new GlyphRunFormatter(TextFormattingMode.Ideal);
+		static readonly GlyphRunFormatter GlyphRunFormatter_Display = new GlyphRunFormatter(TextFormattingMode.Display);
+		static readonly WpfTextFormatter WpfTextFormatter_Ideal = new WpfTextFormatter(TextFormattingMode.Ideal);
+		static readonly WpfTextFormatter WpfTextFormatter_Display = new WpfTextFormatter(TextFormattingMode.Display);
+
+		public static ITextFormatter GetTextFormatter(DependencyObject owner, bool useNewFormatter) {
 			if (useNewFormatter)
-				return new GlyphRunFormatter(TextOptions.GetTextFormattingMode(owner));
-			return new WpfTextFormatter(TextOptions.GetTextFormattingMode(owner));
+				return TextOptions.GetTextFormattingMode(owner) == TextFormattingMode.Ideal ? GlyphRunFormatter_Ideal : GlyphRunFormatter_Display;
+			return TextOptions.GetTextFormattingMode(owner) == TextFormattingMode.Ideal ? WpfTextFormatter_Ideal : WpfTextFormatter_Display;
 		}
 	}
 
 	sealed class WpfTextFormatter : ITextFormatter {
 		readonly TextFormatter formatter;
 
-		public WpfTextFormatter(TextFormattingMode mode) {
-			formatter = TextFormatter.Create(mode);
-		}
+		public WpfTextFormatter(TextFormattingMode mode) => formatter = TextFormatter.Create(mode);
 
 		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth,
-			TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) {
-			return formatter.FormatLine(textSource, firstCharIndex, paragraphWidth, paragraphProperties, previousLineBreak);
-		}
+			TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) => formatter.FormatLine(textSource, firstCharIndex, paragraphWidth, paragraphProperties, previousLineBreak);
 
-		public void Dispose() {
-			formatter.Dispose();
-		}
+		public void Dispose() => formatter.Dispose();
 	}
 
 	sealed class GlyphRunFormatter : ITextFormatter {
@@ -96,16 +95,14 @@ namespace dnSpy.Contracts.Controls {
 			}
 		}
 
-		public GlyphRunFormatter(object mode) {
-			this.mode = mode;
-		}
+		public GlyphRunFormatter(object mode) => this.mode = mode;
 
 		public void Dispose() {
 			//
 		}
 
 		public TextLine FormatLine(TextSource textSource, int firstCharIndex, double paragraphWidth, TextParagraphProperties paragraphProperties, TextLineBreak previousLineBreak) {
-			var runs = new List<Tuple<TextRun, GlyphRun, int, double>>();
+			var runs = new List<(TextRun, GlyphRun, int, double)>();
 
 			int index = firstCharIndex;
 			double x = paragraphProperties.Indent, height = 0, baseline = 0;
@@ -123,16 +120,14 @@ namespace dnSpy.Contracts.Controls {
 
 				if (run is TextEndOfLine || run == null) {
 					index += len;
-					runs.Add(Tuple.Create(run, (GlyphRun)null, 0, 0.0));
+					runs.Add((run, (GlyphRun)null, 0, 0.0));
 					break;
 				}
-				else if (run is TextCharacters) {
-					var chrs = (TextCharacters)run;
+				else if (run is TextCharacters chrs) {
 					var charBuf = getCharBuf(chrs.CharacterBufferReference);
 					var charOffset = getCharOffset(chrs.CharacterBufferReference);
 
-					GlyphTypeface gl;
-					if (!textProps.Typeface.TryGetGlyphTypeface(out gl))
+					if (!textProps.Typeface.TryGetGlyphTypeface(out var gl))
 						throw new Exception("GlyphTypeface does not exists for font '" + textProps.Typeface.FontFamily + "'.");
 
 					ushort[] glyphIndexes = new ushort[len];
@@ -172,19 +167,20 @@ namespace dnSpy.Contracts.Controls {
 					}
 					var origin = new Point(x, 0);
 
+#pragma warning disable 0618 // Type or member is obsolete
 					var glyphRun = new GlyphRun(
 						gl, 0, false, fontSize, glyphIndexes, origin, advanceWidths,
 						null, null, null, null, null, null);
-					runs.Add(Tuple.Create(run, glyphRun, trailWhitespace, trailWhitespaceWidth));
+#pragma warning restore 0618 // Type or member is obsolete
+					runs.Add((run, glyphRun, trailWhitespace, trailWhitespaceWidth));
 
 					x += totalWidth + trailWhitespaceWidth;
 
 					index += len;
 				}
-				else if (run is TextEmbeddedObject) {
-					var obj = (TextEmbeddedObject)run;
+				else if (run is TextEmbeddedObject obj) {
 					var metrics = obj.Format(paragraphWidth - x);
-					runs.Add(Tuple.Create(run, (GlyphRun)null, 0, metrics.Width));
+					runs.Add((run, (GlyphRun)null, 0, metrics.Width));
 
 					height = Math.Max(height, obj.Format(paragraphWidth - x).Height);
 					x += metrics.Width;
@@ -203,7 +199,7 @@ namespace dnSpy.Contracts.Controls {
 		}
 
 		class GlyphRunLine : TextLine {
-			internal Tuple<TextRun, GlyphRun, int, double>[] entries;
+			internal (TextRun textRun, GlyphRun glyphRun, int trailWhitespace, double trailWhitespaceWidth)[] entries;
 			internal double baseline;
 			internal double width;
 			internal double height;
@@ -211,9 +207,7 @@ namespace dnSpy.Contracts.Controls {
 
 			#region Unused members
 
-			public override TextLine Collapse(params TextCollapsingProperties[] collapsingPropertiesList) {
-				throw new NotSupportedException();
-			}
+			public override TextLine Collapse(params TextCollapsingProperties[] collapsingPropertiesList) => throw new NotSupportedException();
 
 			public override int DependentLength {
 				get { throw new NotSupportedException(); }
@@ -267,25 +261,15 @@ namespace dnSpy.Contracts.Controls {
 				get { throw new NotSupportedException(); }
 			}
 
-			public override CharacterHit GetBackspaceCaretCharacterHit(CharacterHit characterHit) {
-				throw new NotSupportedException();
-			}
+			public override CharacterHit GetBackspaceCaretCharacterHit(CharacterHit characterHit) => throw new NotSupportedException();
 
-			public override IEnumerable<IndexedGlyphRun> GetIndexedGlyphRuns() {
-				throw new NotSupportedException();
-			}
+			public override IEnumerable<IndexedGlyphRun> GetIndexedGlyphRuns() => throw new NotSupportedException();
 
-			public override CharacterHit GetNextCaretCharacterHit(CharacterHit characterHit) {
-				throw new NotSupportedException();
-			}
+			public override CharacterHit GetNextCaretCharacterHit(CharacterHit characterHit) => throw new NotSupportedException();
 
-			public override CharacterHit GetPreviousCaretCharacterHit(CharacterHit characterHit) {
-				throw new NotSupportedException();
-			}
+			public override CharacterHit GetPreviousCaretCharacterHit(CharacterHit characterHit) => throw new NotSupportedException();
 
-			public override IList<TextCollapsedRange> GetTextCollapsedRanges() {
-				throw new NotSupportedException();
-			}
+			public override IList<TextCollapsedRange> GetTextCollapsedRanges() => throw new NotSupportedException();
 
 			#endregion
 
@@ -293,23 +277,23 @@ namespace dnSpy.Contracts.Controls {
 				//
 			}
 
-			static GlyphRun Clone(GlyphRun run, Point origin) {
-				return new GlyphRun(
+#pragma warning disable 0618 // Type or member is obsolete
+			static GlyphRun Clone(GlyphRun run, Point origin) => new GlyphRun(
 					run.GlyphTypeface, run.BidiLevel, run.IsSideways,
 					run.FontRenderingEmSize, run.GlyphIndices, origin,
 					run.AdvanceWidths, run.GlyphOffsets, run.Characters,
 					run.DeviceFontName, run.ClusterMap, run.CaretStops, run.Language);
-			}
+#pragma warning restore 0618 // Type or member is obsolete
 
 			public override void Draw(DrawingContext drawingContext, Point origin, InvertAxes inversion) {
 				foreach (var entry in entries) {
-					if (entry.Item2 == null)
+					if (entry.glyphRun == null)
 						continue;
-					if (entry.Item3 == entry.Item1.Length) // All whitespace, no need to render
+					if (entry.trailWhitespace == entry.textRun.Length) // All whitespace, no need to render
 						continue;
 
-					var textRun = entry.Item1;
-					var glyphRun = entry.Item2;
+					var textRun = entry.textRun;
+					var glyphRun = entry.glyphRun;
 					var textProps = textRun.Properties;
 
 					var newRun = Clone(glyphRun, new Point {
@@ -348,18 +332,18 @@ namespace dnSpy.Contracts.Controls {
 				double currentDistance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.Item2 == null) {
-						var newDistance = currentDistance + entry.Item4;
+					if (entry.glyphRun == null) {
+						var newDistance = currentDistance + entry.trailWhitespaceWidth;
 						if (newDistance > distance)
 							return new CharacterHit(index, 0);
 						currentDistance = newDistance;
-						index += entry.Item1.Length;
+						index += entry.textRun.Length;
 
 						continue;
 					}
 
-					index = getCharOffset(entry.Item1.CharacterBufferReference);
-					var widthList = entry.Item2.AdvanceWidths;
+					index = getCharOffset(entry.textRun.CharacterBufferReference);
+					var widthList = entry.glyphRun.AdvanceWidths;
 					for (int i = 0; i < widthList.Count; i++) {
 						var newDistance = currentDistance + widthList[i];
 						if (newDistance > distance + widthList[i] * 2 / 3)
@@ -375,17 +359,17 @@ namespace dnSpy.Contracts.Controls {
 				double distance = 0;
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.Item2 == null) {
+					if (entry.glyphRun == null) {
 						if (index == characterHit.FirstCharacterIndex)
 							return distance;
-						distance += entry.Item4;
-						index += entry.Item1.Length;
+						distance += entry.trailWhitespaceWidth;
+						index += entry.textRun.Length;
 
 						continue;
 					}
 
-					index = getCharOffset(entry.Item1.CharacterBufferReference);
-					var widthList = entry.Item2.AdvanceWidths;
+					index = getCharOffset(entry.textRun.CharacterBufferReference);
+					var widthList = entry.glyphRun.AdvanceWidths;
 					for (int i = 0; i < widthList.Count; i++) {
 						if (index == characterHit.FirstCharacterIndex)
 							return distance;
@@ -404,25 +388,25 @@ namespace dnSpy.Contracts.Controls {
 
 				int index = 0;
 				foreach (var entry in entries) {
-					if (entry.Item2 == null) {
+					if (entry.glyphRun == null) {
 						if (index == firstTextSourceCharacterIndex) {
 							found = true;
 							x = d;
 						}
 						if (found) {
-							width += entry.Item4;
-							textLength -= entry.Item1.Length;
+							width += entry.trailWhitespaceWidth;
+							textLength -= entry.textRun.Length;
 							if (textLength == 0)
 								return new[] { makeBounds(new Rect(x, 0, width, height)) };
 						}
-						d += entry.Item4;
-						index += entry.Item1.Length;
+						d += entry.trailWhitespaceWidth;
+						index += entry.textRun.Length;
 
 						continue;
 					}
 
-					index = getCharOffset(entry.Item1.CharacterBufferReference);
-					var widthList = entry.Item2.AdvanceWidths;
+					index = getCharOffset(entry.textRun.CharacterBufferReference);
+					var widthList = entry.glyphRun.AdvanceWidths;
 					for (int i = 0; i < widthList.Count; i++) {
 						if (index == firstTextSourceCharacterIndex) {
 							found = true;
@@ -442,41 +426,31 @@ namespace dnSpy.Contracts.Controls {
 				return new[] { makeBounds(new Rect(x, 0, width, height)) };
 			}
 
-			public override TextLineBreak GetTextLineBreak() {
-				return null;
-			}
+			public override TextLineBreak GetTextLineBreak() => null;
 
-			public override IList<TextSpan<TextRun>> GetTextRunSpans() {
-				return entries.Select(entry => new TextSpan<TextRun>(entry.Item1.Length, entry.Item1)).ToList();
-			}
+			public override IList<TextSpan<TextRun>> GetTextRunSpans() => entries.Select(entry => new TextSpan<TextRun>(entry.Item1.Length, entry.Item1)).ToList();
 
-			public override double Width {
-				get { return width; }
-			}
-
-			public override double Height {
-				get { return height; }
-			}
-
-			public override double Baseline {
-				get { return baseline; }
-			}
-
-			public override int Length {
-				get { return entries.Sum(entry => entry.Item1.Length); }
-			}
-
+			public override double Width => width;
+			public override double Height => height;
+			public override double Baseline => baseline;
+			public override int Length => entries.Sum(entry => entry.textRun.Length);
 			public override int TrailingWhitespaceLength {
 				get {
-					var entry = entries.LastOrDefault(e => e.Item2 != null);
-					return entry == null ? 0 : entry.Item3;
+					foreach (var e in entries.Reverse()) {
+						if (e.glyphRun != null)
+							return e.trailWhitespace;
+					}
+					return 0;
 				}
 			}
 
 			public override double WidthIncludingTrailingWhitespace {
 				get {
-					var entry = entries.LastOrDefault(e => e.Item2 != null);
-					return entry == null ? width : width + entry.Item4;
+					foreach (var e in entries.Reverse()) {
+						if (e.glyphRun != null)
+							return width + e.trailWhitespaceWidth;
+					}
+					return width;
 				}
 			}
 		}

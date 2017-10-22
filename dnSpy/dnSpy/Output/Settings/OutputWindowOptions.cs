@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,8 +28,13 @@ namespace dnSpy.Output.Settings {
 		}
 
 		public bool ShowTimestamps {
-			get { return group.GetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId); }
-			set { group.SetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId, value); }
+			get => group.GetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId);
+			set => group.SetOptionValue(ContentType.TypeName, DefaultOutputOptions.ShowTimestampsId, value);
+		}
+
+		public string TimestampDateTimeFormat {
+			get => group.GetOptionValue(ContentType.TypeName, DefaultOutputOptions.TimestampDateTimeFormatId);
+			set => group.SetOptionValue(ContentType.TypeName, DefaultOutputOptions.TimestampDateTimeFormatId, value);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,6 @@
 
 using System;
 using dnSpy.Analyzer.Properties;
-using dnSpy.Contracts.Documents.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
@@ -62,14 +61,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			readonly IAnalyzerTreeNodeDataContext context;
 
-			public MessageNode(IAnalyzerTreeNodeDataContext context) {
-				this.context = context;
-			}
+			public MessageNode(IAnalyzerTreeNodeDataContext context) => this.context = context;
 
 			static class Cache {
 				static readonly TextClassifierTextColorWriter writer = new TextClassifierTextColorWriter();
 				public static TextClassifierTextColorWriter GetWriter() => writer;
-				public static void FreeWriter(TextClassifierTextColorWriter writer) { writer.Clear(); }
+				public static void FreeWriter(TextClassifierTextColorWriter writer) => writer.Clear();
 			}
 
 			public override object Text {

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,6 @@ using dnSpy.Contracts.Controls;
 
 namespace dnSpy.AsmEditor.Field {
 	sealed partial class FieldOptionsDlg : WindowBase {
-		public FieldOptionsDlg() {
-			InitializeComponent();
-		}
+		public FieldOptionsDlg() => InitializeComponent();
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ using dnSpy.Decompiler;
 namespace dnSpy.Documents.TreeView {
 	sealed class PEDocumentNodeImpl : PEDocumentNode {
 		public PEDocumentNodeImpl(IDsDocument document)
-			: base(document) {
-			Debug.Assert(document.PEImage != null && document.ModuleDef == null);
-		}
+			: base(document) => Debug.Assert(document.PEImage != null && document.ModuleDef == null);
 
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.PEDOCUMENT_NODE_GUID);
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(Document.PEImage);

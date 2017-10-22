@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,6 +48,11 @@ namespace dnSpy.Contracts.Decompiler {
 		public static readonly Guid SortMembers_GUID = new Guid("51FEEFED-5353-4637-A75E-7CA87EFA3998");
 		/// <summary />
 		public static readonly string SortMembers_NAME = "sort-members";
+
+		/// <summary />
+		public static readonly Guid ShowPdbInfo_GUID = new Guid("2E19D17C-1994-4CA3-914B-1D690E3EA29E");
+		/// <summary />
+		public static readonly string ShowPdbInfo_NAME = "pdb-info";
 
 		/// <summary />
 		public static readonly Guid MemberOrder_GUID = new Guid("8E6FE77A-2BCB-4F34-A41B-7F097560A211");
@@ -183,5 +188,25 @@ namespace dnSpy.Contracts.Decompiler {
 		public static readonly Guid AllowFieldInitializers_GUID = new Guid("148CE5B9-95EC-441A-BDC8-1EAFFC02B097");
 		/// <summary />
 		public static readonly string AllowFieldInitializers_NAME = "field-initializers";
+
+		/// <summary />
+		public static readonly Guid OneCustomAttributePerLine_GUID = new Guid("DFFAF5AE-2A25-4A3A-A82E-779B58DA734A");
+		/// <summary />
+		public static readonly string OneCustomAttributePerLine_NAME = "one-ca-per-line";
+
+		/// <summary />
+		public static readonly Guid TypeAddInternalModifier_GUID = new Guid("354FAA68-7CDC-478E-9414-5C066C45C3F3");
+		/// <summary />
+		public static readonly string TypeAddInternalModifier_NAME = "internal-modifier-type";
+
+		/// <summary />
+		public static readonly Guid MemberAddPrivateModifier_GUID = new Guid("2E764781-2075-47DC-BEE5-7F5F560BA726");
+		/// <summary />
+		public static readonly string MemberAddPrivateModifier_NAME = "private-modifier-member";
+
+		/// <summary />
+		public static readonly Guid RemoveNewDelegateClass_GUID = new Guid("BEC534D0-A231-4F65-BE2E-5CCC4A7CE1B2");
+		/// <summary />
+		public static readonly string RemoveNewDelegateClass_NAME = "remove-new-delegate-class";
 	}
 }

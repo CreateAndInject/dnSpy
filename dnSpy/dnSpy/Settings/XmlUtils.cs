@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -68,19 +68,14 @@ namespace dnSpy.Settings {
 				return -1;
 			if (!IsHex(hex[0]) || !IsHex(hex[1]) || !IsHex(hex[2]) || !IsHex(hex[3]))
 				return -1;
-			int val;
-			bool b = int.TryParse(hex, NumberStyles.HexNumber, null, out val);
+			bool b = int.TryParse(hex, NumberStyles.HexNumber, null, out int val);
 			Debug.Assert(b);
 			if (b)
 				return val;
 			return -1;
 		}
 
-		static bool IsHex(char c) {
-			return ('0' <= c && c <= '9') ||
-					('A' <= c && c <= 'F') ||
-					('a' <= c && c <= 'f');
-		}
+		static bool IsHex(char c) => ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
 
 		public static string FilterAttributeName(string s) {
 			if (s == null || s.Length == 0)
@@ -98,17 +93,15 @@ namespace dnSpy.Settings {
 			return s;
 		}
 
-		static bool IsValidFirstXmlAttrChar(char c) {
-			return c == '-' || c == '_' || c == '.' ||
-					('A' <= c && c <= 'Z') ||
-					('a' <= c && c <= 'z');
-		}
+		static bool IsValidFirstXmlAttrChar(char c) =>
+			c == '-' || c == '_' || c == '.' ||
+			('A' <= c && c <= 'Z') ||
+			('a' <= c && c <= 'z');
 
-		static bool IsValidXmlAttrChar(char c) {
-			return c == '-' || c == '_' || c == '.' ||
-					('0' <= c && c <= '9') ||
-					('A' <= c && c <= 'Z') ||
-					('a' <= c && c <= 'z');
-		}
+		static bool IsValidXmlAttrChar(char c) =>
+			c == '-' || c == '_' || c == '.' ||
+			('0' <= c && c <= '9') ||
+			('A' <= c && c <= 'Z') ||
+			('a' <= c && c <= 'z');
 	}
 }

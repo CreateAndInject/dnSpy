@@ -32,13 +32,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		readonly bool hidesParent;
 
 		public EventNode(EventDef analyzedEvent, bool hidesParent = false) {
-			if (analyzedEvent == null)
-				throw new ArgumentNullException(nameof(analyzedEvent));
-			this.analyzedEvent = analyzedEvent;
+			this.analyzedEvent = analyzedEvent ?? throw new ArgumentNullException(nameof(analyzedEvent));
 			this.hidesParent = hidesParent;
 		}
 
-		public override void Initialize() => this.TreeNode.LazyLoading = true;
+		public override void Initialize() => TreeNode.LazyLoading = true;
 		public override IMemberRef Member => analyzedEvent;
 		public override IMDTokenProvider Reference => analyzedEvent;
 		protected override ImageReference GetIcon(IDotNetImageService dnImgMgr) => dnImgMgr.GetImageReference(analyzedEvent);
@@ -67,6 +65,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			if (EventFiredByNode.CanShow(analyzedEvent))
 				yield return new EventFiredByNode(analyzedEvent);
+
+			if (EventOverriddenNode.CanShow(analyzedEvent))
+				yield return new EventOverriddenNode(analyzedEvent);
 
 			if (EventOverridesNode.CanShow(analyzedEvent))
 				yield return new EventOverridesNode(analyzedEvent);

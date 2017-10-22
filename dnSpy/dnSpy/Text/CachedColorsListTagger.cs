@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,13 +36,10 @@ namespace dnSpy.Text {
 		readonly IThemeClassificationTypeService themeClassificationTypeService;
 
 		[ImportingConstructor]
-		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) {
-			this.themeClassificationTypeService = themeClassificationTypeService;
-		}
+		CachedColorsListTaggerProvider(IThemeClassificationTypeService themeClassificationTypeService) => this.themeClassificationTypeService = themeClassificationTypeService;
 
 		public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag {
-			CachedColorsListTagger colorizer;
-			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out colorizer)) {
+			if (buffer.Properties.TryGetProperty(typeof(CachedColorsListTagger), out CachedColorsListTagger colorizer)) {
 				colorizer.ThemeClassificationTypeService = themeClassificationTypeService;
 				return colorizer as ITagger<T>;
 			}
@@ -64,9 +61,7 @@ namespace dnSpy.Text {
 
 		public IThemeClassificationTypeService ThemeClassificationTypeService { get; internal set; }
 
-		CachedColorsListTagger(CachedColorsList cachedColorsList) {
-			this.cachedColorsList = cachedColorsList;
-		}
+		CachedColorsListTagger(CachedColorsList cachedColorsList) => this.cachedColorsList = cachedColorsList;
 
 		public event EventHandler<SnapshotSpanEventArgs> TagsChanged {
 			add { }

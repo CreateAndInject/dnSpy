@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,7 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
 	sealed class TreeNodeDataImpl : TreeNodeData {
-		public TreeNodeDataImpl(Guid guid) {
-			this.Guid = guid;
-		}
+		public TreeNodeDataImpl(Guid guid) => Guid = guid;
 
 		public override object Text => null;
 		public override object ToolTip => null;

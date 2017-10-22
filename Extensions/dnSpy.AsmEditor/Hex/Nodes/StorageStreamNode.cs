@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,34 +19,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
+using dnSpy.Contracts.Hex.Files.DotNet;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	enum StorageStreamType {
-		None,
-		Strings,
-		US,
-		Blob,
-		Guid,
-		Tables,
-		Pdb,
-		HotHeap,
-	}
-
-	sealed class StorageStreamNode : HexNode {
+	class StorageStreamNode : HexNode {
 		public override Guid Guid => new Guid(DocumentTreeViewConstants.STRGSTREAM_NODE_GUID);
 		public override NodePathName NodePathName => new NodePathName(Guid, StreamNumber.ToString());
-		public StorageStreamType StorageStreamType { get; }
+		public DotNetHeapKind HeapKind => storageStreamVM.HeapKind;
 		public override object VMObject => storageStreamVM;
 		protected override ImageReference IconReference => DsImages.BinaryFile;
-		public int StreamNumber { get; }
+		public int StreamNumber => storageStreamVM.StreamNumber;
 
 		protected override IEnumerable<HexVM> HexVMs {
 			get { yield return storageStreamVM; }
@@ -54,52 +43,16 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly StorageStreamVM storageStreamVM;
 
-		public StorageStreamNode(HexDocument doc, StreamHeader sh, int streamNumber, DotNetStream knownStream, IMetaData md)
-			: base((ulong)sh.StartOffset, (ulong)sh.EndOffset - 1) {
-			this.StreamNumber = streamNumber;
-			this.StorageStreamType = GetStorageStreamType(knownStream);
-			this.storageStreamVM = new StorageStreamVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 8));
+		public StorageStreamNode(StorageStreamVM storageStream)
+			: base(storageStream.Span) => storageStreamVM = storageStream;
 
-			var tblStream = knownStream as TablesStream;
-			if (tblStream != null)
-				this.newChild = new TablesStreamNode(doc, tblStream, md);
-		}
-		TreeNodeData newChild;
-
-		public override IEnumerable<TreeNodeData> CreateChildren() {
-			if (newChild != null)
-				yield return newChild;
-			newChild = null;
-		}
-
-		static StorageStreamType GetStorageStreamType(DotNetStream stream) {
-			if (stream == null)
-				return StorageStreamType.None;
-			if (stream is StringsStream)
-				return StorageStreamType.Strings;
-			if (stream is USStream)
-				return StorageStreamType.US;
-			if (stream is BlobStream)
-				return StorageStreamType.Blob;
-			if (stream is GuidStream)
-				return StorageStreamType.Guid;
-			if (stream is TablesStream)
-				return StorageStreamType.Tables;
-			if (stream.Name == "#Pdb")
-				return StorageStreamType.Pdb;
-			if (stream.Name == "#!")
-				return StorageStreamType.HotHeap;
-			Debug.Fail(string.Format("Shouldn't be here when stream is a known stream type: {0}", stream.GetType()));
-			return StorageStreamType.None;
-		}
-
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
-			if (HexUtils.IsModified(storageStreamVM.RCNameVM.StartOffset, storageStreamVM.RCNameVM.EndOffset, modifiedStart, modifiedEnd))
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
+			if (changes.OverlapsWith(storageStreamVM.RCNameVM.Span))
 				TreeNode.RefreshUI();
 
 			foreach (HexNode node in TreeNode.DataChildren)
-				node.OnDocumentModified(modifiedStart, modifiedEnd);
+				node.OnBufferChanged(changes);
 		}
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) {
@@ -109,13 +62,31 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			output.Write(BoxedTextColor.Number, StreamNumber.ToString());
 			output.Write(BoxedTextColor.Punctuation, ":");
 			output.WriteSpace();
-			output.Write(StorageStreamType == StorageStreamType.None ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
+			output.Write(HeapKind == DotNetHeapKind.Unknown ? BoxedTextColor.HexStorageStreamNameInvalid : BoxedTextColor.HexStorageStreamName, string.Format("{0}", storageStreamVM.RCNameVM.StringZ));
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {
-			if (StorageStreamType != StorageStreamType.Tables)
+			if (HeapKind != DotNetHeapKind.Tables)
 				return null;
 			return ((TablesStreamNode)TreeNode.Children[0].Data).FindTokenNode(token);
+		}
+	}
+
+	sealed class TablesStorageStreamNode : StorageStreamNode {
+		readonly TablesStreamVM tablesStream;
+
+		public TablesStorageStreamNode(StorageStreamVM storageStream, TablesStreamVM tablesStream)
+			: base(storageStream) => this.tablesStream = tablesStream;
+
+		public override IEnumerable<TreeNodeData> CreateChildren() {
+			yield return new TablesStreamNode(tablesStream);
+		}
+
+		protected override IEnumerable<HexSpan> Spans {
+			get {
+				yield return Span;
+				yield return tablesStream.Span;
+			}
 		}
 	}
 }

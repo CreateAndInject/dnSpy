@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,11 +30,9 @@ namespace dnSpy.Text {
 		readonly PointTrackingMode trackingMode;
 
 		public MappingPoint(IBufferGraph bufferGraph, SnapshotPoint snapshotPoint, PointTrackingMode trackingMode) {
-			if (bufferGraph == null)
-				throw new ArgumentNullException(nameof(bufferGraph));
 			if (snapshotPoint.Snapshot == null)
 				throw new ArgumentException();
-			BufferGraph = bufferGraph;
+			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
 			this.snapshotPoint = snapshotPoint;
 			this.trackingMode = trackingMode;
 		}
@@ -59,9 +57,7 @@ namespace dnSpy.Text {
 			return GetPoint(targetBuffer.CurrentSnapshot, affinity);
 		}
 
-		public SnapshotPoint? GetInsertionPoint(Predicate<ITextBuffer> match) {
-			throw new NotImplementedException();//TODO:
-		}
+		public SnapshotPoint? GetInsertionPoint(Predicate<ITextBuffer> match) => throw new NotImplementedException();//TODO:
 
 		public override string ToString() => nameof(IMappingPoint) + "@" + snapshotPoint.ToString();
 	}

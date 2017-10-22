@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,9 +37,7 @@ namespace dnSpy.AsmEditor.Compiler {
 	sealed class EditCodeCommandTargetFilter : ICommandTargetFilter {
 		readonly ITextView textView;
 
-		public EditCodeCommandTargetFilter(ITextView textView) {
-			this.textView = textView;
-		}
+		public EditCodeCommandTargetFilter(ITextView textView) => this.textView = textView;
 
 		EditCodeVM TryGetInstance() =>
 			__editCodeVM ?? (__editCodeVM = EditCodeVM.TryGet(textView));

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,8 +23,7 @@ using System.Windows;
 namespace dnSpy.Tabs {
 	static class TabUtils {
 		public static void SetStyle(this FrameworkElement elem, object obj) {
-			var style = obj as Style;
-			if (style != null) {
+			if (obj is Style style) {
 				elem.Style = style;
 				return;
 			}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,8 +45,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			var body = method.Body;
 			if (body != null) {
 				foreach (var instr in body.Instructions) {
-					var def = instr.Operand as IMemberDef;
-					if (def != null && def.DeclaringType == method.DeclaringType)
+					if (instr.Operand is IMemberDef def && def.DeclaringType == method.DeclaringType)
 						yield return def;
 				}
 			}

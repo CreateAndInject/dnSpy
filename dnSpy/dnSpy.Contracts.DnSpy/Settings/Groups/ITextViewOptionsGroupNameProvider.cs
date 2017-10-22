@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,9 +49,7 @@ namespace dnSpy.Contracts.Settings.Groups {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instanec</param>
 		public ExportTextViewOptionsGroupNameProviderAttribute(double order = double.MaxValue)
-			: base(typeof(ITextViewOptionsGroupNameProvider)) {
-			Order = order;
-		}
+			: base(typeof(ITextViewOptionsGroupNameProvider)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,11 @@ namespace dnSpy.Contracts.Text.Formatting {
 	/// Creates HTML strings
 	/// </summary>
 	interface IHtmlBuilderService {
+		/// <summary>
+		/// Gets the default delimiter
+		/// </summary>
+		string DefaultDelimiter { get; }
+
 		/// <summary>
 		/// Creates an HTML fragment that can be copied to the clipboard
 		/// </summary>

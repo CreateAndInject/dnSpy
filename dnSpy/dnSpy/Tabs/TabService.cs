@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Tabs {
 		public TabService(IMenuService menuService, IWpfFocusService wpfFocusService) {
 			this.menuService = menuService;
 			this.wpfFocusService = wpfFocusService;
-			this.tabGroupServices = new List<TabGroupService>();
-			this.selectedIndex = -1;
+			tabGroupServices = new List<TabGroupService>();
+			selectedIndex = -1;
 		}
 
 		public ITabGroupService Create(TabGroupServiceOptions options = null) {

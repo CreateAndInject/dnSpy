@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,13 +40,9 @@ namespace dnSpy.Text.Operations {
 		readonly List<ChangeInfo> changes;
 
 		public TextBufferUndoManager(ITextBuffer textBuffer, ITextUndoHistoryRegistry textUndoHistoryRegistry) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			if (textUndoHistoryRegistry == null)
-				throw new ArgumentNullException(nameof(textUndoHistoryRegistry));
 			changes = new List<ChangeInfo>();
-			TextBuffer = textBuffer;
-			this.textUndoHistoryRegistry = textUndoHistoryRegistry;
+			TextBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
+			this.textUndoHistoryRegistry = textUndoHistoryRegistry ?? throw new ArgumentNullException(nameof(textUndoHistoryRegistry));
 			textBufferUndoHistory = textUndoHistoryRegistry.RegisterHistory(TextBuffer);
 			TextBuffer.Changed += TextBuffer_Changed;
 			TextBuffer.PostChanged += TextBuffer_PostChanged;

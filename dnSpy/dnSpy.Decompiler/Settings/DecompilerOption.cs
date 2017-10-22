@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,13 +35,9 @@ namespace dnSpy.Decompiler.Settings {
 		readonly Action<T> setter;
 
 		public DecompilerOption(Guid guid, Func<T> getter, Action<T> setter) {
-			if (getter == null)
-				throw new ArgumentNullException(nameof(getter));
-			if (setter == null)
-				throw new ArgumentNullException(nameof(setter));
-			this.Guid = guid;
-			this.getter = getter;
-			this.setter = setter;
+			Guid = guid;
+			this.getter = getter ?? throw new ArgumentNullException(nameof(getter));
+			this.setter = setter ?? throw new ArgumentNullException(nameof(setter));
 		}
 	}
 }

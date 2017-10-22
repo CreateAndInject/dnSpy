@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		/// <summary>Brace pair service</summary>
 		public const double ORDER_BRACEPAIRSERVICE = 4000;
 
-		/// <summary>Structure visualizer service</summary>
-		public const double ORDER_STRUCTUREVISUALIZERSERVICE = 5000;
+		/// <summary>Block structure service</summary>
+		public const double ORDER_BLOCKSTRUCTURESERVICE = 5000;
 
 		/// <summary>Line separator service</summary>
 		public const double ORDER_LINESEPARATORSERVICE = 6000;

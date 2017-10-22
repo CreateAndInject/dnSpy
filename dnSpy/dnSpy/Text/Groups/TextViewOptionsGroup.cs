@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,10 +28,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Groups {
 	sealed class TextViewOptionsGroup : ITextViewOptionsGroup {
-		IEnumerable<IWpfTextView> ITextViewOptionsGroup.TextViews {
-			get { return textViews.ToArray(); }
-		}
-
+		IEnumerable<IWpfTextView> ITextViewOptionsGroup.TextViews => textViews.ToArray();
 		public event EventHandler<TextViewOptionChangedEventArgs> TextViewOptionChanged;
 
 		readonly List<IWpfTextView> textViews;
@@ -41,18 +38,14 @@ namespace dnSpy.Text.Groups {
 		readonly string groupName;
 
 		public TextViewOptionsGroup(string groupName, IContentTypeRegistryService contentTypeRegistryService, ContentTypeOptionDefinition[] defaultOptions, OptionsStorage optionsStorage) {
-			if (groupName == null)
-				throw new ArgumentNullException(nameof(groupName));
-			if (contentTypeRegistryService == null)
-				throw new ArgumentNullException(nameof(contentTypeRegistryService));
 			if (defaultOptions == null)
 				throw new ArgumentNullException(nameof(defaultOptions));
 			if (optionsStorage == null)
 				throw new ArgumentNullException(nameof(optionsStorage));
-			this.contentTypeRegistryService = contentTypeRegistryService;
-			this.textViews = new List<IWpfTextView>();
-			this.toOptions = new Dictionary<IContentType, TextViewGroupOptionCollection>();
-			this.groupName = groupName;
+			this.contentTypeRegistryService = contentTypeRegistryService ?? throw new ArgumentNullException(nameof(contentTypeRegistryService));
+			textViews = new List<IWpfTextView>();
+			toOptions = new Dictionary<IContentType, TextViewGroupOptionCollection>();
+			this.groupName = groupName ?? throw new ArgumentNullException(nameof(groupName));
 
 			foreach (var option in defaultOptions) {
 				Debug.Assert(option.Name != null);
@@ -64,8 +57,7 @@ namespace dnSpy.Text.Groups {
 				if (ct == null)
 					continue;
 
-				TextViewGroupOptionCollection coll;
-				if (!toOptions.TryGetValue(ct, out coll))
+				if (!toOptions.TryGetValue(ct, out var coll))
 					toOptions.Add(ct, coll = new TextViewGroupOptionCollection(ct));
 				coll.Add(new TextViewGroupOption(this, option));
 			}
@@ -83,8 +75,7 @@ namespace dnSpy.Text.Groups {
 			if (contentType == null)
 				return ErrorCollection;
 
-			TextViewGroupOptionCollection coll;
-			if (toOptions.TryGetValue(contentType, out coll))
+			if (toOptions.TryGetValue(contentType, out var coll))
 				return coll;
 
 			// No perfect match, use inherited options
@@ -138,7 +129,7 @@ namespace dnSpy.Text.Groups {
 			GetCollection(contentType).SetOptionValue(optionId, value);
 		}
 
-		public void TextViewCreated(IWpfTextView textView) {
+		internal void TextViewCreated(IWpfTextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
 			Debug.Assert(!textView.IsClosed);
@@ -191,6 +182,9 @@ namespace dnSpy.Text.Groups {
 				writeOptionHash.Add(option);
 				optionsStorage.Write(groupName, option);
 				foreach (var textView in textViews.ToArray()) {
+					var coll = GetCollection(textView.TextDataModel.ContentType);
+					if (!StringComparer.OrdinalIgnoreCase.Equals(option.Definition.ContentType, coll.ContentType.TypeName))
+						continue;
 					try {
 						textView.Options.SetOptionValue(option.OptionId, option.Value);
 					}

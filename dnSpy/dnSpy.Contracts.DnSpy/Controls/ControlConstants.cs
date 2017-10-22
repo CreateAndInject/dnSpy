@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Controls;
 using dnSpy.Contracts.Documents.Tabs.DocViewer;
+using dnSpy.Contracts.Hex.Editor;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Controls {
@@ -45,11 +46,31 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of search <see cref="ListBox"/></summary>
 		public static readonly Guid GUID_SEARCH_LISTBOX = new Guid("651FC97F-A9A7-4649-97AC-FC942168E6E2");
 
+		/// <summary>Guid of bookmarks control</summary>
+		public static readonly Guid GUID_BOOKMARKS_CONTROL = new Guid("0222FABA-6344-4DAE-966F-3FA5EA19598F");
+
+		/// <summary>Guid of bookmarks <see cref="ListView"/></summary>
+		public static readonly Guid GUID_BOOKMARKS_LISTVIEW = new Guid("2A3AE539-9666-486C-98AC-AA5679DD9F54");
+
 		/// <summary>Guid of debugger breakpoints control</summary>
+		[Obsolete("Use " + nameof(GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL), true)]
 		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_CONTROL = new Guid("00EC8F82-086C-4305-A07D-CC43CB035905");
 
 		/// <summary>Guid of debugger breakpoints <see cref="ListView"/></summary>
+		[Obsolete("Use " + nameof(GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW), true)]
 		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_LISTVIEW = new Guid("E178917C-199C-4A99-95F9-9724806E528F");
+
+		/// <summary>Guid of debugger breakpoints control</summary>
+		public static readonly Guid GUID_DEBUGGER_CODEBREAKPOINTS_CONTROL = new Guid("00EC8F82-086C-4305-A07D-CC43CB035905");
+
+		/// <summary>Guid of debugger breakpoints <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_CODEBREAKPOINTS_LISTVIEW = new Guid("E178917C-199C-4A99-95F9-9724806E528F");
+
+		/// <summary>Guid of debugger module breakpoints control</summary>
+		public static readonly Guid GUID_DEBUGGER_MODULEBREAKPOINTS_CONTROL = new Guid("D64862B4-6282-4579-BE84-41B1D629F980");
+
+		/// <summary>Guid of debugger module breakpoints <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_MODULEBREAKPOINTS_LISTVIEW = new Guid("DAB850F0-BA82-454E-9C00-2EF9C12CCF7F");
 
 		/// <summary>Guid of debugger call stack control</summary>
 		public static readonly Guid GUID_DEBUGGER_CALLSTACK_CONTROL = new Guid("D0EDBB27-8367-4806-BB03-03B6990A7D32");
@@ -58,9 +79,11 @@ namespace dnSpy.Contracts.Controls {
 		public static readonly Guid GUID_DEBUGGER_CALLSTACK_LISTVIEW = new Guid("7E39E2DD-666C-4309-867E-9460D97361D2");
 
 		/// <summary>Guid of debugger locals control</summary>
+		[Obsolete("This field isn't used anymore", true)]
 		public static readonly Guid GUID_DEBUGGER_LOCALS_CONTROL = new Guid("391EB04D-F544-459A-A242-2D856E3C6CDB");
 
 		/// <summary>Guid of debugger locals <see cref="ListView"/></summary>
+		[Obsolete("This field isn't used anymore", true)]
 		public static readonly Guid GUID_DEBUGGER_LOCALS_LISTVIEW = new Guid("B50167E5-2AD7-44A3-B3E2-C486BD56BE3B");
 
 		/// <summary>Guid of debugger exceptions control</summary>
@@ -81,10 +104,20 @@ namespace dnSpy.Contracts.Controls {
 		/// <summary>Guid of debugger modules <see cref="ListView"/></summary>
 		public static readonly Guid GUID_DEBUGGER_MODULES_LISTVIEW = new Guid("F91D9EA8-614D-4B36-AE27-B4EA541F6992");
 
+		/// <summary>Guid of debugger processes control</summary>
+		public static readonly Guid GUID_DEBUGGER_PROCESSES_CONTROL = new Guid("418382F3-596E-485E-BF56-6FAF156EAA34");
+
+		/// <summary>Guid of debugger processes <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_PROCESSES_LISTVIEW = new Guid("A26EA8A2-64EE-4311-B365-789C26D86711");
+
 		/// <summary>Guid of debugger memory control</summary>
 		public static readonly Guid GUID_DEBUGGER_MEMORY_CONTROL = new Guid("D638F6E0-EA1E-4E2C-9969-A14751C800D1");
 
+		/// <summary>Guid of debugger memory <see cref="WpfHexViewHost"/></summary>
+		public static readonly Guid GUID_DEBUGGER_MEMORY_WPFHEXVIEWHOST = new Guid("9A82A54B-B5FC-4EA4-B825-45DD32C1695D");
+
 		/// <summary>Guid of debugger memory <c>HexBox</c></summary>
+		[Obsolete("Use " + nameof(GUID_DEBUGGER_MEMORY_WPFHEXVIEWHOST), true)]
 		public static readonly Guid GUID_DEBUGGER_MEMORY_HEXBOX = new Guid("34F1BAA4-36F1-4687-8552-7D71BDDBC1F3");
 
 		/// <summary>Guid of output control</summary>

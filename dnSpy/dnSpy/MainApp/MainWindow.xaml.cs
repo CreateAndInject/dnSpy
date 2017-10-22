@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -24,8 +24,8 @@ namespace dnSpy.MainApp {
 	sealed partial class MainWindow : MetroWindow {
 		public MainWindow(object content) {
 			InitializeComponent();
-			this.contentPresenter.Content = content;
-			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
+			contentPresenter.Content = content;
+			CommandBindings.Add(new CommandBinding(ApplicationCommands.Close, (s, e) => Close(), (s, e) => e.CanExecute = true));
 		}
 	}
 }

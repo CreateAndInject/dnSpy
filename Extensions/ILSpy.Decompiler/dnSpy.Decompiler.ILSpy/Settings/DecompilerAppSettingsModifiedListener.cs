@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		DecompilerAppSettingsModifiedListener(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		DecompilerAppSettingsModifiedListener(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
 			bool refreshIL = appRefreshSettings.Has(SettingsConstants.REDISASSEMBLE_IL_ILSPY_CODE);
@@ -57,16 +55,16 @@ namespace dnSpy.Decompiler.ILSpy.Settings {
 				RefreshCode<Core.VisualBasic.VBDecompiler>();
 		}
 
-		IEnumerable<Tuple<IDocumentTab, IDecompiler>> DecompilerTabs {
+		IEnumerable<(IDocumentTab tab, IDecompiler decompiler)> DecompilerTabs {
 			get {
 				foreach (var tab in documentTabService.VisibleFirstTabs) {
 					var decompiler = (tab.Content as IDecompilerTabContent)?.Decompiler;
 					if (decompiler != null)
-						yield return Tuple.Create(tab, decompiler);
+						yield return (tab, decompiler);
 				}
 			}
 		}
 
-		void RefreshCode<T>() => documentTabService.Refresh(DecompilerTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
+		void RefreshCode<T>() => documentTabService.Refresh(DecompilerTabs.Where(t => t.decompiler is T).Select(a => a.tab).ToArray());
 	}
 }

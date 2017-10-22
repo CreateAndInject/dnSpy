@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,8 +34,7 @@ namespace dnSpy.Tabs {
 			set {
 				if (isActive != value) {
 					isActive = value;
-					var hdr = Header as TheHeader;
-					if (hdr != null)
+					if (Header is TheHeader hdr)
 						hdr.IsActiveChanged();
 				}
 			}
@@ -65,7 +64,7 @@ namespace dnSpy.Tabs {
 
 			public TheHeader(TabItemImpl impl) {
 				this.impl = impl;
-				this.isSelected = impl.IsSelected;
+				isSelected = impl.IsSelected;
 			}
 
 			internal void TabContentPropertyChanged(string propName) {
@@ -87,13 +86,13 @@ namespace dnSpy.Tabs {
 		public TabItemImpl(TabGroup tabGroup, ITabContent tabContent, object objStyle) {
 			this.tabGroup = tabGroup;
 			this.tabContent = tabContent;
-			this.Content = tabContent.UIObject;
-			this.theHeader = new TheHeader(this);
-			this.DataContext = theHeader;
-			this.Header = theHeader;
-			this.AllowDrop = true;
-			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
-			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
+			Content = tabContent.UIObject;
+			theHeader = new TheHeader(this);
+			DataContext = theHeader;
+			Header = theHeader;
+			AllowDrop = true;
+			AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
+			AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
 			this.SetStyle(objStyle ?? "FileTabGroupTabItemStyle");
 			AddEvents();
 		}
@@ -137,21 +136,19 @@ namespace dnSpy.Tabs {
 		}
 
 		void AddEvents() {
-			var npc = tabContent as INotifyPropertyChanged;
-			if (npc != null)
+			if (tabContent is INotifyPropertyChanged npc)
 				npc.PropertyChanged += TabContent_PropertyChanged;
 		}
 
 		void RemoveEvents() {
-			var npc = tabContent as INotifyPropertyChanged;
-			if (npc != null)
+			if (tabContent is INotifyPropertyChanged npc)
 				npc.PropertyChanged -= TabContent_PropertyChanged;
 		}
 
 		void TabContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			theHeader.TabContentPropertyChanged(e.PropertyName);
 			if (e.PropertyName == nameof(tabContent.UIObject))
-				this.Content = tabContent.UIObject;
+				Content = tabContent.UIObject;
 		}
 	}
 }

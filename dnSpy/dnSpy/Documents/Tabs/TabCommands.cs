@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Extension;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.TreeView;
@@ -35,7 +36,6 @@ using dnSpy.Contracts.Utilities;
 using dnSpy.Documents.Tabs.Dialogs;
 using dnSpy.Properties;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Documents.Tabs {
 	[ExportAutoLoaded]
@@ -94,8 +94,8 @@ namespace dnSpy.Documents.Tabs {
 		public readonly ITabGroup TabGroup;
 
 		public TabGroupContext(ITabGroup tabGroup) {
-			this.TabGroup = tabGroup;
-			this.TabGroupService = tabGroup.TabGroupService;
+			TabGroup = tabGroup;
+			TabGroupService = tabGroup.TabGroupService;
 		}
 	}
 
@@ -107,9 +107,7 @@ namespace dnSpy.Documents.Tabs {
 
 		protected readonly IDocumentTabService documentTabService;
 
-		protected CtxMenuTabGroupCommand(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		protected CtxMenuTabGroupCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		TabGroupContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TABCONTROL_GUID))
@@ -314,9 +312,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		OpenInNewTabCtxMenuCommand(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		OpenInNewTabCtxMenuCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public override bool IsVisible(IMenuItemContext context) =>
 			context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DOCUMENTS_TREEVIEW_GUID) &&
@@ -329,16 +325,12 @@ namespace dnSpy.Documents.Tabs {
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_DOCVIEWER_TABS, Order = 0)]
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
-			IDocumentViewer documentViewer;
-			var @ref = GetReference(context, out documentViewer);
+			var @ref = GetReference(context, out var documentViewer);
 			if (@ref != null)
 				documentViewer.DocumentTab.FollowReferenceNewTab(@ref);
 		}
 
-		public override bool IsVisible(IMenuItemContext context) {
-			IDocumentViewer documentViewer;
-			return GetReference(context, out documentViewer) != null;
-		}
+		public override bool IsVisible(IMenuItemContext context) => GetReference(context, out var documentViewer) != null;
 
 		static object GetReference(IMenuItemContext context, out IDocumentViewer documentViewer) {
 			documentViewer = null;
@@ -359,8 +351,8 @@ namespace dnSpy.Documents.Tabs {
 		public readonly ITabGroup TabGroup;
 
 		public MenuTabGroupContext(ITabGroupService tabGroupService) {
-			this.TabGroup = tabGroupService.ActiveTabGroup;
-			this.TabGroupService = tabGroupService;
+			TabGroup = tabGroupService.ActiveTabGroup;
+			TabGroupService = tabGroupService;
 		}
 	}
 
@@ -377,9 +369,7 @@ namespace dnSpy.Documents.Tabs {
 
 		protected readonly IDocumentTabService documentTabService;
 
-		protected MenuTabGroupCommand(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		protected MenuTabGroupCommand(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewWindowCommand", Icon = DsImagesAttribute.NewWindow, Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]
@@ -567,19 +557,13 @@ namespace dnSpy.Documents.Tabs {
 		readonly IClassificationFormatMap classificationFormatMap;
 		readonly ITextElementProvider textElementProvider;
 
-		[Export(typeof(TextEditorFormatDefinition))]
-		[Name(AppearanceCategoryConstants.TabsDialog)]
-		[BaseDefinition(AppearanceCategoryConstants.TextEditor)]
-		sealed class TabsDialogTextEditorFormatDefinition : TextEditorFormatDefinition {
-		}
-
 		[ImportingConstructor]
 		AllTabsMenuItemCommand(IDocumentTabService documentTabService, ISaveService saveService, ITabsVMSettings tabsVMSettings, IAppWindow appWindow, IClassificationFormatMapService classificationFormatMapService, ITextElementProvider textElementProvider)
 			: base(documentTabService) {
 			this.saveService = saveService;
 			this.tabsVMSettings = tabsVMSettings;
 			this.appWindow = appWindow;
-			this.classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.TabsDialog);
+			classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.textElementProvider = textElementProvider;
 		}
 

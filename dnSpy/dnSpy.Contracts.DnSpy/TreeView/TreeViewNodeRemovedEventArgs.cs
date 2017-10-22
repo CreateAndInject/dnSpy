@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -40,8 +40,8 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="node">Node</param>
 		/// <param name="removed">true if it was removed</param>
 		public TreeViewNodeRemovedEventArgs(TreeNodeData node, bool removed) {
-			this.Node = node;
-			this.Removed = removed;
+			Node = node;
+			Removed = removed;
 		}
 	}
 }

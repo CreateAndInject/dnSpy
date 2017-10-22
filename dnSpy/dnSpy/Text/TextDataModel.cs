@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,10 +45,6 @@ namespace dnSpy.Text {
 		void TextBuffer_ContentTypeChanged(object sender, ContentTypeChangedEventArgs e) =>
 			realContentTypeChanged?.Invoke(this, new TextDataModelContentTypeChangedEventArgs(e.BeforeContentType, e.AfterContentType));
 
-		public TextDataModel(ITextBuffer textBuffer) {
-			if (textBuffer == null)
-				throw new ArgumentNullException(nameof(textBuffer));
-			this.textBuffer = textBuffer;
-		}
+		public TextDataModel(ITextBuffer textBuffer) => this.textBuffer = textBuffer ?? throw new ArgumentNullException(nameof(textBuffer));
 	}
 }

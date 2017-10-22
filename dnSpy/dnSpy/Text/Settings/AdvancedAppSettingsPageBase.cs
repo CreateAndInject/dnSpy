@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -178,12 +178,21 @@ namespace dnSpy.Text.Settings {
 		}
 		bool zoomControl;
 
+		public bool ForceClearTypeIfNeeded {
+			get { return forceClearTypeIfNeeded; }
+			set {
+				if (forceClearTypeIfNeeded != value) {
+					forceClearTypeIfNeeded = value;
+					OnPropertyChanged(nameof(ForceClearTypeIfNeeded));
+				}
+			}
+		}
+		bool forceClearTypeIfNeeded;
+
 		readonly ICommonEditorOptions options;
 
 		protected AdvancedAppSettingsPageBase(ICommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			BlockStructureLineKindVM = new EnumListVM(blockStructureLineKindList);
 			ReferenceHighlighting = options.ReferenceHighlighting;
 			HighlightRelatedKeywords = options.HighlightRelatedKeywords;
@@ -198,6 +207,7 @@ namespace dnSpy.Text.Settings {
 			GlyphMargin = options.GlyphMargin;
 			MouseWheelZoom = options.EnableMouseWheelZoom;
 			ZoomControl = options.ZoomControl;
+			ForceClearTypeIfNeeded = options.ForceClearTypeIfNeeded;
 		}
 
 		public override void OnApply() {
@@ -214,6 +224,7 @@ namespace dnSpy.Text.Settings {
 			options.GlyphMargin = GlyphMargin;
 			options.EnableMouseWheelZoom = MouseWheelZoom;
 			options.ZoomControl = ZoomControl;
+			options.ForceClearTypeIfNeeded = ForceClearTypeIfNeeded;
 		}
 	}
 }

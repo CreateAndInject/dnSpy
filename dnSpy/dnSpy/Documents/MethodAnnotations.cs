@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,7 +37,7 @@ namespace dnSpy.Documents {
 
 			public Key(MethodDef method) {
 				this.method = new WeakReference(method);
-				this.hc = method.GetHashCode();
+				hc = method.GetHashCode();
 			}
 
 			public bool Equals(Key other) {
@@ -62,9 +62,7 @@ namespace dnSpy.Documents {
 			}
 		}
 
-		MethodAnnotations() {
-			AddTimerWait(this);
-		}
+		MethodAnnotations() => AddTimerWait(this);
 
 		static void AddTimerWait(MethodAnnotations ma) {
 			Timer timer = null;

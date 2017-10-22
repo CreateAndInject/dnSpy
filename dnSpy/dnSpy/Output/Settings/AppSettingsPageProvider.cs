@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,9 +27,7 @@ namespace dnSpy.Output.Settings {
 		readonly IOutputWindowOptionsService outputWindowOptionsService;
 
 		[ImportingConstructor]
-		AppSettingsPageProvider(IOutputWindowOptionsService outputWindowOptionsService) {
-			this.outputWindowOptionsService = outputWindowOptionsService;
-		}
+		AppSettingsPageProvider(IOutputWindowOptionsService outputWindowOptionsService) => this.outputWindowOptionsService = outputWindowOptionsService;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new GeneralAppSettingsPage(outputWindowOptionsService.Default);

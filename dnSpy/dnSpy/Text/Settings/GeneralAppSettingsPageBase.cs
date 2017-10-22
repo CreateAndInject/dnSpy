@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -96,9 +96,7 @@ namespace dnSpy.Text.Settings {
 		readonly ICommonEditorOptions options;
 
 		protected GeneralAppSettingsPageBase(ICommonEditorOptions options) {
-			if (options == null)
-				throw new ArgumentNullException(nameof(options));
-			this.options = options;
+			this.options = options ?? throw new ArgumentNullException(nameof(options));
 			UseVirtualSpace = options.UseVirtualSpace;
 			ShowLineNumbers = options.LineNumberMargin;
 			WordWrap = (options.WordWrapStyle & WordWrapStyles.WordWrap) != 0;

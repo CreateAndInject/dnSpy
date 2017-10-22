@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -89,12 +89,12 @@ namespace dnSpy.Controls {
 		public Screen(DependencyObject o) {
 			var helper = GetHelper(o);
 			IsValid = false;
-			info = default(MONITORINFOEX);
+			info = default;
 			if (helper != null) {
 				var hMonitor = MonitorFromWindow(helper.Handle, MONITOR_DEFAULTTONEAREST);
 				info.cbSize = MONITORINFOEX.SIZE;
 				if (!GetMonitorInfo(hMonitor, ref info))
-					info = default(MONITORINFOEX);
+					info = default;
 				else
 					IsValid = true;
 			}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 	sealed partial class XmlParser {
 		readonly string text;
 		readonly XamlAttributeParser xamlAttributeParser;
+		readonly CodeBracesRangeFlags blockFlags;
 		readonly List<ReferenceInfo> references;
 		readonly List<CodeBracesRange> bracesInfo;
 		readonly List<XmlNamespaceReference> xmlNamespaceReferences;
@@ -96,10 +97,9 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		public XmlParser(string text, bool isXaml) {
-			if (text == null)
-				throw new ArgumentNullException(nameof(text));
-			this.text = text;
-			this.xamlAttributeParser = isXaml ? new XamlAttributeParser(this) : null;
+			this.text = text ?? throw new ArgumentNullException(nameof(text));
+			xamlAttributeParser = isXaml ? new XamlAttributeParser(this) : null;
+			blockFlags = isXaml ? CodeBracesRangeFlags.XamlBlockBraces : CodeBracesRangeFlags.XmlBlockBraces;
 			references = new List<ReferenceInfo>();
 			bracesInfo = new List<CodeBracesRange>();
 			xmlNamespaceReferences = new List<XmlNamespaceReference>();
@@ -119,11 +119,11 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			bracesInfo.Add(new CodeBracesRange(new TextSpan(left.Start, left.Length), new TextSpan(right.Start, right.Length), flags));
 
 		void SaveComment(Token token) =>
-			SaveBraceInfo(token.Span, 4, 3, CodeBracesRangeFlags.OtherBlockBraces);
+			SaveBraceInfo(token.Span, 4, 3, blockFlags);
 		void SaveString(Token token) =>
 			SaveBraceInfo(token.Span, 1, 1, token.Kind == TokenKind.SingleQuoteString ? CodeBracesRangeFlags.SingleQuotes : CodeBracesRangeFlags.DoubleQuotes);
 		void SaveProcessingInstruction(Token token) =>
-			SaveBraceInfo(token.Span, 2, 2, CodeBracesRangeFlags.OtherBlockBraces);
+			SaveBraceInfo(token.Span, 2, 2, blockFlags);
 
 		enum XmlNameReferenceKind {
 			Tag,// or markup extension
@@ -139,12 +139,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			readonly XmlNameReferenceKind refKind;
 
 			public XmlNameTextViewerReference(XmlNamespaceReference nsRef, string name, XmlNameReferenceKind refKind) {
-				if (nsRef == null)
-					throw new ArgumentNullException(nameof(nsRef));
-				if (name == null)
-					throw new ArgumentNullException(nameof(name));
-				this.nsRef = nsRef;
-				this.name = name;
+				this.nsRef = nsRef ?? throw new ArgumentNullException(nameof(nsRef));
+				this.name = name ?? throw new ArgumentNullException(nameof(name));
 				this.refKind = refKind;
 			}
 
@@ -158,11 +154,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 
 		sealed class XmlNamespaceTextViewerReference {
 			public XmlNamespaceReference XmlNamespaceReference { get; }
-			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) {
-				if (nsRef == null)
-					throw new ArgumentNullException(nameof(nsRef));
-				XmlNamespaceReference = nsRef;
-			}
+			public XmlNamespaceTextViewerReference(XmlNamespaceReference nsRef) => XmlNamespaceReference = nsRef ?? throw new ArgumentNullException(nameof(nsRef));
 			public override bool Equals(object obj) {
 				var other = obj as XmlNamespaceTextViewerReference;
 				return other != null && XmlNamespaceReference.Equals(other.XmlNamespaceReference);
@@ -212,9 +204,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		}
 
 		string GetSubstring(Span span) {
-			string s;
 			var key = new SubString(text, span.Start, span.Length);
-			if (subStringDict.TryGetValue(key, out s))
+			if (subStringDict.TryGetValue(key, out string s))
 				return s;
 			s = key.ToString();
 			subStringDict[key] = s;
@@ -391,7 +382,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					return;
 
 				case TokenKind.SlashGreaterThan:
-					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, CodeBracesRangeFlags.OtherBlockBraces);
+					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End), token.Span, blockFlags);
 					endTagPos = token.Span.Start;
 					break;
 
@@ -408,7 +399,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 					var greaterThanToken = GetNextToken();
 					if (greaterThanToken.Kind != TokenKind.GreaterThan)
 						return;
-					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), CodeBracesRangeFlags.OtherBlockBraces);
+					SaveBraceInfo(Span.FromBounds(lessThanToken.Span.Start, tagName.Value.Span.End == firstGreaterThan.Span.Start ? firstGreaterThan.Span.End : tagName.Value.Span.End), Span.FromBounds(token.Span.Start, greaterThanToken.Span.End), blockFlags);
 					SaveReference(tagEndName.Value, XmlNameReferenceKind.Tag, findDefsOnly: true);
 					endTagPos = greaterThanToken.Span.Start;
 					break;
@@ -430,9 +421,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			XmlNamespaces previous;
 			readonly Dictionary<string, XmlNamespaceDefinition> namespaces;
 
-			public XmlNamespaces() {
-				namespaces = new Dictionary<string, XmlNamespaceDefinition>(StringComparer.Ordinal);
-			}
+			public XmlNamespaces() => namespaces = new Dictionary<string, XmlNamespaceDefinition>(StringComparer.Ordinal);
 
 			public void Clear() {
 				previous = null;
@@ -467,12 +456,8 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 			public string Alias { get; }
 			public string Name { get; }
 			public XmlNamespaceDefinition(string alias, string name) {
-				if (alias == null)
-					throw new ArgumentNullException(nameof(alias));
-				if (name == null)
-					throw new ArgumentNullException(nameof(name));
-				Alias = alias;
-				Name = name;
+				Alias = alias ?? throw new ArgumentNullException(nameof(alias));
+				Name = name ?? throw new ArgumentNullException(nameof(name));
 			}
 			public override bool Equals(object obj) {
 				var other = obj as XmlNamespaceDefinition;
@@ -484,11 +469,7 @@ namespace dnSpy.Documents.Tabs.DocViewer {
 		sealed class XmlNamespaceReference : IEquatable<XmlNamespaceReference> {
 			public string Alias { get; }
 			public XmlNamespaceDefinition Definition { get; set; }
-			public XmlNamespaceReference(string alias) {
-				if (alias == null)
-					throw new ArgumentNullException(nameof(alias));
-				Alias = alias;
-			}
+			public XmlNamespaceReference(string alias) => Alias = alias ?? throw new ArgumentNullException(nameof(alias));
 			public bool Equals(XmlNamespaceReference other) => Equals(Definition, other.Definition);
 			public override bool Equals(object obj) => obj is XmlNamespaceReference && Equals((XmlNamespaceReference)obj);
 			public override int GetHashCode() => Definition?.GetHashCode() ?? 0;

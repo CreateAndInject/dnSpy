@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,6 +28,11 @@ namespace dnSpy.Contracts.Decompiler {
 	/// </summary>
 	public sealed class MethodDebugInfo {
 		/// <summary>
+		/// Decompiler options version number
+		/// </summary>
+		public int DecompilerOptionsVersion { get; }
+
+		/// <summary>
 		/// Gets the method
 		/// </summary>
 		public MethodDef Method { get; }
@@ -38,10 +43,9 @@ namespace dnSpy.Contracts.Decompiler {
 		public SourceStatement[] Statements { get; }
 
 		/// <summary>
-		/// Gets all locals used by the decompiler. This list can be a subset of the
-		/// real locals in the method.
+		/// Gets the root scope
 		/// </summary>
-		public SourceLocal[] Locals { get; }
+		public MethodDebugScope Scope { get; }
 
 		/// <summary>
 		/// Method span or the default value (position 0, length 0) if it's not known
@@ -56,22 +60,20 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="decompilerOptionsVersion">Decompiler options version number. This version number should get incremented when the options change.</param>
 		/// <param name="method">Method</param>
 		/// <param name="statements">Statements</param>
-		/// <param name="locals">Locals</param>
+		/// <param name="scope">Root scope</param>
 		/// <param name="methodSpan">Method span or null to calculate it from <paramref name="statements"/></param>
-		public MethodDebugInfo(MethodDef method, SourceStatement[] statements, SourceLocal[] locals, TextSpan? methodSpan) {
-			if (method == null)
-				throw new ArgumentNullException(nameof(method));
+		public MethodDebugInfo(int decompilerOptionsVersion, MethodDef method, SourceStatement[] statements, MethodDebugScope scope, TextSpan? methodSpan) {
 			if (statements == null)
 				throw new ArgumentNullException(nameof(statements));
-			if (locals == null)
-				throw new ArgumentNullException(nameof(locals));
-			Method = method;
+			Method = method ?? throw new ArgumentNullException(nameof(method));
 			if (statements.Length > 1)
 				Array.Sort(statements, SourceStatement.SpanStartComparer);
+			DecompilerOptionsVersion = decompilerOptionsVersion;
 			Statements = statements;
-			Locals = locals;
+			Scope = scope ?? throw new ArgumentNullException(nameof(scope));
 			Span = methodSpan ?? CalculateMethodSpan(statements) ?? new TextSpan(0, 0);
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using dnlib.DotNet.MD;
+using dnSpy.Contracts.Hex.Files.DotNet;
 
 namespace dnSpy.AsmEditor.Hex {
 	static class TableSorter {
@@ -90,8 +90,8 @@ namespace dnSpy.AsmEditor.Hex {
 			public readonly byte[] Data;
 
 			public Record(int index, byte[] data) {
-				this.OrigIndex = index;
-				this.Data = data;
+				OrigIndex = index;
+				Data = data;
 			}
 		}
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,8 +30,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class HexDocumentTabContentFactory : IDocumentTabContentFactory {
 		public DocumentTabContent Create(IDocumentTabContentFactoryContext context) {
 			if (context.Nodes.Length == 1) {
-				var hexNode = context.Nodes[0] as HexNode;
-				if (hexNode != null)
+				if (context.Nodes[0] is HexNode hexNode)
 					return new HexDocumentTabContent(hexNode);
 			}
 
@@ -69,9 +68,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly HexNode hexNode;
 
-		public HexDocumentTabContent(HexNode hexNode) {
-			this.hexNode = hexNode;
-		}
+		public HexDocumentTabContent(HexNode hexNode) => this.hexNode = hexNode;
 
 		public override DocumentTabContent Clone() => new HexDocumentTabContent(hexNode);
 		public override DocumentTabUIContext CreateUIContext(IDocumentTabUIContextLocator locator) =>
@@ -87,13 +84,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public HexDocumentTabUIContext(object vmObj, bool isVirtualizingCollection) {
 			if (isVirtualizingCollection) {
-				this.uiObj = new ContentPresenter {
+				uiObj = new ContentPresenter {
 					Content = vmObj,
 					Focusable = true
 				};
 			}
 			else {
-				this.uiObj = new ScrollViewer {
+				uiObj = new ScrollViewer {
 					CanContentScroll = true,
 					HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
 					VerticalScrollBarVisibility = ScrollBarVisibility.Auto,

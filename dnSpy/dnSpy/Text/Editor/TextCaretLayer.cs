@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -89,15 +89,10 @@ namespace dnSpy.Text.Editor {
 		readonly IClassificationFormatMap classificationFormatMap;
 
 		public TextCaretLayer(TextCaret textCaret, IAdornmentLayer layer, IClassificationFormatMap classificationFormatMap) {
-			if (textCaret == null)
-				throw new ArgumentNullException(nameof(textCaret));
-			if (layer == null)
-				throw new ArgumentNullException(nameof(layer));
-			this.textCaret = textCaret;
-			this.layer = layer;
-			this.classificationFormatMap = classificationFormatMap;
-			this.caretGeometry = new CaretGeometry();
-			textCaret.PositionChanged += TextCaret_PositionChanged;
+			this.textCaret = textCaret ?? throw new ArgumentNullException(nameof(textCaret));
+			this.layer = layer ?? throw new ArgumentNullException(nameof(layer));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			caretGeometry = new CaretGeometry();
 			layer.TextView.LayoutChanged += TextView_LayoutChanged;
 			layer.TextView.Selection.SelectionChanged += Selection_SelectionChanged;
 			layer.TextView.VisualElement.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(VisualElement_GotKeyboardFocus), true);
@@ -136,9 +131,7 @@ namespace dnSpy.Text.Editor {
 		struct SelectionState {
 			byte state;
 
-			public SelectionState(ITextSelection selection) {
-				this.state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
-			}
+			public SelectionState(ITextSelection selection) => state = (byte)((selection.IsEmpty ? 1 : 0) | (selection.Mode == TextSelectionMode.Box ? 2 : 0));
 
 			public bool Equals(SelectionState other) => state == other.state;
 		}
@@ -151,7 +144,7 @@ namespace dnSpy.Text.Editor {
 		}
 		SelectionState oldSelectionState;
 
-		void TextCaret_PositionChanged(object sender, CaretPositionChangedEventArgs e) => UpdateCaretProperties();
+		internal void CaretPositionChanged() => UpdateCaretProperties();
 		void TextView_LayoutChanged(object sender, TextViewLayoutChangedEventArgs e) => UpdateCaretProperties();
 
 		public void SetImeStarted(bool started) {
@@ -165,7 +158,7 @@ namespace dnSpy.Text.Editor {
 		void UpdateCaretProperties() => UpdateCaretProperties(false);
 		void UpdateCaretProperties(bool forceInvalidateVisual) {
 			if (inUpdateCaretPropertiesCore)
-				Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => UpdateCaretProperties(forceInvalidateVisual)));
+				Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => UpdateCaretProperties(forceInvalidateVisual)));
 			else {
 				inUpdateCaretPropertiesCore = true;
 				try {
@@ -176,7 +169,7 @@ namespace dnSpy.Text.Editor {
 				}
 			}
 		}
-		bool inUpdateCaretPropertiesCore = false;
+		bool inUpdateCaretPropertiesCore;
 
 		void UpdateCaretPropertiesCore(bool forceInvalidateVisual) {
 			if (layer.TextView.IsClosed)
@@ -296,7 +289,6 @@ namespace dnSpy.Text.Editor {
 
 		public void Dispose() {
 			StopTimer();
-			textCaret.PositionChanged -= TextCaret_PositionChanged;
 			layer.TextView.LayoutChanged -= TextView_LayoutChanged;
 			layer.TextView.Selection.SelectionChanged -= Selection_SelectionChanged;
 			layer.TextView.VisualElement.GotKeyboardFocus -= VisualElement_GotKeyboardFocus;

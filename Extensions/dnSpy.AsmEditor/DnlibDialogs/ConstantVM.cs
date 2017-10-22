@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -72,9 +72,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		};
 
 		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip) {
-			this.ConstantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
-			this.ConstantCheckBoxToolTip = constantCheckBoxToolTip;
-			this.ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
+			ConstantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
+			ConstantCheckBoxToolTip = constantCheckBoxToolTip;
+			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 
 			IsEnabled = ConstantTypeVM.IsEnabled;
 		}

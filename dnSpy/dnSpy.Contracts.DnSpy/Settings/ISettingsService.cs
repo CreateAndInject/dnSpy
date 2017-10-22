@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Contracts.Settings {
 	/// <summary>
-	/// Settings manager
+	/// Adds/removes settings
 	/// </summary>
 	public interface ISettingsService {
 		/// <summary>

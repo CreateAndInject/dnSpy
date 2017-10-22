@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,10 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.PE;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -39,10 +38,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly ImageOptionalHeader64VM imageOptionalHeader64VM;
 
-		public ImageOptionalHeader64Node(HexDocument doc, ImageOptionalHeader64 optHdr)
-			: base((ulong)optHdr.StartOffset, (ulong)optHdr.EndOffset - 1) {
-			this.imageOptionalHeader64VM = new ImageOptionalHeader64VM(this, doc, StartOffset, EndOffset);
-		}
+		public ImageOptionalHeader64Node(ImageOptionalHeader64VM optHdr)
+			: base(optHdr.Span) => imageOptionalHeader64VM = optHdr;
 
 		protected override void WriteCore(ITextColorWriter output, DocumentNodeWriteOptions options) =>
 			output.Write(BoxedTextColor.HexPeOptionalHeader64, dnSpy_AsmEditor_Resources.HexNode_OptHeader64);

@@ -23,6 +23,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Text;
+using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
@@ -30,12 +31,12 @@ using ICSharpCode.NRefactory.VB.Ast;
 namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class VBTextOutputFormatter : IOutputFormatter {
 		readonly IDecompilerOutput output;
+		readonly DecompilerContext context;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 
-		public VBTextOutputFormatter(IDecompilerOutput output) {
-			if (output == null)
-				throw new ArgumentNullException(nameof(output));
-			this.output = output;
+		public VBTextOutputFormatter(IDecompilerOutput output, DecompilerContext context) {
+			this.output = output ?? throw new ArgumentNullException(nameof(output));
+			this.context = context ?? throw new ArgumentNullException(nameof(context));
 		}
 
 		MethodDebugInfoBuilder currentMethodDebugInfoBuilder;
@@ -63,6 +64,10 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 				throw new InvalidOperationException();
 
 			if (node.Annotation<MethodDebugInfoBuilder>() != null) {
+				if (context.CalculateBinSpans) {
+					foreach (var ns in context.UsingNamespaces)
+						currentMethodDebugInfoBuilder.Scope.Imports.Add(ImportInfo.CreateNamespace(ns));
+				}
 				output.AddDebugInfo(currentMethodDebugInfoBuilder.Create());
 				currentMethodDebugInfoBuilder = parentMethodDebugInfoBuilder.Pop();
 			}
@@ -127,12 +132,13 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			ILVariable variable = node.Annotation<ILVariable>();
 			if (variable == null && node.Parent is IdentifierExpression)
 				variable = node.Parent.Annotation<ILVariable>();
-			if (variable != null) {
-				if (variable.OriginalParameter != null)
-					return variable.OriginalParameter;
-				if (variable.OriginalVariable != null)
-					return variable.OriginalVariable;
-				return variable.Id;
+			if (variable != null)
+				return variable.GetTextReferenceObject();
+			var lbl = (node.Parent?.Parent as GoToStatement)?.Label ?? (node.Parent?.Parent as LabelDeclarationStatement)?.Label;
+			if (lbl != null) {
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
+				if (method != null)
+					return method.ToString() + lbl;
 			}
 			return null;
 		}
@@ -153,28 +159,17 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 			if (node is VariableIdentifier) {
 				var variable = ((VariableIdentifier)node).Name.Annotation<ILVariable>();
-				if (variable != null) {
-					if (variable.OriginalParameter != null)
-						return variable.OriginalParameter;
-					if (variable.OriginalVariable != null)
-						return variable.OriginalVariable;
-					return variable.Id;
-				}
+				if (variable != null)
+					return variable.GetTextReferenceObject();
 				node = node.Parent ?? node;
 			}
 			if (node is VariableDeclaratorWithTypeAndInitializer || node is VariableInitializer || node is CatchBlock || node is ForEachStatement) {
 				var variable = node.Annotation<ILVariable>();
-				if (variable != null) {
-					if (variable.OriginalParameter != null)
-						return variable.OriginalParameter;
-					if (variable.OriginalVariable != null)
-						return variable.OriginalVariable;
-					return variable.Id;
-				}
+				if (variable != null)
+					return variable.GetTextReferenceObject();
 			}
 
-			var label = node as LabelDeclarationStatement;
-			if (label != null) {
+			if (node is LabelDeclarationStatement label) {
 				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
 				if (method != null)
 					return method.ToString() + label.Label;
@@ -219,6 +214,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 					output.Write(keyword, BoxedTextColor.Keyword);
 				canPrintAccessor = !canPrintAccessor;
 			}
+			else if (memberRef != null && node is OperatorDeclaration && keyword == "Operator")
+				output.Write(keyword, memberRef, DecompilerReferenceFlags.Definition, BoxedTextColor.Keyword);
 			else
 				output.Write(keyword, BoxedTextColor.Keyword);
 		}
@@ -291,8 +288,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		public void DebugStart(AstNode node) => debugStack.Push(new DebugState { StartLocation = output.NextPosition });
 
 		public void DebugHidden(object hiddenBinSpans) {
-			var list = hiddenBinSpans as IList<BinSpan>;
-			if (list != null) {
+			if (hiddenBinSpans is IList<BinSpan> list) {
 				if (debugStack.Count > 0)
 					debugStack.Peek().ExtraBinSpans.AddRange(list);
 			}

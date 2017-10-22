@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,11 +57,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 		protected override InstructionVM[] GetSelectedItems() => listBox.SelectedItems.Cast<InstructionVM>().ToArray();
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
-			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
-			this.cilBodyVM.SelectItems = this;
-			this.coll = cilBodyVM.InstructionsListVM;
-			this.coll.CollectionChanged += coll_CollectionChanged;
-			InitializeInstructions(this.coll);
+			cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
+			cilBodyVM.SelectItems = this;
+			coll = cilBodyVM.InstructionsListVM;
+			coll.CollectionChanged += coll_CollectionChanged;
+			InitializeInstructions(coll);
 
 			Add(new ContextMenuHandler {
 				Header = "res:NopInstrCommand",
@@ -391,15 +391,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddFieldDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			object op = opvm.Other as IField ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
-			var field = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.FieldDef), op, cilBodyVM.OwnerModule) as IField;
-			if (field != null)
+			if (picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.FieldDef), op, cilBodyVM.OwnerModule) is IField field)
 				opvm.Other = field;
 		}
 
 		void AddFieldMemberRef(InstructionOperandVM opvm) {
 			MemberRef mr = opvm.Other as MemberRef;
-			var fd = opvm.Other as FieldDef;
-			if (fd != null)
+			if (opvm.Other is FieldDef fd)
 				mr = cilBodyVM.OwnerModule.Import(fd);
 			if (mr != null && mr.FieldSig == null)
 				mr = null;
@@ -409,16 +407,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddMethodDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			object op = opvm.Other as IMethod ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
-			var method = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), op, cilBodyVM.OwnerModule) as IMethod;
-			if (method != null)
+			if (picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.MethodDef), op, cilBodyVM.OwnerModule) is IMethod method)
 				opvm.Other = method;
 		}
 
 		void AddMethodMemberRef(InstructionOperandVM opvm) {
 			MemberRef mr = opvm.Other as MemberRef;
 			var md = opvm.Other as MethodDef;
-			var ms = opvm.Other as MethodSpec;
-			if (ms != null) {
+			if (opvm.Other is MethodSpec ms) {
 				mr = ms.Method as MemberRef;
 				md = ms.Method as MethodDef;
 			}
@@ -456,16 +452,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		void AddType(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			object op = opvm.Other as ITypeDefOrRef ?? (object)cilBodyVM.TypeSigCreatorOptions.OwnerType;
-			var type = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), op, cilBodyVM.OwnerModule) as ITypeDefOrRef;
-			if (type != null)
+			if (picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsDocumentTreeNodeFilter(VisibleMembersFlags.TypeDef), op, cilBodyVM.OwnerModule) is ITypeDefOrRef type)
 				opvm.Other = type;
 		}
 
 		void AddTypeSpec(InstructionOperandVM opvm) {
 			var creator = new TypeSigCreator(Window.GetWindow(listBox));
 			var opts = cilBodyVM.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec);
-			bool canceled;
-			var newSig = creator.Create(opts, (opvm.Other as ITypeDefOrRef).ToTypeSig(), out canceled);
+			var newSig = creator.Create(opts, (opvm.Other as ITypeDefOrRef).ToTypeSig(), out bool canceled);
 			if (canceled)
 				return;
 
@@ -593,10 +587,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case MethodBody.InstructionOperandType.Local:
 					if (!fromThisInstance) {
 						var oldLocal = (origInstr.InstructionOperandVM.OperandListItem as LocalVM) ?? LocalVM.Null;
-						LocalVM newLocal;
-						if (!createdLocals.TryGetValue(oldLocal, out newLocal)) {
+						if (!createdLocals.TryGetValue(oldLocal, out var newLocal)) {
 							newLocal = oldLocal.Import(cilBodyVM.TypeSigCreatorOptions, cilBodyVM.OwnerModule);
-							this.cilBodyVM.LocalsListVM.Add(newLocal);
+							cilBodyVM.LocalsListVM.Add(newLocal);
 							createdLocals.Add(oldLocal, newLocal);
 						}
 						op.OperandListItem = newLocal;

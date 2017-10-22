@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
@@ -33,6 +34,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.AsmEditor.Compiler;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Editor;
@@ -52,7 +54,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		// Make all types, methods, fields public so we don't get a compilation error when trying
 		// to reference an internal type or a private method in the original assembly.
-		protected const bool makeEverythingPublic = true;
+		internal const bool makeEverythingPublic = true;
 
 		protected const string MAIN_CODE_NAME = "main";
 		protected const string MAIN_G_CODE_NAME = "main.g";
@@ -63,9 +65,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		public ICommand CompileCommand => new RelayCommand(a => CompileCode(), a => CanCompile);
 		public ICommand AddAssemblyReferenceCommand => new RelayCommand(a => AddAssemblyReference(), a => CanAddAssemblyReference);
 		public ICommand AddGacReferenceCommand => new RelayCommand(a => AddGacReference(), a => CanAddGacReference);
+		public ICommand GoToNextDiagnosticCommand => new RelayCommand(a => GoToNextDiagnostic(), a => CanGoToNextDiagnostic);
+		public ICommand GoToPreviousDiagnosticCommand => new RelayCommand(a => GoToPreviousDiagnostic(), a => CanGoToPreviousDiagnostic);
 
 		public bool CanCompile {
-			get { return canCompile; }
+			get => canCompile;
 			set {
 				if (canCompile != value) {
 					canCompile = value;
@@ -111,7 +115,7 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CodeDocument> Documents { get; } = new ObservableCollection<CodeDocument>();
 		public CodeDocument SelectedDocument {
-			get { return selectedDocument; }
+			get => selectedDocument;
 			set {
 				if (selectedDocument != value) {
 					selectedDocument = value;
@@ -123,6 +127,17 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		public ObservableCollection<CompilerDiagnosticVM> Diagnostics { get; } = new ObservableCollection<CompilerDiagnosticVM>();
 
+		public CompilerDiagnosticVM SelectedCompilerDiagnosticVM {
+			get => selectedCompilerDiagnosticVM;
+			set {
+				if (selectedCompilerDiagnosticVM != value) {
+					selectedCompilerDiagnosticVM = value;
+					OnPropertyChanged(nameof(SelectedCompilerDiagnosticVM));
+				}
+			}
+		}
+		CompilerDiagnosticVM selectedCompilerDiagnosticVM;
+
 		protected readonly ModuleDef sourceModule;
 
 		protected EditCodeVM(IRawModuleBytesProvider rawModuleBytesProvider, IOpenFromGAC openFromGAC, IOpenAssembly openAssembly, ILanguageCompiler languageCompiler, IDecompiler decompiler, ModuleDef sourceModule) {
@@ -132,7 +147,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			this.languageCompiler = languageCompiler;
 			this.decompiler = decompiler;
 			this.sourceModule = sourceModule;
-			this.assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
+			assemblyReferenceResolver = new AssemblyReferenceResolver(rawModuleBytesProvider, sourceModule.Context.AssemblyResolver, sourceModule, makeEverythingPublic);
 		}
 
 		protected abstract class AsyncStateBase : IDisposable {
@@ -141,7 +156,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			bool disposed;
 
 			protected AsyncStateBase() {
-				this.cancellationTokenSource = new CancellationTokenSource();
+				cancellationTokenSource = new CancellationTokenSource();
 				CancellationToken = cancellationTokenSource.Token;
 			}
 
@@ -198,7 +213,7 @@ namespace dnSpy.AsmEditor.Compiler {
 					return;
 				if (methodSourceStatement == null)
 					return;
-				if (methodSourceStatement.Value.Method != reference)
+				if (methodSourceStatement.Value.Method != info.Method)
 					return;
 				var stmt = info.GetSourceStatementByCodeOffset(methodSourceStatement.Value.Statement.BinSpan.Start);
 				if (stmt == null)
@@ -209,11 +224,9 @@ namespace dnSpy.AsmEditor.Compiler {
 
 		protected abstract class DecompileCodeState : AsyncStateBase {
 			public DecompilationContext DecompilationContext { get; }
-			protected DecompileCodeState() {
-				DecompilationContext = new DecompilationContext {
-					CancellationToken = CancellationToken,
-				};
-			}
+			protected DecompileCodeState() => DecompilationContext = new DecompilationContext {
+				CancellationToken = CancellationToken,
+			};
 		}
 		protected DecompileCodeState decompileCodeState;
 
@@ -221,12 +234,10 @@ namespace dnSpy.AsmEditor.Compiler {
 		}
 		CompileCodeState compileCodeState;
 
-		protected void StartDecompile() {
-			StartDecompileAsync().ContinueWith(t => {
-				var ex = t.Exception;
-				Debug.Assert(ex == null);
-			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-		}
+		protected void StartDecompile() => StartDecompileAsync().ContinueWith(t => {
+			var ex = t.Exception;
+			Debug.Assert(ex == null);
+		}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 
 		protected struct SimpleDocument {
 			public string NameNoExtension { get; }
@@ -249,11 +260,11 @@ namespace dnSpy.AsmEditor.Compiler {
 		async Task StartDecompileAsync() {
 			bool canCompile = false, canceled = false;
 			var assemblyReferences = Array.Empty<CompilerMetadataReference>();
-			SimpleDocument[] simpleDocuments = Array.Empty<SimpleDocument>();
+			var simpleDocuments = Array.Empty<SimpleDocument>();
 			try {
 				var result = await DecompileAndGetRefsAsync();
-				assemblyReferences = result.Value;
-				simpleDocuments = result.Key.Documents.ToArray();
+				assemblyReferences = result.assemblyReferences;
+				simpleDocuments = result.result.Documents.ToArray();
 				canCompile = true;
 			}
 			catch (OperationCanceledException) {
@@ -299,16 +310,15 @@ namespace dnSpy.AsmEditor.Compiler {
 		static readonly object editCodeTextViewKey = new object();
 
 		internal static EditCodeVM TryGet(ITextView textView) {
-			EditCodeVM vm;
-			textView.Properties.TryGetProperty(editCodeTextViewKey, out vm);
+			textView.Properties.TryGetProperty(editCodeTextViewKey, out EditCodeVM vm);
 			return vm;
 		}
 
-		async Task<KeyValuePair<DecompileAsyncResult, CompilerMetadataReference[]>> DecompileAndGetRefsAsync() {
+		async Task<(DecompileAsyncResult result, CompilerMetadataReference[] assemblyReferences)> DecompileAndGetRefsAsync() {
 			var result = await DecompileAsync().ConfigureAwait(false);
 			decompileCodeState.CancellationToken.ThrowIfCancellationRequested();
-			var refs = await CreateCompilerMetadataReferencesAsync(assemblyReferenceResolver, languageCompiler.RequiredAssemblyReferences, decompileCodeState.CancellationToken).ConfigureAwait(false);
-			return new KeyValuePair<DecompileAsyncResult, CompilerMetadataReference[]>(result, refs);
+			var refs = await CreateCompilerMetadataReferencesAsync(languageCompiler.RequiredAssemblyReferences, decompileCodeState.CancellationToken).ConfigureAwait(false);
+			return (result, refs);
 		}
 
 		Task<DecompileAsyncResult> DecompileAsync() {
@@ -324,14 +334,16 @@ namespace dnSpy.AsmEditor.Compiler {
 				return;
 			CanCompile = false;
 
+			DnSpyEventSource.Log.CompileStart();
 			ProfileOptimizationHelper.StartProfile("compile-" + decompiler.UniqueGuid.ToString());
 			StartCompileAsync().ContinueWith(t => {
+				DnSpyEventSource.Log.CompileStop();
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		Task<CompilerMetadataReference[]> CreateCompilerMetadataReferencesAsync(AssemblyReferenceResolver assemblyReferenceResolver, IEnumerable<string> extraAssemblyReferences, CancellationToken cancellationToken) {
+		Task<CompilerMetadataReference[]> CreateCompilerMetadataReferencesAsync(IEnumerable<string> extraAssemblyReferences, CancellationToken cancellationToken) {
 			cancellationToken.ThrowIfCancellationRequested();
 
 			var modules = new HashSet<ModuleDef>(new MetadataReferenceFinder(sourceModule, cancellationToken).Find(extraAssemblyReferences));
@@ -385,7 +397,7 @@ namespace dnSpy.AsmEditor.Compiler {
 			}
 			else if (result?.Success == true) {
 				try {
-					importer = new ModuleImporter(sourceModule);
+					importer = new ModuleImporter(sourceModule, makeEverythingPublic);
 					Import(importer, result.Value);
 					compilerDiagnostics = importer.Diagnostics;
 					if (compilerDiagnostics.Any(a => a.Severity == CompilerDiagnosticSeverity.Error))
@@ -440,7 +452,8 @@ namespace dnSpy.AsmEditor.Compiler {
 			Diagnostics.Clear();
 			Diagnostics.AddRange(diags.OrderBy(a => a, CompilerDiagnosticComparer.Instance).
 				Where(a => a.Severity != CompilerDiagnosticSeverity.Hidden).
-				Select(a => new CompilerDiagnosticVM(a, GetImageReference(a.Severity) ?? default(ImageReference))));
+				Select(a => new CompilerDiagnosticVM(a, GetImageReference(a.Severity) ?? default)));
+			SelectedCompilerDiagnosticVM = Diagnostics.FirstOrDefault();
 		}
 
 		static ImageReference? GetImageReference(CompilerDiagnosticSeverity severity) {
@@ -492,6 +505,70 @@ namespace dnSpy.AsmEditor.Compiler {
 			catch (Exception ex) {
 				MsgBox.Instance.Show(ex);
 			}
+		}
+
+		internal void MoveTo(CompilerDiagnosticVM diag) {
+			if (string.IsNullOrEmpty(diag.FullPath))
+				return;
+
+			var doc = Documents.FirstOrDefault(a => a.Name == diag.FullPath);
+			Debug.Assert(doc != null);
+			if (doc == null)
+				return;
+			SelectedDocument = doc;
+
+			if (diag.LineLocationSpan != null) {
+				UIUtilities.Focus(doc.TextView.VisualElement, () => {
+					// The caret isn't always moved unless we wait a little
+					doc.TextView.VisualElement.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+						if (doc == SelectedDocument) {
+							MoveCaretTo(doc.TextView, diag.LineLocationSpan.Value.StartLinePosition.Line, diag.LineLocationSpan.Value.StartLinePosition.Character);
+							doc.TextView.EnsureCaretVisible();
+							doc.TextView.Selection.Clear();
+						}
+					}));
+				});
+			}
+		}
+
+		static CaretPosition MoveCaretTo(ITextView textView, int line, int column) {
+			if (line >= textView.TextSnapshot.LineCount)
+				line = textView.TextSnapshot.LineCount - 1;
+			var snapshotLine = textView.TextSnapshot.GetLineFromLineNumber(line);
+			if (column >= snapshotLine.Length)
+				column = snapshotLine.Length;
+			return textView.Caret.MoveTo(snapshotLine.Start + column);
+		}
+
+		bool CanGoToNextDiagnostic => Diagnostics.Count > 0;
+		bool CanGoToPreviousDiagnostic => Diagnostics.Count > 0;
+
+		void GoToNextDiagnostic() {
+			if (!CanGoToNextDiagnostic)
+				return;
+			GoToDiagnostic(1);
+		}
+
+		void GoToPreviousDiagnostic() {
+			if (!CanGoToPreviousDiagnostic)
+				return;
+			GoToDiagnostic(-1);
+		}
+
+		void GoToDiagnostic(int offset) {
+			var item = SelectedCompilerDiagnosticVM ?? Diagnostics.FirstOrDefault();
+			if (item == null)
+				return;
+			int index = Diagnostics.IndexOf(item);
+			Debug.Assert(index >= 0);
+			if (index < 0)
+				return;
+			index = (index + offset) % Diagnostics.Count;
+			if (index < 0)
+				index += Diagnostics.Count;
+			var diag = Diagnostics[index];
+			SelectedCompilerDiagnosticVM = diag;
+			MoveTo(diag);
 		}
 
 		public void Dispose() {

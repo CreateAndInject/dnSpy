@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,7 +31,7 @@ namespace dnSpy.Text.Formatting {
 		public PhysicalLineCache(int maxCacheSize) {
 			if (maxCacheSize < 1)
 				throw new ArgumentOutOfRangeException(nameof(maxCacheSize));
-			this.cache = new List<PhysicalLine>(maxCacheSize);
+			cache = new List<PhysicalLine>(maxCacheSize);
 			this.maxCacheSize = maxCacheSize;
 		}
 

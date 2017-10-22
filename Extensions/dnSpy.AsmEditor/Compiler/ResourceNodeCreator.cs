@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,8 +30,8 @@ namespace dnSpy.AsmEditor.Compiler {
 		readonly ResourceNode[] nodes;
 
 		public ResourceNodeCreator(ResourcesFolderNode rsrcListNode, ResourceNode[] nodes) {
-			this.module = rsrcListNode.GetModule();
-			Debug.Assert(this.module != null);
+			module = rsrcListNode.GetModule();
+			Debug.Assert(module != null);
 			this.rsrcListNode = rsrcListNode;
 			this.nodes = nodes;
 		}

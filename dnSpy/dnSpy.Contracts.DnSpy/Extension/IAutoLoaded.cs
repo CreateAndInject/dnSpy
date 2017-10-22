@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -68,9 +68,7 @@ namespace dnSpy.Contracts.Extension {
 	public sealed class ExportAutoLoadedAttribute : ExportAttribute, IAutoLoadedMetadata {
 		/// <summary>Constructor</summary>
 		public ExportAutoLoadedAttribute()
-			: base(typeof(IAutoLoaded)) {
-			LoadType = AutoLoadedLoadType.AppLoaded;
-		}
+			: base(typeof(IAutoLoaded)) => LoadType = AutoLoadedLoadType.AppLoaded;
 
 		/// <summary>
 		/// Order of this instance

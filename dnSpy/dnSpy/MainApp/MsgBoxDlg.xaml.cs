@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,9 +30,9 @@ namespace dnSpy.MainApp {
 		MsgBoxButton clickedButton;
 
 		public MsgBoxDlg() {
-			this.clickedButton = MsgBoxButton.None;
+			clickedButton = MsgBoxButton.None;
 			InitializeComponent();
-			this.IsVisibleChanged += MsgBoxDlg_IsVisibleChanged;
+			IsVisibleChanged += MsgBoxDlg_IsVisibleChanged;
 		}
 
 		void MsgBoxDlg_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {

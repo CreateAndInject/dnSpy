@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>[] intellisensePresenterProviders;
 
 		[ImportingConstructor]
-		IntellisensePresenterFactoryService([ImportMany] IEnumerable<Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>> intellisensePresenterProviders) {
-			this.intellisensePresenterProviders = Orderer.Order(intellisensePresenterProviders).ToArray();
-		}
+		IntellisensePresenterFactoryService([ImportMany] IEnumerable<Lazy<IIntellisensePresenterProvider, IOrderableContentTypeMetadata>> intellisensePresenterProviders) => this.intellisensePresenterProviders = Orderer.Order(intellisensePresenterProviders).ToArray();
 
 		public IIntellisensePresenter TryCreateIntellisensePresenter(IIntellisenseSession session) {
 			if (session == null)

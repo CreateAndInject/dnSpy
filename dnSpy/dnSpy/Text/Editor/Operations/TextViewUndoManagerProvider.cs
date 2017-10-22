@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,9 +31,7 @@ namespace dnSpy.Text.Editor.Operations {
 		readonly ITextBufferUndoManagerProvider textBufferUndoManagerProvider;
 
 		[ImportingConstructor]
-		TextViewUndoManagerProvider(ITextBufferUndoManagerProvider textBufferUndoManagerProvider) {
-			this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
-		}
+		TextViewUndoManagerProvider(ITextBufferUndoManagerProvider textBufferUndoManagerProvider) => this.textBufferUndoManagerProvider = textBufferUndoManagerProvider;
 
 		public ITextViewUndoManager GetTextViewUndoManager(IDsWpfTextView textView) {
 			if (textView == null)
@@ -50,8 +48,7 @@ namespace dnSpy.Text.Editor.Operations {
 		public void RemoveTextViewUndoManager(IDsWpfTextView textView) {
 			if (textView == null)
 				throw new ArgumentNullException(nameof(textView));
-			TextViewUndoManager manager;
-			if (!textView.Properties.TryGetProperty(textViewUndoManagerKey, out manager))
+			if (!textView.Properties.TryGetProperty(textViewUndoManagerKey, out TextViewUndoManager manager))
 				return;
 			textView.Properties.RemoveProperty(textViewUndoManagerKey);
 			manager.Dispose();

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,10 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using dnlib.PE;
+using dnSpy.AsmEditor.Hex.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Documents.TreeView;
-using dnSpy.Contracts.HexEditor;
+using dnSpy.Contracts.Hex;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Text;
 
@@ -41,15 +41,15 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		readonly ImageSectionHeaderVM imageSectionHeaderVM;
 
-		public ImageSectionHeaderNode(HexDocument doc, ImageSectionHeader sectHdr, int sectionNumber)
-			: base((ulong)sectHdr.StartOffset, (ulong)sectHdr.EndOffset - 1) {
-			this.SectionNumber = sectionNumber;
-			this.imageSectionHeaderVM = new ImageSectionHeaderVM(this, doc, StartOffset);
+		public ImageSectionHeaderNode(ImageSectionHeaderVM sectHdr, int sectionNumber)
+			: base(sectHdr.Span) {
+			SectionNumber = sectionNumber;
+			imageSectionHeaderVM = sectHdr;
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
-			if (HexUtils.IsModified(imageSectionHeaderVM.NameVM.StartOffset, imageSectionHeaderVM.NameVM.EndOffset, modifiedStart, modifiedEnd))
+		public override void OnBufferChanged(NormalizedHexChangeCollection changes) {
+			base.OnBufferChanged(changes);
+			if (changes.OverlapsWith(imageSectionHeaderVM.NameVM.Span))
 				TreeNode.RefreshUI();
 		}
 

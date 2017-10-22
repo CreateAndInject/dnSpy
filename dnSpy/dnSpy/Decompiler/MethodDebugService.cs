@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Decompiler {
 		readonly IModuleIdProvider moduleIdProvider;
 
 		[ImportingConstructor]
-		MethodDebugServiceDocumentViewerListener(IModuleIdProvider moduleIdProvider) {
-			this.moduleIdProvider = moduleIdProvider;
-		}
+		MethodDebugServiceDocumentViewerListener(IModuleIdProvider moduleIdProvider) => this.moduleIdProvider = moduleIdProvider;
 
 		public void OnEvent(DocumentViewerEventArgs e) {
 			if (e.EventType == DocumentViewerEvent.GotNewContent)
@@ -62,14 +60,9 @@ namespace dnSpy.Decompiler {
 		public MethodDebugService(IReadOnlyList<MethodDebugInfo> methodDebugInfos, ITextSnapshot snapshot, IModuleIdProvider moduleIdProvider) {
 			if (methodDebugInfos == null)
 				throw new ArgumentNullException(nameof(methodDebugInfos));
-			if (snapshot == null)
-				throw new ArgumentNullException(nameof(snapshot));
-			if (moduleIdProvider == null)
-				throw new ArgumentNullException(nameof(moduleIdProvider));
-
-			this.dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
-			this.snapshot = snapshot;
-			this.moduleIdProvider = moduleIdProvider;
+			dict = new Dictionary<ModuleTokenId, MethodDebugInfo>(methodDebugInfos.Count);
+			this.snapshot = snapshot ?? throw new ArgumentNullException(nameof(snapshot));
+			this.moduleIdProvider = moduleIdProvider ?? throw new ArgumentNullException(nameof(moduleIdProvider));
 
 			var modIdDict = new Dictionary<ModuleDef, ModuleId>();
 			foreach (var info in methodDebugInfos) {
@@ -77,18 +70,16 @@ namespace dnSpy.Decompiler {
 				if (module == null)
 					continue;
 
-				ModuleId moduleId;
-				if (!modIdDict.TryGetValue(module, out moduleId)) {
+				if (!modIdDict.TryGetValue(module, out var moduleId)) {
 					moduleId = moduleIdProvider.Create(module);
 					modIdDict.Add(module, moduleId);
 				}
 				var key = new ModuleTokenId(moduleId, info.Method.MDToken);
-				MethodDebugInfo oldDebugInfo;
-				if (this.dict.TryGetValue(key, out oldDebugInfo)) {
+				if (dict.TryGetValue(key, out var oldDebugInfo)) {
 					if (info.Statements.Length < oldDebugInfo.Statements.Length)
 						continue;
 				}
-				this.dict[key] = info;
+				dict[key] = info;
 			}
 		}
 
@@ -104,8 +95,16 @@ namespace dnSpy.Decompiler {
 			var methodStatements = FindByLineAndTextOffset(line.Start.Position, line.End.Position, textPosition);
 			if (methodStatements == null && line.Start.Position != textPosition)
 				methodStatements = FindByLineAndTextOffset(line.Start.Position, line.End.Position, line.Start.Position);
+			if (methodStatements != null && methodStatements.Count > 1) {
+				// If there are two methods (get; set;) on the same line, only return one of them
+				var exact = methodStatements.Where(a => a.Statement.TextSpan.Start <= textPosition && textPosition < a.Statement.TextSpan.End).ToList();
+				if (exact.Count != 0)
+					methodStatements = exact;
+				else
+					methodStatements = null;
+			}
 			if (methodStatements == null)
-				methodStatements = GetClosest(line.Start.Position, line.End.Position);
+				methodStatements = GetClosest(line.Start.Position, line.End.Position, textPosition);
 
 			if (methodStatements != null) {
 				if (!sameMethod || IsSameMethod(methodStatements, textPosition))
@@ -149,7 +148,7 @@ namespace dnSpy.Decompiler {
 			return list == null ? null : list.Distinct().ToList();
 		}
 
-		List<MethodSourceStatement> GetClosest(int lineStart, int lineEnd) {
+		List<MethodSourceStatement> GetClosest(int lineStart, int lineEnd, int textPosition) {
 			var list = new List<MethodSourceStatement>();
 			foreach (var info in dict.Values) {
 				MethodSourceStatement? methodSourceStatement = null;
@@ -164,7 +163,7 @@ namespace dnSpy.Decompiler {
 						list.Add(methodSourceStatement.Value);
 					else if (methodSourceStatement.Value.Statement.TextSpan.Start == list[0].Statement.TextSpan.Start)
 						list.Add(methodSourceStatement.Value);
-					else if (methodSourceStatement.Value.Statement.TextSpan.Start < list[0].Statement.TextSpan.Start) {
+					else if (GetDist(methodSourceStatement.Value.Statement.TextSpan, textPosition) < GetDist(list[0].Statement.TextSpan, textPosition)) {
 						list.Clear();
 						list.Add(methodSourceStatement.Value);
 					}
@@ -176,12 +175,17 @@ namespace dnSpy.Decompiler {
 			return list.Distinct().ToList();
 		}
 
+		static int GetDist(TextSpan span, int textPosition) {
+			int a = Math.Abs(span.Start - textPosition);
+			int b = Math.Abs(span.End - textPosition);
+			return Math.Min(a, b);
+		}
+
 		public MethodSourceStatement? FindByCodeOffset(MethodDef method, uint codeOffset) =>
 			FindByCodeOffset(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken), codeOffset);
 
 		public MethodSourceStatement? FindByCodeOffset(ModuleTokenId token, uint codeOffset) {
-			MethodDebugInfo info;
-			if (!dict.TryGetValue(token, out info))
+			if (!dict.TryGetValue(token, out var info))
 				return null;
 			foreach (var sourceStatement in info.Statements) {
 				if (sourceStatement.BinSpan.Start <= codeOffset && codeOffset < sourceStatement.BinSpan.End)
@@ -194,8 +198,7 @@ namespace dnSpy.Decompiler {
 			TryGetMethodDebugInfo(new ModuleTokenId(moduleIdProvider.Create(method.Module), method.MDToken));
 
 		public MethodDebugInfo TryGetMethodDebugInfo(ModuleTokenId token) {
-			MethodDebugInfo info;
-			dict.TryGetValue(token, out info);
+			dict.TryGetValue(token, out var info);
 			return info;
 		}
 

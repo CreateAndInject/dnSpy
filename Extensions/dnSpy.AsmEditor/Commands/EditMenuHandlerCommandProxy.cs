@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,9 +25,7 @@ namespace dnSpy.AsmEditor.Commands {
 	sealed class EditMenuHandlerCommandProxy : ICommand {
 		readonly EditMenuHandler command;
 
-		public EditMenuHandlerCommandProxy(EditMenuHandler command) {
-			this.command = command;
-		}
+		public EditMenuHandlerCommandProxy(EditMenuHandler command) => this.command = command;
 
 		AsmEditorContext CreateContext() => command.CreateContext();
 

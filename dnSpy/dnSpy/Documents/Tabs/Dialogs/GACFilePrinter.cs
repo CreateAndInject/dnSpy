@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,9 +23,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 	sealed class GACFilePrinter {
 		readonly ITextColorWriter output;
 
-		public GACFilePrinter(ITextColorWriter output) {
-			this.output = output;
-		}
+		public GACFilePrinter(ITextColorWriter output) => this.output = output;
 
 		public void WriteName(GACFileVM vm) => output.Write(vm.IsExe ? BoxedTextColor.AssemblyExe : BoxedTextColor.Assembly, vm.Name);
 		public void WriteVersion(GACFileVM vm) => output.Write(vm.Version);

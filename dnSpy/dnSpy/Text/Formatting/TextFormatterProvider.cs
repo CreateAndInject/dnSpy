@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,8 +29,8 @@ namespace dnSpy.Text.Formatting {
 
 		[ImportingConstructor]
 		TextFormatterProvider() {
-			this.idealModeTextFormatter = TextFormatter.Create(TextFormattingMode.Ideal);
-			this.displayModeTextFormatter = TextFormatter.Create(TextFormattingMode.Display);
+			idealModeTextFormatter = TextFormatter.Create(TextFormattingMode.Ideal);
+			displayModeTextFormatter = TextFormatter.Create(TextFormattingMode.Display);
 		}
 
 		// These formatters are only used on the UI thread so they can be shared by all callers

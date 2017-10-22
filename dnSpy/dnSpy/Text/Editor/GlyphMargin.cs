@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -96,13 +96,9 @@ namespace dnSpy.Text.Editor {
 			public IGlyphFactoryProvider FactoryProvider { get; }
 			public Canvas Canvas { get; }
 			public GlyphFactoryInfo(int order, IGlyphFactory factory, IGlyphFactoryProvider glyphFactoryProvider) {
-				if (factory == null)
-					throw new ArgumentNullException(nameof(factory));
-				if (glyphFactoryProvider == null)
-					throw new ArgumentNullException(nameof(glyphFactoryProvider));
 				Order = order;
-				Factory = factory;
-				FactoryProvider = glyphFactoryProvider;
+				Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+				FactoryProvider = glyphFactoryProvider ?? throw new ArgumentNullException(nameof(glyphFactoryProvider));
 				Canvas = new Canvas { Background = Brushes.Transparent };
 			}
 		}
@@ -112,12 +108,8 @@ namespace dnSpy.Text.Editor {
 			public List<IconInfo> Icons { get; }
 
 			public LineInfo(ITextViewLine textViewLine, List<IconInfo> icons) {
-				if (textViewLine == null)
-					throw new ArgumentNullException(nameof(textViewLine));
-				if (icons == null)
-					throw new ArgumentNullException(nameof(icons));
-				Line = textViewLine;
-				Icons = icons;
+				Line = textViewLine ?? throw new ArgumentNullException(nameof(textViewLine));
+				Icons = icons ?? throw new ArgumentNullException(nameof(icons));
 			}
 		}
 
@@ -126,9 +118,7 @@ namespace dnSpy.Text.Editor {
 			public double BaseTopValue { get; }
 			public int Order { get; }
 			public IconInfo(int order, UIElement element) {
-				if (element == null)
-					throw new ArgumentNullException(nameof(element));
-				Element = element;
+				Element = element ?? throw new ArgumentNullException(nameof(element));
 				BaseTopValue = GetBaseTopValue(element);
 				Order = order;
 			}
@@ -145,22 +135,13 @@ namespace dnSpy.Text.Editor {
 		public GlyphMargin(IMenuService menuService, IWpfTextViewHost wpfTextViewHost, IViewTagAggregatorFactoryService viewTagAggregatorFactoryService, IEditorFormatMapService editorFormatMapService, Lazy<IGlyphMouseProcessorProvider, IGlyphMouseProcessorProviderMetadata>[] glyphMouseProcessorProviders, Lazy<IGlyphFactoryProvider, IGlyphMetadata>[] glyphFactoryProviders, IMarginContextMenuService marginContextMenuHandlerProviderService) {
 			if (menuService == null)
 				throw new ArgumentNullException(nameof(menuService));
-			if (wpfTextViewHost == null)
-				throw new ArgumentNullException(nameof(wpfTextViewHost));
-			if (viewTagAggregatorFactoryService == null)
-				throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
-			if (editorFormatMapService == null)
-				throw new ArgumentNullException(nameof(editorFormatMapService));
-			if (glyphMouseProcessorProviders == null)
-				throw new ArgumentNullException(nameof(glyphMouseProcessorProviders));
-			if (glyphFactoryProviders == null)
-				throw new ArgumentNullException(nameof(glyphFactoryProviders));
-			this.glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
-			this.wpfTextViewHost = wpfTextViewHost;
-			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService;
-			this.editorFormatMapService = editorFormatMapService;
-			this.lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders;
-			this.lazyGlyphFactoryProviders = glyphFactoryProviders;
+			glyphFactories = new Dictionary<Type, GlyphFactoryInfo>();
+			childCanvases = Array.Empty<Canvas>();
+			this.wpfTextViewHost = wpfTextViewHost ?? throw new ArgumentNullException(nameof(wpfTextViewHost));
+			this.viewTagAggregatorFactoryService = viewTagAggregatorFactoryService ?? throw new ArgumentNullException(nameof(viewTagAggregatorFactoryService));
+			this.editorFormatMapService = editorFormatMapService ?? throw new ArgumentNullException(nameof(editorFormatMapService));
+			lazyGlyphMouseProcessorProviders = glyphMouseProcessorProviders ?? throw new ArgumentNullException(nameof(glyphMouseProcessorProviders));
+			lazyGlyphFactoryProviders = glyphFactoryProviders ?? throw new ArgumentNullException(nameof(glyphFactoryProviders));
 
 			var binding = new Binding {
 				Path = new PropertyPath(BackgroundProperty),
@@ -269,9 +250,9 @@ namespace dnSpy.Text.Editor {
 			mouseProcessorCollection = new MouseProcessorCollection(VisualElement, null, new DefaultMouseProcessor(), CreateMouseProcessors(), null);
 			wpfTextViewHost.TextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			lineInfos = new Dictionary<object, LineInfo>();
-			InitializeGlyphFactories(null, wpfTextViewHost.TextView.TextDataModel.ContentType);
 			tagAggregator = viewTagAggregatorFactoryService.CreateTagAggregator<IGlyphTag>(wpfTextViewHost.TextView);
 			editorFormatMap = editorFormatMapService.GetEditorFormatMap(wpfTextViewHost.TextView);
+			InitializeGlyphFactories(null, wpfTextViewHost.TextView.TextDataModel.ContentType);
 		}
 
 		void TextDataModel_ContentTypeChanged(object sender, TextDataModelContentTypeChangedEventArgs e) =>
@@ -288,10 +269,8 @@ namespace dnSpy.Text.Editor {
 			else {
 				UnregisterEvents();
 				lineInfos?.Clear();
-				if (childCanvases != null) {
-					foreach (var c in childCanvases)
-						c.Children.Clear();
-				}
+				foreach (var c in childCanvases)
+					c.Children.Clear();
 			}
 		}
 
@@ -315,8 +294,7 @@ namespace dnSpy.Text.Editor {
 				AddLine(newInfos, line);
 
 			foreach (var line in translatedLines) {
-				LineInfo info;
-				bool b = lineInfos.TryGetValue(line.IdentityTag, out info);
+				bool b = lineInfos.TryGetValue(line.IdentityTag, out var info);
 				Debug.Assert(b);
 				if (!b)
 					continue;
@@ -329,8 +307,7 @@ namespace dnSpy.Text.Editor {
 			foreach (var line in wpfTextViewHost.TextView.TextViewLines) {
 				if (newInfos.ContainsKey(line.IdentityTag))
 					continue;
-				LineInfo info;
-				if (!lineInfos.TryGetValue(line.IdentityTag, out info))
+				if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 					continue;
 				lineInfos.Remove(line.IdentityTag);
 				newInfos.Add(line.IdentityTag, info);
@@ -361,9 +338,8 @@ namespace dnSpy.Text.Editor {
 				Debug.Assert(tag != null);
 				if (tag == null)
 					continue;
-				GlyphFactoryInfo factoryInfo;
 				// Fails if someone forgot to Export(typeof(IGlyphFactoryProvider)) with the correct tag types
-				bool b = glyphFactories.TryGetValue(tag.GetType(), out factoryInfo);
+				bool b = glyphFactories.TryGetValue(tag.GetType(), out var factoryInfo);
 				Debug.Assert(b);
 				if (!b)
 					continue;
@@ -417,8 +393,7 @@ namespace dnSpy.Text.Editor {
 
 		void Update(IWpfTextViewLine line) {
 			Debug.Assert(line.VisibilityState != VisibilityState.Unattached);
-			LineInfo info;
-			if (!lineInfos.TryGetValue(line.IdentityTag, out info))
+			if (!lineInfos.TryGetValue(line.IdentityTag, out var info))
 				return;
 			lineInfos.Remove(line.IdentityTag);
 			foreach (var iconInfo in info.Icons)

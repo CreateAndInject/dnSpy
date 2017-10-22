@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,7 +63,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 
 		protected override bool IsCompleteSubmission(string text) =>
 			SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
-		static readonly VisualBasicParseOptions parseOptions = new VisualBasicParseOptions(kind: SourceCodeKind.Script);
+		static readonly VisualBasicParseOptions parseOptions = new VisualBasicParseOptions(languageVersion: LanguageVersion.Latest, kind: SourceCodeKind.Script);
 
 		protected override SyntaxTree CreateSyntaxTree(string code, CancellationToken cancellationToken) =>
 			SyntaxFactory.ParseSyntaxTree(code, parseOptions, cancellationToken: cancellationToken);
@@ -77,7 +77,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 			var rspFile = GetResponseFile("VisualBasicInteractive.rsp");
 			if (rspFile == null)
 				return;
-			this.replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
+			ReplEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)), BoxedTextColor.ReplOutputText);
 
 			foreach (var t in ResponseFileReader.Read(rspFile)) {
 				switch (t.Item1.ToLowerInvariant()) {

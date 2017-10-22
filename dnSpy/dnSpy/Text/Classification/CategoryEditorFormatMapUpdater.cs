@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -23,36 +23,29 @@ using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Themes;
+using dnSpy.Settings.AppearanceCategory;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Text.Classification {
 	sealed class CategoryEditorFormatMapUpdater {
 		readonly IThemeService themeService;
-		readonly ITextEditorFontSettings textEditorFontSettings;
+		readonly ITextAppearanceCategory textAppearanceCategory;
 		readonly IEditorFormatDefinitionService editorFormatDefinitionService;
 		readonly IEditorFormatMap editorFormatMap;
 
-		public CategoryEditorFormatMapUpdater(IThemeService themeService, ITextEditorFontSettings textEditorFontSettings, IEditorFormatDefinitionService editorFormatDefinitionService, IEditorFormatMap editorFormatMap) {
-			if (themeService == null)
-				throw new ArgumentNullException(nameof(themeService));
-			if (textEditorFontSettings == null)
-				throw new ArgumentNullException(nameof(textEditorFontSettings));
-			if (editorFormatDefinitionService == null)
-				throw new ArgumentNullException(nameof(editorFormatDefinitionService));
-			if (editorFormatMap == null)
-				throw new ArgumentNullException(nameof(editorFormatMap));
-			this.themeService = themeService;
-			this.textEditorFontSettings = textEditorFontSettings;
-			this.editorFormatDefinitionService = editorFormatDefinitionService;
-			this.editorFormatMap = editorFormatMap;
+		public CategoryEditorFormatMapUpdater(IThemeService themeService, ITextAppearanceCategory textAppearanceCategory, IEditorFormatDefinitionService editorFormatDefinitionService, IEditorFormatMap editorFormatMap) {
+			this.themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+			this.textAppearanceCategory = textAppearanceCategory ?? throw new ArgumentNullException(nameof(textAppearanceCategory));
+			this.editorFormatDefinitionService = editorFormatDefinitionService ?? throw new ArgumentNullException(nameof(editorFormatDefinitionService));
+			this.editorFormatMap = editorFormatMap ?? throw new ArgumentNullException(nameof(editorFormatMap));
 
 			themeService.ThemeChangedHighPriority += ThemeService_ThemeChangedHighPriority;
-			textEditorFontSettings.SettingsChanged += TextEditorFontSettings_SettingsChanged;
+			textAppearanceCategory.SettingsChanged += TextAppearanceCategory_SettingsChanged;
 			InitializeAll();
 		}
 
-		void TextEditorFontSettings_SettingsChanged(object sender, EventArgs e) => InitializeAll();
+		void TextAppearanceCategory_SettingsChanged(object sender, EventArgs e) => InitializeAll();
 		void ThemeService_ThemeChangedHighPriority(object sender, ThemeChangedEventArgs e) => InitializeAll();
 
 		void InitializeAll() {
@@ -61,7 +54,7 @@ namespace dnSpy.Text.Classification {
 				editorFormatMap.BeginBatchUpdate();
 
 			var theme = themeService.Theme;
-			var textProps = textEditorFontSettings.CreateResourceDictionary(theme);
+			var textProps = textAppearanceCategory.CreateResourceDictionary(theme);
 			var winbg = textProps[EditorFormatMapConstants.TextViewBackgroundId] as Brush ?? SystemColors.WindowBrush;
 			var winbgRes = editorFormatMap.GetProperties(EditorFormatMapConstants.TextViewBackgroundId);
 			if (winbgRes[EditorFormatDefinition.BackgroundBrushId] != winbg) {
@@ -70,8 +63,8 @@ namespace dnSpy.Text.Classification {
 			}
 
 			foreach (var t in GetEditorFormatDefinitions()) {
-				var key = t.Item1.Name;
-				var props = t.Item2.CreateThemeResourceDictionary(theme);
+				var key = t.metadata.Name;
+				var props = t.def.CreateThemeResourceDictionary(theme);
 				editorFormatMap.SetProperties(key, props);
 			}
 
@@ -99,9 +92,9 @@ namespace dnSpy.Text.Classification {
 			ClassificationFormatDefinition.TypefaceId,
 		};
 
-		IEnumerable<Tuple<IEditorFormatMetadata, EditorFormatDefinition>> GetEditorFormatDefinitions() {
+		IEnumerable<(IEditorFormatMetadata metadata, EditorFormatDefinition def)> GetEditorFormatDefinitions() {
 			foreach (var lazy in editorFormatDefinitionService.EditorFormatDefinitions)
-				yield return Tuple.Create(lazy.Metadata, lazy.Value);
+				yield return (lazy.Metadata, lazy.Value);
 		}
 	}
 }

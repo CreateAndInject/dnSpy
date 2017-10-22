@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,24 +37,24 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public AssemblyOptions(AssemblyDef asm) {
-			this.HashAlgorithm = asm.HashAlgorithm;
-			this.Version = asm.Version;
-			this.Attributes = asm.Attributes;
-			this.PublicKey = asm.PublicKey;
-			this.Name = asm.Name;
-			this.Culture = asm.Culture;
-			this.ClrVersion = Module.ClrVersion.DefaultVersion;
-			this.CustomAttributes.AddRange(asm.CustomAttributes);
-			this.DeclSecurities.AddRange(asm.DeclSecurities);
+			HashAlgorithm = asm.HashAlgorithm;
+			Version = asm.Version;
+			Attributes = asm.Attributes;
+			PublicKey = asm.PublicKey;
+			Name = asm.Name;
+			Culture = asm.Culture;
+			ClrVersion = Module.ClrVersion.DefaultVersion;
+			CustomAttributes.AddRange(asm.CustomAttributes);
+			DeclSecurities.AddRange(asm.DeclSecurities);
 		}
 
 		public AssemblyDef CopyTo(AssemblyDef asm) {
-			asm.HashAlgorithm = this.HashAlgorithm;
-			asm.Version = this.Version;
-			asm.Attributes = this.Attributes;
-			asm.PublicKey = this.PublicKey;
-			asm.Name = this.Name ?? UTF8String.Empty;
-			asm.Culture = this.Culture;
+			asm.HashAlgorithm = HashAlgorithm;
+			asm.Version = Version;
+			asm.Attributes = Attributes;
+			asm.PublicKey = PublicKey;
+			asm.Name = Name ?? UTF8String.Empty;
+			asm.Culture = Culture;
 			asm.CustomAttributes.Clear();
 			asm.CustomAttributes.AddRange(CustomAttributes);
 			asm.DeclSecurities.Clear();
@@ -64,16 +64,14 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public AssemblyDef CreateAssemblyDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new AssemblyDefUser()));
 
-		public static AssemblyOptions Create(string name) {
-			return new AssemblyOptions {
-				HashAlgorithm = AssemblyHashAlgorithm.SHA1,
-				Version = new Version(0, 0, 0, 0),
-				Attributes = AssemblyAttributes.None,
-				PublicKey = new PublicKey(Array.Empty<byte>()),
-				Name = name,
-				Culture = string.Empty,
-				ClrVersion = Module.ClrVersion.DefaultVersion,
-			};
-		}
+		public static AssemblyOptions Create(string name) => new AssemblyOptions {
+			HashAlgorithm = AssemblyHashAlgorithm.SHA1,
+			Version = new Version(0, 0, 0, 0),
+			Attributes = AssemblyAttributes.None,
+			PublicKey = new PublicKey(Array.Empty<byte>()),
+			Name = name,
+			Culture = string.Empty,
+			ClrVersion = Module.ClrVersion.DefaultVersion,
+		};
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,7 +49,7 @@ namespace dnSpy.Documents.Tabs {
 
 			if (args.LoadFiles) {
 				var tgws = new List<SerializedTabGroupWindow>();
-				var tgwsHash = new HashSet<string>();
+				var tgwsHash = new HashSet<string>(StringComparer.Ordinal);
 				foreach (var tgwSection in section.SectionsWithName(TABGROUPWINDOW_SECTION)) {
 					var tgw = SerializedTabGroupWindow.Load(tgwSection);
 					yield return null;
@@ -58,7 +58,7 @@ namespace dnSpy.Documents.Tabs {
 					tgws.Add(tgw);
 				}
 
-				// The documents are added to the treeview with a slight delay. Make sure the documentss
+				// The documents are added to the treeview with a slight delay. Make sure the documents
 				// have been added to the TV or the node lookup code will fail to find the nodes it needs.
 				yield return LoaderConstants.Delay;
 

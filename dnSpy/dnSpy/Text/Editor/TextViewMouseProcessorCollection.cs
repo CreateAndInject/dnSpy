@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,14 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Text.MEF;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Utilities;
 
 namespace dnSpy.Text.Editor {
 	sealed class TextViewMouseProcessorCollection {
@@ -39,10 +37,10 @@ namespace dnSpy.Text.Editor {
 
 		public TextViewMouseProcessorCollection(IWpfTextView wpfTextView, Lazy<IMouseProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] mouseProcessorProviders, IEditorOperationsFactoryService editorOperationsFactoryService) {
 			this.wpfTextView = wpfTextView;
-			this.dsWpfTextView = wpfTextView as IDsWpfTextViewImpl;
-			this.mouseProcessorProviders = Orderer.Order(mouseProcessorProviders).ToArray();
+			dsWpfTextView = wpfTextView as IDsWpfTextViewImpl;
+			this.mouseProcessorProviders = mouseProcessorProviders;
 			this.editorOperationsFactoryService = editorOperationsFactoryService;
-			this.allowEventDelegate = AllowMouseEvent;
+			allowEventDelegate = AllowMouseEvent;
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			Reinitialize();

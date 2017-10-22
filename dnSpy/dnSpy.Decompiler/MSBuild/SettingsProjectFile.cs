@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,9 +52,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			public string Scope { get; set; }
 			public Value Value { get; set; }
 			public Value DesignTimeValue { get; set; }
-			public Setting() {
-				this.GenerateDefaultValueInCode = true;
-			}
+			public Setting() => GenerateDefaultValueInCode = true;
 		}
 		sealed class Value {
 			public string Profile { get; set; }
@@ -186,8 +184,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					if (argType.GetElementType() == ElementType.String)
 						provider = arg.Value as UTF8String;
 					else if (argType != null && argType.FullName == "System.Type") {
-						var t = arg.Value as TypeDefOrRefSig;
-						if (t != null && t.TypeDefOrRef != null)
+						if (arg.Value is TypeDefOrRefSig t && t.TypeDefOrRef != null)
 							provider = t.TypeDefOrRef.ReflectionFullName;
 					}
 				}
@@ -220,8 +217,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetConnectionStringDesignTimeValue(PropertyDef prop) {
 			if (toConnectionStringInfo == null)
 				InitializeConnectionStringDesignTimeValues();
-			ConnectionStringInfo info;
-			if (!toConnectionStringInfo.TryGetValue(prop.Name, out info))
+			if (!toConnectionStringInfo.TryGetValue(prop.Name, out var info))
 				return null;
 
 			return string.Format(connectionIdStringFormat, EscapeXmlString(info.String), EscapeXmlString(info.ProviderName));

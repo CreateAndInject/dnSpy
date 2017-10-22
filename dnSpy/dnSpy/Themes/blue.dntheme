@@ -7,7 +7,7 @@
 		<color name="comment" fg="#008000" />
 		<color name="keyword" fg="#0000FF" />
 		<color name="string" fg="#A31515" />
-		<color name="verbatimstring" fg="#A31515" />
+		<color name="verbatimstring" fg="#800000" />
 		<color name="char" fg="#A31515" />
 		<color name="namespace" fg="#9E7E00" />
 		<color name="type" fg="#2B91AF" />
@@ -17,6 +17,7 @@
 		<color name="enum" fg="#336600" />
 		<color name="interface" fg="#1E667A" />
 		<color name="valuetype" fg="#009933" />
+		<color name="module" fg="#1B5D70" />
 		<color name="typegenericparameter" fg="#2B91AF" />
 		<color name="methodgenericparameter" fg="#2B91AF" />
 		<color name="instancemethod" fg="#880000" />
@@ -30,9 +31,9 @@
 		<color name="staticevent" fg="#660033" />
 		<color name="instanceproperty" fg="#996633" />
 		<color name="staticproperty" fg="#7A5229" />
-		<color name="local" fg="#000080" />
-		<color name="parameter" fg="#000080" bold="true" />
-		<color name="preprocessorkeyword" fg="#FF0000FF" />
+		<color name="local" fg="Black" />
+		<color name="parameter" fg="Black" bold="true" />
+		<color name="preprocessorkeyword" fg="#FF808080" />
 		<color name="preprocessortext" fg="#FF000000" />
 		<color name="label" fg="#663300" />
 		<color name="opcode" fg="#993366" />
@@ -86,7 +87,7 @@
 		<color name="xmldoctooltipheader" italics="true" bold="true" />
 		<color name="assembly" fg="#444444" />
 		<color name="assemblyexe" fg="#C9801A" />
-		<color name="module" fg="#682E95" />
+		<color name="assemblymodule" fg="#682E95" />
 		<color name="directorypart" fg="#216F85" />
 		<color name="filenamenoextension" fg="#990000" />
 		<color name="fileextension" fg="#3366CC" />
@@ -97,7 +98,7 @@
 		<color name="repllinenumberinput2" fg="#0000FF" />
 		<color name="repllinenumberoutput" fg="#2B91AF" />
 		<color name="visiblewhitespace" fg="#FF2B91AF" />
-		<color name="selectedtext" bg="#FF3399FF" />
+		<color name="selectedtext" bg="#FF0078D7" />
 		<color name="inactiveselectedtext" bg="#FFBFCDDB" />
 		<color name="highlightedreference" bg="#FFDBE0CC" />
 		<color name="highlightedwrittenreference" bg="#FFDBE0CC" />
@@ -111,8 +112,52 @@
 		<color name="breakpointstatementmarker" bg="#FF963A46" />
 		<color name="selectedbreakpointstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
 		<color name="disabledbreakpointstatementmarker" fg="#FF800000" />
+		<color name="advancedbreakpointstatement" fg="#FFFFFFFF" />
+		<color name="advancedbreakpointstatementmarker" bg="#FF963A46" />
+		<color name="selectedadvancedbreakpointstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="disabledadvancedbreakpointstatement" fg="#FF800000" />
+		<color name="disabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selecteddisabledadvancedbreakpointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="breakpointwarningstatement" fg="#FFFFFFFF" />
+		<color name="breakpointwarningstatementmarker" bg="#FF963A46" />
+		<color name="selectedbreakpointwarningstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="breakpointerrorstatement" fg="#FFFFDBA3" />
+		<color name="breakpointerrorstatementmarker" bg="#FF963A46" />
+		<color name="selectedbreakpointerrorstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="advancedbreakpointwarningstatement" fg="#FFFFFFFF" />
+		<color name="advancedbreakpointwarningstatementmarker" bg="#FF963A46" />
+		<color name="selectedadvancedbreakpointwarningstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="advancedbreakpointerrorstatement" fg="#FFFFDBA3" />
+		<color name="advancedbreakpointerrorstatementmarker" bg="#FF963A46" />
+		<color name="selectedadvancedbreakpointerrorstatementmarker" bg="#FF963A46" fg="#FF0000FF" />
+		<color name="tracepointstatement" fg="#FF800000" />
+		<color name="tracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="disabledtracepointstatement" fg="#FF800000" />
+		<color name="disabledtracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selecteddisabledtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="advancedtracepointstatement" fg="#FF800000" />
+		<color name="advancedtracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedadvancedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="disabledadvancedtracepointstatement" fg="#FF800000" />
+		<color name="disabledadvancedtracepointstatementmarker" bg="#FFFFFFFF" />
+		<color name="selecteddisabledadvancedtracepointstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="tracepointwarningstatement" fg="#FF800000" />
+		<color name="tracepointwarningstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedtracepointwarningstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="tracepointerrorstatement" fg="#FF800000" />
+		<color name="tracepointerrorstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedtracepointerrorstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="advancedtracepointwarningstatement" fg="#FF800000" />
+		<color name="advancedtracepointwarningstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedadvancedtracepointwarningstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="advancedtracepointerrorstatement" fg="#FF800000" />
+		<color name="advancedtracepointerrorstatementmarker" bg="#FFFFFFFF" />
+		<color name="selectedadvancedtracepointerrorstatementmarker" bg="#FFFFFFFF" fg="#FF0000FF" />
+		<color name="bookmarkname" fg="#A31515" />
+		<color name="activebookmarkname" fg="#A31515" bold="true" />
 		<color name="currentline" fg="#EAEAF2" />
-		<color name="currentlinenofocus" fg="#EEEEEE" />
+		<color name="currentlinenofocus" fg="#EAEAF2" />
 		<color name="hextext" fg="Black" bg="White" />
 		<color name="hexoffset" fg="#FF000000" />
 		<color name="hexbyte0" fg="#FF3333CC" />
@@ -121,7 +166,7 @@
 		<color name="hexascii" fg="#FF000000" />
 		<color name="hexcaret" bg="#66000000" />
 		<color name="hexinactivecaret" bg="#FFFF0000" />
-		<color name="hexselection" bg="#663399FF" />
+		<color name="hexselection" bg="#FF3399FF" />
 		<color name="replprompt1" fg="Black" />
 		<color name="replprompt2" fg="Black" />
 		<color name="reploutputtext" fg="Black" />
@@ -165,40 +210,42 @@
 		<color name="debuglogunloadmodule" fg="#FF6600FF" />
 		<color name="debuglogexitprocess" fg="#FF000000" />
 		<color name="debuglogexitthread" fg="#FF006699" />
-		<color name="debuglogprogramoutput" fg="#FF996600" />
+		<color name="debuglogprogramoutput" fg="#FF487C5F" />
 		<color name="debuglogmda" fg="#FFFF0000" />
 		<color name="debuglogtimestamp" fg="#FF6600CC" />
 		<color name="glyphmargin" bg="#FFE6E7E8" />
 		<color name="bracematching" bg="#FFDBE0CC" />
 		<color name="lineseparator" fg="#FFA5A5A5" />
 		<color name="findmatchhighlightmarker" bg="#FFF4A721" />
-		<color name="structurevisualizernamespace" fg="#FFB6B6B6" />
-		<color name="structurevisualizertype" fg="#FF7CCADD" />
-		<color name="structurevisualizermodule" fg="#FF7CCADD" />
-		<color name="structurevisualizervaluetype" fg="#FF7CCADD" />
-		<color name="structurevisualizerinterface" fg="#FF7CCADD" />
-		<color name="structurevisualizermethod" fg="#FF879FFF" />
-		<color name="structurevisualizeraccessor" fg="#FF879FFF" />
-		<color name="structurevisualizeranonymousmethod" fg="#FF879FFF" />
-		<color name="structurevisualizerconstructor" fg="#FF879FFF" />
-		<color name="structurevisualizerdestructor" fg="#FF879FFF" />
-		<color name="structurevisualizeroperator" fg="#FF879FFF" />
-		<color name="structurevisualizerconditional" fg="#FF7CCC87" />
-		<color name="structurevisualizerloop" fg="#FFFF00DC" />
-		<color name="structurevisualizerproperty" fg="#FF879FFF" />
-		<color name="structurevisualizerevent" fg="#FF879FFF" />
-		<color name="structurevisualizertry" fg="#FFFF776D" />
-		<color name="structurevisualizercatch" fg="#FFFF776D" />
-		<color name="structurevisualizerfilter" fg="#FFFF776D" />
-		<color name="structurevisualizerfinally" fg="#FFFF776D" />
-		<color name="structurevisualizerfault" fg="#FFFF776D" />
-		<color name="structurevisualizerlock" fg="#FFB6B6B6" />
-		<color name="structurevisualizerusing" fg="#FFB6B6B6" />
-		<color name="structurevisualizerfixed" fg="#FFB6B6B6" />
-		<color name="structurevisualizerswitch" fg="#FF7CCC87" />
-		<color name="structurevisualizercase" fg="#FF7CCC87" />
-		<color name="structurevisualizerlocalfunction" fg="#FF879FFF" />
-		<color name="structurevisualizerother" fg="#FFB6B6B6" />
+		<color name="blockstructurenamespace" fg="#FFB6B6B6" />
+		<color name="blockstructuretype" fg="#FF7CCADD" />
+		<color name="blockstructuremodule" fg="#FF7CCADD" />
+		<color name="blockstructurevaluetype" fg="#FF7CCADD" />
+		<color name="blockstructureinterface" fg="#FF7CCADD" />
+		<color name="blockstructuremethod" fg="#FF879FFF" />
+		<color name="blockstructureaccessor" fg="#FF879FFF" />
+		<color name="blockstructureanonymousmethod" fg="#FF879FFF" />
+		<color name="blockstructureconstructor" fg="#FF879FFF" />
+		<color name="blockstructuredestructor" fg="#FF879FFF" />
+		<color name="blockstructureoperator" fg="#FF879FFF" />
+		<color name="blockstructureconditional" fg="#FF7CCC87" />
+		<color name="blockstructureloop" fg="#FFFF00DC" />
+		<color name="blockstructureproperty" fg="#FF879FFF" />
+		<color name="blockstructureevent" fg="#FF879FFF" />
+		<color name="blockstructuretry" fg="#FFFF776D" />
+		<color name="blockstructurecatch" fg="#FFFF776D" />
+		<color name="blockstructurefilter" fg="#FFFF776D" />
+		<color name="blockstructurefinally" fg="#FFFF776D" />
+		<color name="blockstructurefault" fg="#FFFF776D" />
+		<color name="blockstructurelock" fg="#FFB6B6B6" />
+		<color name="blockstructureusing" fg="#FFB6B6B6" />
+		<color name="blockstructurefixed" fg="#FFB6B6B6" />
+		<color name="blockstructureswitch" fg="#FF7CCC87" />
+		<color name="blockstructurecase" fg="#FF7CCC87" />
+		<color name="blockstructurelocalfunction" fg="#FF879FFF" />
+		<color name="blockstructureother" fg="#FFB6B6B6" />
+		<color name="blockstructurexml" fg="#FFB6B6B6" />
+		<color name="blockstructurexaml" fg="#FFB6B6B6" />
 		<color name="completionmatchhighlight" bg="#FFF4A721" />
 		<color name="completionsuffix" fg="Black" />
 		<color name="signaturehelpdocumentation" bold="true" />
@@ -224,6 +271,34 @@
 		<color name="gacmatchhighlight" bg="#FFF4A721" />
 		<color name="appsettingstreeviewnodematchhighlight" bg="#FFF4A721" />
 		<color name="appsettingstextmatchhighlight" bg="#FFF4A721" />
+		<color name="hexcurrentline" fg="#A0A0A0" />
+		<color name="hexcurrentlinenofocus" fg="#A0A0A0" />
+		<color name="hexinactiveselectedtext" bg="#FFBFCDDB" />
+		<color name="hexcolumnline0" fg="#FF000000" />
+		<color name="hexcolumnline1" fg="#FF000000" />
+		<color name="hexcolumnlinegroup0" fg="#FF000000" />
+		<color name="hexcolumnlinegroup1" fg="#FF000000" />
+		<color name="hexhighlightedvaluescolumn" bg="#FFFCFCFC" />
+		<color name="hexhighlightedasciicolumn" bg="#FFFCFCFC" />
+		<color name="hexglyphmargin" bg="#FFE6E7E8" />
+		<color name="hexcurrentvaluecell" bg="#FFDBE0CC" />
+		<color name="hexcurrentasciicell" bg="#FFDBE0CC" />
+		<color name="outputwindowtext" fg="Black" bg="White" />
+		<color name="hexfindmatchhighlightmarker" bg="#FFF4A721" />
+		<color name="hextooltipservicefield0" bg="#FFB3B6D3" fg="#FF888AA0" />
+		<color name="hextooltipservicefield1" bg="#FFDDCCAF" fg="#FFA09480" />
+		<color name="hextooltipservicecurrentfield" bg="#FFB8DB95" fg="#FF74895F" />
+		<color name="listfindmatchhighlight" bg="#FFF4A721" />
+		<color name="debuglogtrace" fg="#FF0000CC" />
+		<color name="debuglogextensionmessage" fg="#FFFF3DE5" />
+		<color name="debuggervaluechangedhighlight" bg="#FFF4A721" />
+		<color name="debugexceptionname" fg="Black" />
+		<color name="debugstowedexceptionname" fg="Black" />
+		<color name="debugreturnvaluename" fg="Black" />
+		<color name="debugvariablename" fg="Black" />
+		<color name="debugobjectidname" fg="Black" />
+		<color name="debuggerdisplayattributeeval" fg="#2E387C" />
+		<color name="debuggernostringquoteseval" fg="#2E387C" />
 
 		<color name="systemcolorscontrol" bg="#FFF0F0F0" />
 		<color name="systemcolorscontroldark" bg="#FFA0A0A0" />
@@ -645,5 +720,13 @@
 		<color name="environmenticongeneralfill" bg="#FF424242" />
 		<color name="environmenticonactionfill" bg="#FF00529B" />
 		<color name="searchcontrolmouseoverdropdownbuttonglyph" bg="#FF1E1E1E" />
+		<color name="hexsearchcontrolmouseoverdropdownbuttonglyph" bg="#FF1E1E1E" />
+		<color name="hexsearchingtextbox" fg="#FF000000" bg="#FFB7B7B7" />
+		<color name="hexsearchingtextboxborder" bg="#FF0048B5" />
+		<color name="environmentcommandbartoolbarseparator" bg="#FF8591A2" />
+		<color name="environmentcommandbartoolbarseparatorhighlight" bg="#FFD6DBE9" />
+		<color name="debuggerbreakpointglyphmargincontrolborder" bg="#FFDCE0EC" />
+		<color name="debuggerbreakpointglyphmargincontrolbackground" bg="#FFF0F0F0" />
+		<color name="debuggerbreakpointglyphmargincontrolhoverbackground" bg="#FFFFFCF4" />
 	</colors>
 </theme>

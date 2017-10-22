@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,7 +59,8 @@ namespace dnSpy.Decompiler.MSBuild {
 				var toolsVersion = GetToolsVersion();
 				if (toolsVersion != null)
 					writer.WriteAttributeString("ToolsVersion", toolsVersion);
-				writer.WriteAttributeString("DefaultTargets", "Build");
+				if (projectVersion <= ProjectVersion.VS2015)
+					writer.WriteAttributeString("DefaultTargets", "Build");
 				if (projectVersion >= ProjectVersion.VS2012) {
 					writer.WriteStartElement("Import");
 					writer.WriteAttributeString("Project", @"$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props");
@@ -98,7 +99,7 @@ namespace dnSpy.Decompiler.MSBuild {
 					writer.WriteElementString("TargetFrameworkIdentifier", fwkInfo.Framework);
 				writer.WriteElementString("FileAlignment", GetFileAlignment());
 				if (project.ProjectTypeGuids.Count != 0) {
-					var text = string.Join(";", project.ProjectTypeGuids.Select(a => a.ToString("B")).ToArray());
+					var text = string.Join(";", project.ProjectTypeGuids.Select(a => a.ToString("B").ToUpperInvariant()).ToArray());
 					writer.WriteElementString("ProjectTypeGuids", text);
 				}
 				//TODO: VB includes a "MyType"
@@ -285,6 +286,7 @@ namespace dnSpy.Decompiler.MSBuild {
 			case ProjectVersion.VS2012: return "4.0";
 			case ProjectVersion.VS2013: return "12.0";
 			case ProjectVersion.VS2015: return "14.0";
+			case ProjectVersion.VS2017: return "15.0";
 			default: throw new InvalidOperationException();
 			}
 		}
@@ -334,6 +336,8 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetAppDesignerFolder() {
 			if (project.Options.Decompiler.GenericGuid == DecompilerConstants.LANGUAGE_VISUALBASIC)
 				return null;
+			if (projectVersion >= ProjectVersion.VS2017)
+				return null;
 			return project.PropertiesFolder;
 		}
 
@@ -352,8 +356,7 @@ namespace dnSpy.Decompiler.MSBuild {
 		string GetAssemblyName() => project.AssemblyName;
 
 		string GetFileAlignment() {
-			var mod = project.Module as ModuleDefMD;
-			if (mod != null)
+			if (project.Module is ModuleDefMD mod)
 				return mod.MetaData.PEImage.ImageNTHeaders.OptionalHeader.FileAlignment.ToString();
 			return "512";
 		}

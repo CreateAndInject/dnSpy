@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,7 +29,7 @@ namespace dnSpy.Text.Editor {
 		public TextViewRoleSet(IEnumerable<string> textViewRoles) {
 			if (textViewRoles == null)
 				throw new ArgumentNullException(nameof(textViewRoles));
-			this.roles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			roles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			foreach (var s in textViewRoles) {
 				if (s == null)
 					throw new ArgumentNullException(nameof(textViewRoles));
@@ -37,9 +37,7 @@ namespace dnSpy.Text.Editor {
 			}
 		}
 
-		TextViewRoleSet(HashSet<string> roles) {
-			this.roles = roles;
-		}
+		TextViewRoleSet(HashSet<string> roles) => this.roles = roles;
 
 		public bool Contains(string textViewRole) {
 			if (textViewRole == null)

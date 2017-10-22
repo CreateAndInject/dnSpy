@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Text.Editor {
 		readonly Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>[] keyProcessorProviders;
 
 		[ImportingConstructor]
-		KeyboardWpfTextViewCreationListener([ImportMany] IEnumerable<Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>> keyProcessorProviders) {
-			this.keyProcessorProviders = Orderer.Order(keyProcessorProviders).ToArray();
-		}
+		KeyboardWpfTextViewCreationListener([ImportMany] IEnumerable<Lazy<IKeyProcessorProvider, IOrderableContentTypeAndTextViewRoleMetadata>> keyProcessorProviders) => this.keyProcessorProviders = Orderer.Order(keyProcessorProviders).ToArray();
 
 		public void TextViewCreated(IWpfTextView textView) {
 			if (!textView.Roles.Contains(PredefinedTextViewRoles.Interactive))

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -52,10 +52,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="address">Address</param>
 		/// <param name="length">Length</param>
 		public AddressReference(string filename, bool isRva, ulong address, ulong length) {
-			this.Filename = filename ?? string.Empty;
-			this.IsRVA = isRva;
-			this.Address = address;
-			this.Length = length;
+			Filename = filename ?? string.Empty;
+			IsRVA = isRva;
+			Address = address;
+			Length = length;
 		}
 
 		/// <summary>
@@ -63,13 +63,12 @@ namespace dnSpy.Contracts.Decompiler {
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(AddressReference other) {
-			return other != null &&
-				IsRVA == other.IsRVA &&
-				Address == other.Address &&
-				Length == other.Length &&
-				StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
-		}
+		public bool Equals(AddressReference other) =>
+			other != null &&
+			IsRVA == other.IsRVA &&
+			Address == other.Address &&
+			Length == other.Length &&
+			StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
 
 		/// <summary>
 		/// Equals()
@@ -82,11 +81,10 @@ namespace dnSpy.Contracts.Decompiler {
 		/// GetHashCode()
 		/// </summary>
 		/// <returns></returns>
-		public override int GetHashCode() {
-			return StringComparer.OrdinalIgnoreCase.GetHashCode(Filename) ^
-				(IsRVA ? 0 : int.MinValue) ^
-				(int)Address ^ (int)(Address >> 32) ^
-				(int)Length ^ (int)(Length >> 32);
-		}
+		public override int GetHashCode() =>
+			StringComparer.OrdinalIgnoreCase.GetHashCode(Filename) ^
+			(IsRVA ? 0 : int.MinValue) ^
+			(int)Address ^ (int)(Address >> 32) ^
+			(int)Length ^ (int)(Length >> 32);
 	}
 }

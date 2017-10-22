@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,8 +35,7 @@ namespace dnSpy.Contracts.Documents.Tabs.DocViewer {
 		public static IDocumentViewer TryGetDocumentViewer(this ITextBuffer textBuffer) {
 			if (textBuffer == null)
 				throw new ArgumentNullException(nameof(textBuffer));
-			IDocumentViewer documentViewer;
-			textBuffer.Properties.TryGetProperty(DocumentViewerTextBufferKey, out documentViewer);
+			textBuffer.Properties.TryGetProperty(DocumentViewerTextBufferKey, out IDocumentViewer documentViewer);
 			return documentViewer;
 		}
 	}

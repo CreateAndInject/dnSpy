@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Resources;
@@ -74,12 +75,12 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		public ResXProjectFile(ModuleDef module, string filename, string typeFullName, EmbeddedResource er) {
 			this.filename = filename;
-			this.TypeFullName = typeFullName;
-			this.embeddedResource = er;
+			TypeFullName = typeFullName;
+			embeddedResource = er;
 
-			this.newToOldAsm = new Dictionary<IAssembly, IAssembly>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
+			newToOldAsm = new Dictionary<IAssembly, IAssembly>(new AssemblyNameComparer(AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version));
 			foreach (var asmRef in module.GetAssemblyRefs())
-				this.newToOldAsm[asmRef] = asmRef;
+				newToOldAsm[asmRef] = asmRef;
 		}
 
 		public override void Create(DecompileContext ctx) {
@@ -95,8 +96,7 @@ namespace dnSpy.Decompiler.MSBuild {
 
 		string TypeNameConverter(Type type) {
 			var newAsm = new AssemblyNameInfo(type.Assembly.GetName());
-			IAssembly oldAsm;
-			if (!newToOldAsm.TryGetValue(newAsm, out oldAsm))
+			if (!newToOldAsm.TryGetValue(newAsm, out var oldAsm))
 				return type.AssemblyQualifiedName;
 			if (type.IsGenericType)
 				return type.AssemblyQualifiedName;
@@ -118,9 +118,19 @@ namespace dnSpy.Decompiler.MSBuild {
 							key = iter.Key as string;
 							if (key == null)
 								continue;
+							var value = iter.Value;
+							// ResXDataNode ctor checks if the input is serializable, which this stream isn't.
+							// We have no choice but to create a new stream.
+							if (value is Stream && !value.GetType().IsSerializable) {
+								var stream = (Stream)value;
+								var data = new byte[stream.Length];
+								if (stream.Read(data, 0, data.Length) != data.Length)
+									throw new IOException("Could not read all bytes");
+								value = new MemoryStream(data);
+							}
 							//TODO: Some resources, like images, should be saved as separate files. Use ResXFileRef.
 							//		Don't do it if it's a satellite assembly.
-							list.Add(delegateResXDataNodeConstructor?.Invoke(key, iter.Value, TypeNameConverter) ?? new ResXDataNode(key, iter.Value));
+							list.Add(delegateResXDataNodeConstructor?.Invoke(key, value, TypeNameConverter) ?? new ResXDataNode(key, value));
 						}
 						catch (Exception ex) {
 							if (errors++ < 30)

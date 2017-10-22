@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,11 +30,9 @@ namespace dnSpy.Contracts.App {
 		public static IMessageBoxService Instance {
 			get { return messageBoxService; }
 			internal set {
-				if (value == null)
-					throw new ArgumentNullException(nameof(value));
 				if (messageBoxService != null)
 					throw new InvalidOperationException();
-				messageBoxService = value;
+				messageBoxService = value ?? throw new ArgumentNullException(nameof(value));
 			}
 		}
 		static IMessageBoxService messageBoxService;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -66,22 +66,14 @@ namespace dnSpy.Language.Intellisense {
 		ISignatureHelpSource[] signatureHelpSources;
 
 		public SignatureHelpSession(ITextView textView, ITrackingPoint triggerPoint, bool trackCaret, IIntellisensePresenterFactoryService intellisensePresenterFactoryService, Lazy<ISignatureHelpSourceProvider, IOrderableContentTypeMetadata>[] signatureHelpSourceProviders) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			if (triggerPoint == null)
-				throw new ArgumentNullException(nameof(triggerPoint));
-			if (intellisensePresenterFactoryService == null)
-				throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
-			if (signatureHelpSourceProviders == null)
-				throw new ArgumentNullException(nameof(signatureHelpSourceProviders));
 			Properties = new PropertyCollection();
-			TextView = textView;
-			this.triggerPoint = triggerPoint;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
+			this.triggerPoint = triggerPoint ?? throw new ArgumentNullException(nameof(triggerPoint));
 			this.trackCaret = trackCaret;
-			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService;
-			this.signatureHelpSourceProviders = signatureHelpSourceProviders;
-			this.signatures = new ObservableCollection<ISignature>();
-			Signatures = new ReadOnlyObservableCollection<ISignature>(this.signatures);
+			this.intellisensePresenterFactoryService = intellisensePresenterFactoryService ?? throw new ArgumentNullException(nameof(intellisensePresenterFactoryService));
+			this.signatureHelpSourceProviders = signatureHelpSourceProviders ?? throw new ArgumentNullException(nameof(signatureHelpSourceProviders));
+			signatures = new ObservableCollection<ISignature>();
+			Signatures = new ReadOnlyObservableCollection<ISignature>(signatures);
 
 			TextView.Closed += TextView_Closed;
 		}

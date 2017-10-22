@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -31,8 +31,6 @@ namespace dnSpy.Contracts.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="owner">Owner</param>
-		public TreeNodeDataProviderContext(ITreeNode owner) {
-			this.Owner = owner;
-		}
+		public TreeNodeDataProviderContext(ITreeNode owner) => Owner = owner;
 	}
 }

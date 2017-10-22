@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,7 +35,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Search;
-using dnSpy.Contracts.Text.Classification;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace dnSpy.Search {
@@ -97,8 +97,7 @@ namespace dnSpy.Search {
 		sealed class GuidObjectsProvider : IGuidObjectsProvider {
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObjectsProviderArgs args) {
 				var listBox = (ListBox)args.CreatorObject.Object;
-				var searchResult = listBox.SelectedItem as ISearchResult;
-				if (searchResult != null) {
+				if (listBox.SelectedItem is ISearchResult searchResult) {
 					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);
 					var @ref = searchResult.Reference;
 					if (@ref != null)
@@ -109,23 +108,23 @@ namespace dnSpy.Search {
 
 		[ImportingConstructor]
 		SearchService(IDecompilerService decompilerService, ISearchSettings searchSettings, IDocumentSearcherProvider fileSearcherProvider, IMenuService menuService, IWpfCommandService wpfCommandService, IDocumentTabService documentTabService, IClassificationFormatMapService classificationFormatMapService) {
-			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.Search);
+			var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc);
 			this.documentTabService = documentTabService;
-			this.searchControl = new SearchControl();
-			this.vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
+			searchControl = new SearchControl();
+			vmSearch = new SearchControlVM(fileSearcherProvider, documentTabService.DocumentTreeView, searchSettings) {
 				Decompiler = decompilerService.Decompiler,
 			};
-			this.searchControl.DataContext = this.vmSearch;
+			searchControl.DataContext = vmSearch;
 
-			menuService.InitializeContextMenu(this.searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
-			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, this.searchControl);
-			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, this.searchControl.ListBox);
+			menuService.InitializeContextMenu(searchControl.ListBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsProvider());
+			wpfCommandService.Add(ControlConstants.GUID_SEARCH_CONTROL, searchControl);
+			wpfCommandService.Add(ControlConstants.GUID_SEARCH_LISTBOX, searchControl.ListBox);
 			decompilerService.DecompilerChanged += DecompilerService_DecompilerChanged;
 			classificationFormatMap.ClassificationFormatMappingChanged += ClassificationFormatMap_ClassificationFormatMappingChanged;
 			searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			documentTabService.DocumentTreeView.DocumentService.CollectionChanged += DocumentService_CollectionChanged;
 
-			this.searchControl.SearchListBoxDoubleClick += (s, e) => FollowSelectedReference();
+			searchControl.SearchListBoxDoubleClick += (s, e) => FollowSelectedReference();
 			var cmds = wpfCommandService.GetCommands(ControlConstants.GUID_SEARCH_LISTBOX);
 			var command = new RelayCommand(a => FollowSelectedReference());
 			cmds.Add(command, ModifierKeys.None, Key.Enter);
@@ -153,22 +152,22 @@ namespace dnSpy.Search {
 
 		void Add(SearchType searchType, Key key) {
 			var command = new RelayCommand(a => {
-				this.vmSearch.SelectedSearchTypeVM = this.vmSearch.SearchTypeVMs.First(b => b.SearchType == searchType);
-				if (!this.searchControl.SearchTextBox.IsKeyboardFocusWithin)
-					this.searchControl.SearchTextBox.SelectAll();
-				this.searchControl.SearchTextBox.Focus();
+				vmSearch.SelectedSearchTypeVM = vmSearch.SearchTypeVMs.First(b => b.SearchType == searchType);
+				if (!searchControl.SearchTextBox.IsKeyboardFocusWithin)
+					searchControl.SearchTextBox.SelectAll();
+				searchControl.SearchTextBox.Focus();
 			});
-			this.searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
+			searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
 		}
 
 		void Add(SearchLocation loc, Key key) {
 			var command = new RelayCommand(a => {
-				this.vmSearch.SearchLocationVM.SelectedItem = loc;
-				if (!this.searchControl.SearchTextBox.IsKeyboardFocusWithin)
-					this.searchControl.SearchTextBox.SelectAll();
-				this.searchControl.SearchTextBox.Focus();
+				vmSearch.SearchLocationVM.SelectedItem = loc;
+				if (!searchControl.SearchTextBox.IsKeyboardFocusWithin)
+					searchControl.SearchTextBox.SelectAll();
+				searchControl.SearchTextBox.Focus();
 			});
-			this.searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
+			searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
 		}
 
 		void DocumentService_CollectionChanged(object sender, NotifyDocumentCollectionChangedEventArgs e) {
@@ -226,22 +225,20 @@ namespace dnSpy.Search {
 		}
 
 		public void Focus() {
-			this.searchControl.SearchTextBox.SelectAll();
-			this.searchControl.SearchTextBox.Focus();
+			searchControl.SearchTextBox.SelectAll();
+			searchControl.SearchTextBox.Focus();
 		}
 
-		public void OnShow() {
-			this.vmSearch.CanSearch = true;
-		}
+		public void OnShow() => vmSearch.CanSearch = true;
 
 		public void OnClose() {
-			this.vmSearch.CanSearch = false;
-			this.vmSearch.Clear();
+			vmSearch.CanSearch = false;
+			vmSearch.Clear();
 		}
 
 		void FollowSelectedReference() {
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
-			FollowResult(this.searchControl.ListBox.SelectedItem as ISearchResult, newTab);
+			FollowResult(searchControl.ListBox.SelectedItem as ISearchResult, newTab);
 		}
 
 		public void FollowResult(ISearchResult searchResult, bool newTab) {
@@ -249,8 +246,7 @@ namespace dnSpy.Search {
 			if (@ref != null) {
 				documentTabService.FollowReference(@ref, newTab, true, a => {
 					if (!a.HasMovedCaret && a.Success) {
-						var bodyResult = searchResult.ObjectInfo as BodyResult;
-						if (bodyResult != null)
+						if (searchResult.ObjectInfo is BodyResult bodyResult)
 							a.HasMovedCaret = GoTo(a.Tab, searchResult.Object as MethodDef, bodyResult.ILOffset);
 					}
 				});

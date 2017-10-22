@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.ETW;
 using dnSpy.Contracts.MVVM;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Utilities;
@@ -40,6 +41,8 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		public bool SyntaxHighlight { get; }
 		public IClassificationFormatMap ClassificationFormatMap { get; }
 		public ITextElementProvider TextElementProvider { get; }
+
+		public string OpenGAC_Search_ToolTip => ToolTipHelper.AddKeyboardShortcut(dnSpy_Resources.OpenGAC_Search_ToolTip, dnSpy_Resources.ShortCutKeyCtrlF);
 
 		readonly ObservableCollection<GACFileVM> gacFileList;
 		readonly ListCollectionView collectionView;
@@ -98,20 +101,22 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 		readonly HashSet<GACFileVM> uniqueFiles;
 
 		public OpenFromGACVM(bool syntaxHighlight, IClassificationFormatMap classificationFormatMap, ITextElementProvider textElementProvider) {
-			this.SyntaxHighlight = syntaxHighlight;
-			this.ClassificationFormatMap = classificationFormatMap;
-			this.TextElementProvider = textElementProvider;
-			this.gacFileList = new ObservableCollection<GACFileVM>();
-			this.collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
-			this.collectionView.CustomSort = new GACFileVM_Comparer();
-			this.cancellationTokenSource = new CancellationTokenSource();
-			this.cancellationToken = cancellationTokenSource.Token;
-			this.searchingGAC = true;
-			this.uniqueFiles = new HashSet<GACFileVM>(new GACFileVM_EqualityComparer());
+			SyntaxHighlight = syntaxHighlight;
+			ClassificationFormatMap = classificationFormatMap;
+			TextElementProvider = textElementProvider;
+			gacFileList = new ObservableCollection<GACFileVM>();
+			collectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(gacFileList);
+			collectionView.CustomSort = new GACFileVM_Comparer();
+			cancellationTokenSource = new CancellationTokenSource();
+			cancellationToken = cancellationTokenSource.Token;
+			searchingGAC = true;
+			uniqueFiles = new HashSet<GACFileVM>(new GACFileVM_EqualityComparer());
 
 			var dispatcher = Dispatcher.CurrentDispatcher;
+			DnSpyEventSource.Log.OpenFromGACStart();
 			Task.Factory.StartNew(() => new GACFileFinder(this, dispatcher, cancellationToken).Find(), cancellationToken)
 			.ContinueWith(t => {
+				DnSpyEventSource.Log.OpenFromGACStop();
 				var ex = t.Exception;
 				SearchingGAC = false;
 				Refilter();
@@ -133,7 +138,7 @@ namespace dnSpy.Documents.Tabs.Dialogs {
 				var vm = new GACFileVM(this, file);
 				vm.IsDuplicate = uniqueFiles.Contains(vm);
 				uniqueFiles.Add(vm);
-				this.Collection.Add(vm);
+				Collection.Add(vm);
 			}
 			RefreshCounters();
 		}

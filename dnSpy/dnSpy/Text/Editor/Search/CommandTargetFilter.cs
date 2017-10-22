@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,9 +25,7 @@ namespace dnSpy.Text.Editor.Search {
 	sealed class CommandTargetFilter : ICommandTargetFilter {
 		readonly ISearchService searchService;
 
-		public CommandTargetFilter(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) {
-			this.searchService = searchServiceProvider.Get(wpfTextView);
-		}
+		public CommandTargetFilter(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) => searchService = searchServiceProvider.Get(wpfTextView);
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) {
 			if (group == CommandConstants.StandardGroup) {
@@ -97,9 +95,7 @@ namespace dnSpy.Text.Editor.Search {
 	sealed class CommandTargetFilterFocus : ICommandTargetFilter {
 		readonly ISearchService searchService;
 
-		public CommandTargetFilterFocus(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) {
-			this.searchService = searchServiceProvider.Get(wpfTextView);
-		}
+		public CommandTargetFilterFocus(ISearchServiceProvider searchServiceProvider, IWpfTextView wpfTextView) => searchService = searchServiceProvider.Get(wpfTextView);
 
 		public CommandTargetStatus CanExecute(Guid group, int cmdId) => searchService.CanExecuteSearchControl(group, cmdId);
 

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -86,20 +86,6 @@ namespace dnSpy.Text.Editor {
 			return list;
 		}
 
-		internal IEnumerable<VirtualSnapshotSpan> VisibleSpans {
-			get {
-				if (IsEmpty)
-					yield break;
-				if (Mode == TextSelectionMode.Stream)
-					yield return StreamSelectionSpan;
-
-				var helper = new BoxSelectionHelper(this);
-				var lines = TextView.TextViewLines.GetTextViewLinesIntersectingSpan(StreamSelectionSpan.SnapshotSpan);
-				for (int i = 0; i < lines.Count; i++)
-					yield return helper.GetSpan(lines[i]);
-			}
-		}
-
 		public TextSelectionMode Mode {
 			get { return mode; }
 			set {
@@ -119,20 +105,18 @@ namespace dnSpy.Text.Editor {
 		VirtualSnapshotPoint anchorPoint, activePoint;
 
 		public TextSelection(IWpfTextView textView, IAdornmentLayer selectionLayer, IEditorFormatMap editorFormatMap) {
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
 			if (selectionLayer == null)
 				throw new ArgumentNullException(nameof(selectionLayer));
 			if (editorFormatMap == null)
 				throw new ArgumentNullException(nameof(editorFormatMap));
-			TextView = textView;
+			TextView = textView ?? throw new ArgumentNullException(nameof(textView));
 			Mode = TextSelectionMode.Stream;
 			activePoint = anchorPoint = new VirtualSnapshotPoint(TextView.TextSnapshot, 0);
 			TextView.TextBuffer.ChangedHighPriority += TextBuffer_ChangedHighPriority;
 			TextView.Options.OptionChanged += Options_OptionChanged;
 			TextView.GotAggregateFocus += TextView_GotAggregateFocus;
 			TextView.LostAggregateFocus += TextView_LostAggregateFocus;
-			this.textSelectionLayer = new TextSelectionLayer(this, selectionLayer, editorFormatMap);
+			textSelectionLayer = new TextSelectionLayer(this, selectionLayer, editorFormatMap);
 			ActivationTracksFocus = true;
 		}
 
@@ -235,7 +219,7 @@ namespace dnSpy.Text.Editor {
 		static bool SamePoint(VirtualSnapshotPoint a, VirtualSnapshotPoint b) =>
 			a.VirtualSpaces == b.VirtualSpaces && a.Position.Position == b.Position.Position;
 
-		public void Dispose() {
+		internal void Dispose() {
 			TextView.TextBuffer.ChangedHighPriority -= TextBuffer_ChangedHighPriority;
 			TextView.Options.OptionChanged -= Options_OptionChanged;
 			TextView.GotAggregateFocus -= TextView_GotAggregateFocus;

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -32,8 +32,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public readonly ScriptControlVM VM;
 
 		public ReplEditorCtxMenuContext(IReplEditor ui) {
-			this.UI = ui;
-			this.VM = ScriptContent.GetScriptContent(ui).ScriptControlVM;
+			UI = ui;
+			VM = ScriptContent.GetScriptContent(ui).ScriptControlVM;
 		}
 	}
 

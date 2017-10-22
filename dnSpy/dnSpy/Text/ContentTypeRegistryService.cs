@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,7 +63,7 @@ namespace dnSpy.Text {
 
 			public ContentTypeCreator(ContentTypeRegistryService owner, IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
 				this.owner = owner;
-				this.rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
+				rawContentTypes = new Dictionary<string, RawContentType>(StringComparer.OrdinalIgnoreCase);
 				foreach (var md in contentTypeDefinitions.Select(a => a.Metadata)) {
 					var typeName = md.Name;
 					Debug.Assert(typeName != null);
@@ -85,8 +85,7 @@ namespace dnSpy.Text {
 			}
 
 			ContentType TryGet(string typeName) {
-				ContentType contentType;
-				owner.contentTypes.TryGetValue(typeName, out contentType);
+				owner.contentTypes.TryGetValue(typeName, out var contentType);
 				return contentType;
 			}
 
@@ -100,8 +99,7 @@ namespace dnSpy.Text {
 				if (recurse > MAX_RECURSE)
 					return null;
 
-				RawContentType rawCt;
-				bool b = rawContentTypes.TryGetValue(typeName, out rawCt);
+				bool b = rawContentTypes.TryGetValue(typeName, out var rawCt);
 				Debug.Assert(b);
 				if (!b)
 					return null;
@@ -124,7 +122,7 @@ namespace dnSpy.Text {
 
 		[ImportingConstructor]
 		ContentTypeRegistryService([ImportMany] IEnumerable<Lazy<ContentTypeDefinition, IContentTypeDefinitionMetadata>> contentTypeDefinitions) {
-			this.contentTypes = new Dictionary<string, ContentType>(StringComparer.OrdinalIgnoreCase);
+			contentTypes = new Dictionary<string, ContentType>(StringComparer.OrdinalIgnoreCase);
 			AddContentTypeInternal_NoLock(UnknownContentTypeName, Array.Empty<string>());
 			new ContentTypeCreator(this, contentTypeDefinitions);
 		}

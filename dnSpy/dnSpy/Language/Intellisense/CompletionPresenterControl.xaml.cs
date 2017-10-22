@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -21,8 +21,6 @@ using System.Windows.Controls;
 
 namespace dnSpy.Language.Intellisense {
 	sealed partial class CompletionPresenterControl : UserControl {
-		public CompletionPresenterControl() {
-			InitializeComponent();
-		}
+		public CompletionPresenterControl() => InitializeComponent();
 	}
 }

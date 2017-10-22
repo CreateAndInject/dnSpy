@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -36,9 +36,7 @@ namespace dnSpy.Language.Intellisense {
 		readonly IIntellisenseSessionStackMapService intellisenseSessionStackMapService;
 
 		[ImportingConstructor]
-		PresenterMouseProcessorProvider(IIntellisenseSessionStackMapService intellisenseSessionStackMapService) {
-			this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
-		}
+		PresenterMouseProcessorProvider(IIntellisenseSessionStackMapService intellisenseSessionStackMapService) => this.intellisenseSessionStackMapService = intellisenseSessionStackMapService;
 
 		public IMouseProcessor GetAssociatedProcessor(IWpfTextView wpfTextView) =>
 			wpfTextView.Properties.GetOrCreateSingletonProperty(typeof(PresenterMouseProcessor), () => new PresenterMouseProcessor(intellisenseSessionStackMapService.GetStackForTextView(wpfTextView)));
@@ -50,11 +48,7 @@ namespace dnSpy.Language.Intellisense {
 		IMouseProcessor MouseProcessor => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor;
 		IMouseProcessor2 MouseProcessor2 => intellisenseSessionStack.TopSession?.Presenter as IMouseProcessor2;
 
-		public PresenterMouseProcessor(IIntellisenseSessionStack intellisenseSessionStack) {
-			if (intellisenseSessionStack == null)
-				throw new ArgumentNullException(nameof(intellisenseSessionStack));
-			this.intellisenseSessionStack = intellisenseSessionStack;
-		}
+		public PresenterMouseProcessor(IIntellisenseSessionStack intellisenseSessionStack) => this.intellisenseSessionStack = intellisenseSessionStack ?? throw new ArgumentNullException(nameof(intellisenseSessionStack));
 
 		void IMouseProcessor.PreprocessMouseLeftButtonDown(MouseButtonEventArgs e) => intellisenseSessionStack.CollapseAllSessions();
 		void IMouseProcessor.PostprocessMouseLeftButtonDown(MouseButtonEventArgs e) => MouseProcessor?.PostprocessMouseLeftButtonDown(e);

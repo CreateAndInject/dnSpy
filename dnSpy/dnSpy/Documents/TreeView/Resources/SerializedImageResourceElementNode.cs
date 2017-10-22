@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -41,8 +41,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			if (serializedData == null)
 				return null;
 
-			byte[] imageData;
-			if (SerializedImageUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
+			if (SerializedImageUtilities.GetImageData(module, serializedData.TypeName, serializedData.Data, out var imageData))
 				return new SerializedImageResourceElementNodeImpl(treeNodeGroup, resourceElement, imageData);
 
 			return null;
@@ -58,18 +57,15 @@ namespace dnSpy.Documents.TreeView.Resources {
 		protected override ImageReference GetIcon() => DsImages.Image;
 
 		public SerializedImageResourceElementNodeImpl(ITreeNodeGroup treeNodeGroup, ResourceElement resourceElement, byte[] imageData)
-			: base(treeNodeGroup, resourceElement) {
-			InitializeImageData(imageData);
-		}
+			: base(treeNodeGroup, resourceElement) => InitializeImageData(imageData);
 
 		void InitializeImageData(byte[] imageData) {
 			this.imageData = imageData;
-			this.imageSource = ImageResourceUtilities.CreateImageSource(imageData);
+			imageSource = ImageResourceUtilities.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(IDecompilerOutput output, IDecompiler decompiler, bool showOffset) {
-			var documentViewerOutput = output as IDocumentViewerOutput;
-			if (documentViewerOutput != null) {
+			if (output is IDocumentViewerOutput documentViewerOutput) {
 				documentViewerOutput.AddUIElement(() => {
 					return new System.Windows.Controls.Image {
 						Source = ImageSource,
@@ -96,8 +92,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 				return res;
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			if (!SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData))
+			if (!SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData))
 				return dnSpy_Resources.NewDataIsNotAnImage;
 
 			try {
@@ -114,8 +109,7 @@ namespace dnSpy.Documents.TreeView.Resources {
 			base.UpdateData(newResElem);
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
-			byte[] imageData;
-			SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
+			SerializedImageUtilities.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out var imageData);
 			InitializeImageData(imageData);
 		}
 	}

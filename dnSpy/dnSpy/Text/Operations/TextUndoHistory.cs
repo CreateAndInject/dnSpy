@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -49,10 +49,8 @@ namespace dnSpy.Text.Operations {
 		TextUndoTransaction currentTransaction;
 
 		public TextUndoHistory(IPropertyOwner propertyOwner) {
-			if (propertyOwner == null)
-				throw new ArgumentNullException(nameof(propertyOwner));
 			State = TextUndoHistoryState.Idle;
-			PropertyOwner = propertyOwner;
+			PropertyOwner = propertyOwner ?? throw new ArgumentNullException(nameof(propertyOwner));
 			Properties = new PropertyCollection();
 			redoList = new List<TextUndoTransaction>();
 			undoList = new List<TextUndoTransaction>();

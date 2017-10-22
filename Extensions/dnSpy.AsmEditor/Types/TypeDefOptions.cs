@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,9 +37,9 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		public TypeDefOptions(TypeDef type) {
-			this.Attributes = type.Attributes;
-			this.Namespace = type.Namespace;
-			this.Name = type.Name;
+			Attributes = type.Attributes;
+			Namespace = type.Namespace;
+			Name = type.Name;
 			if (type.ClassLayout == null) {
 				PackingSize = null;
 				ClassSize = null;
@@ -48,22 +48,22 @@ namespace dnSpy.AsmEditor.Types {
 				PackingSize = type.ClassLayout.PackingSize;
 				ClassSize = type.ClassLayout.ClassSize;
 			}
-			this.BaseType = type.BaseType;
-			this.CustomAttributes.AddRange(type.CustomAttributes);
-			this.DeclSecurities.AddRange(type.DeclSecurities);
-			this.GenericParameters.AddRange(type.GenericParameters);
-			this.Interfaces.AddRange(type.Interfaces);
+			BaseType = type.BaseType;
+			CustomAttributes.AddRange(type.CustomAttributes);
+			DeclSecurities.AddRange(type.DeclSecurities);
+			GenericParameters.AddRange(type.GenericParameters);
+			Interfaces.AddRange(type.Interfaces);
 		}
 
 		public TypeDef CopyTo(TypeDef type, ModuleDef ownerModule) {
-			type.Attributes = this.Attributes;
-			type.Namespace = this.Namespace ?? UTF8String.Empty;
-			type.Name = this.Name ?? UTF8String.Empty;
+			type.Attributes = Attributes;
+			type.Namespace = Namespace ?? UTF8String.Empty;
+			type.Name = Name ?? UTF8String.Empty;
 			if (PackingSize != null || ClassSize != null)
 				type.ClassLayout = ownerModule.UpdateRowId(new ClassLayoutUser(PackingSize ?? 0, ClassSize ?? 0));
 			else
 				type.ClassLayout = null;
-			type.BaseType = this.BaseType;
+			type.BaseType = BaseType;
 			type.CustomAttributes.Clear();
 			type.CustomAttributes.AddRange(CustomAttributes);
 			type.DeclSecurities.Clear();
@@ -77,15 +77,13 @@ namespace dnSpy.AsmEditor.Types {
 
 		public TypeDef CreateTypeDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new TypeDefUser(UTF8String.Empty), ownerModule));
 
-		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType) {
-			return new TypeDefOptions {
-				Attributes = (isNestedType ? TypeAttributes.NestedPublic : TypeAttributes.Public) | TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.AnsiClass,
-				Namespace = ns ?? UTF8String.Empty,
-				Name = name ?? UTF8String.Empty,
-				PackingSize = null,
-				ClassSize = null,
-				BaseType = baseType,
-			};
-		}
+		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType) => new TypeDefOptions {
+			Attributes = (isNestedType ? TypeAttributes.NestedPublic : TypeAttributes.Public) | TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.AnsiClass,
+			Namespace = ns ?? UTF8String.Empty,
+			Name = name ?? UTF8String.Empty,
+			PackingSize = null,
+			ClassSize = null,
+			BaseType = baseType,
+		};
 	}
 }

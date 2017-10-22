@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -37,11 +37,7 @@ namespace dnSpy.Contracts.Documents.TreeView {
 		/// Constructor
 		/// </summary>
 		/// <param name="type">Type</param>
-		protected TypeNode(TypeDef type) {
-			if (type == null)
-				throw new ArgumentNullException(nameof(type));
-			TypeDef = type;
-		}
+		protected TypeNode(TypeDef type) => TypeDef = type ?? throw new ArgumentNullException(nameof(type));
 
 		/// <summary>
 		/// Creates a <see cref="MethodNode"/>

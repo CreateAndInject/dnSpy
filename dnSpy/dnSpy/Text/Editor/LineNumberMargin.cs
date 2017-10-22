@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -59,9 +59,7 @@ namespace dnSpy.Text.Editor {
 		TextFormattingRunProperties lineNumberTextFormattingRunProperties;
 
 		public LineNumberMargin(IWpfTextViewHost wpfTextViewHost, IClassificationFormatMapService classificationFormatMapService, IThemeClassificationTypeService themeClassificationTypeService, ITextFormatterProvider textFormatterProvider)
-			: base(PredefinedMarginNames.LineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) {
-			this.lineNumberClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.LineNumber);
-		}
+			: base(PredefinedMarginNames.LineNumber, wpfTextViewHost, classificationFormatMapService, textFormatterProvider) => lineNumberClassificationType = themeClassificationTypeService.GetClassificationType(TextColor.LineNumber);
 
 		protected override int? GetLineNumber(ITextViewLine viewLine, ref LineNumberState state) {
 			if (!viewLine.IsFirstTextViewLineForSnapshotLine)

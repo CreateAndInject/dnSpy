@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,8 +43,8 @@ namespace dnSpy.Documents.TreeView {
 		}
 
 		public DerivedTypeNodeImpl(ITreeNodeGroup treeNodeGroup, TypeDef type) {
-			this.TreeNodeGroup = treeNodeGroup;
-			this.weakRefTypeDef = new WeakReference(type);
+			TreeNodeGroup = treeNodeGroup;
+			weakRefTypeDef = new WeakReference(type);
 		}
 
 		public override void Initialize() =>

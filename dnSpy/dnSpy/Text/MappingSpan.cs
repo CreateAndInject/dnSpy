@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,13 +34,11 @@ namespace dnSpy.Text {
 		PointTrackingMode PointTrackingMode => spanTrackingMode == SpanTrackingMode.EdgeExclusive || spanTrackingMode == SpanTrackingMode.EdgeNegative ? PointTrackingMode.Negative : PointTrackingMode.Positive;
 
 		public MappingSpan(IBufferGraph bufferGraph, SnapshotSpan snapshotSpan, SpanTrackingMode trackingMode) {
-			if (bufferGraph == null)
-				throw new ArgumentNullException(nameof(bufferGraph));
 			if (snapshotSpan.Snapshot == null)
 				throw new ArgumentException();
-			BufferGraph = bufferGraph;
+			BufferGraph = bufferGraph ?? throw new ArgumentNullException(nameof(bufferGraph));
 			this.snapshotSpan = snapshotSpan;
-			this.spanTrackingMode = trackingMode;
+			spanTrackingMode = trackingMode;
 		}
 
 		public NormalizedSnapshotSpanCollection GetSpans(Predicate<ITextBuffer> match) {

@@ -53,7 +53,9 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			if (type == null)
 				return;
 
-			var wbAsm = new AssemblyNameInfo("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef();
+			var wbAsm = ctx.Module.CorLibTypes.AssemblyRef.Version == new Version(2, 0, 0, 0) ?
+				new AssemblyNameInfo("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef() :
+				new AssemblyNameInfo("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef();
 			var ifaceRef = new TypeRefUser(ctx.Module, "System.Windows.Markup", "IComponentConnector", wbAsm);
 			var iface = ctx.Module.Context.Resolver.ResolveThrow(ifaceRef);
 
@@ -99,8 +101,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			if (connId == null)
 				return;
 
-			Action<XamlContext, XElement> cb;
-			if (!connIds.TryGetValue((int)connId.Id, out cb)) {
+			if (!connIds.TryGetValue((int)connId.Id, out var cb)) {
 				elem.AddBeforeSelf(new XComment(string.Format(dnSpy_BamlDecompiler_Resources.Error_UnknownConnectionId, connId.Id)));
 				return;
 			}
@@ -140,13 +141,11 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 		struct Error {
 			public string Msg;
 
-			public void Callback(XamlContext ctx, XElement elem) {
-				elem.AddBeforeSelf(new XComment(Msg));
-			}
+			public void Callback(XamlContext ctx, XElement elem) => elem.AddBeforeSelf(new XComment(Msg));
 		}
 
 		Dictionary<int, Action<XamlContext, XElement>> ExtractConnectionId(XamlContext ctx, MethodDef method) {
-			var context = new DecompilerContext(method.Module) {
+			var context = new DecompilerContext(0, method.Module) {
 				CurrentType = method.DeclaringType,
 				CurrentMethod = method,
 				CancellationToken = ctx.CancellationToken
@@ -154,17 +153,13 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			var body = new ILBlock(new ILAstBuilder().Build(method, true, context));
 			new ILAstOptimizer().Optimize(context, body);
 
-			var sw = body.GetSelfAndChildrenRecursive<ILSwitch>().FirstOrDefault();
-			if (sw == null)
-				return null;
-
 			var connIds = new Dictionary<int, Action<XamlContext, XElement>>();
-			foreach (var cas in sw.CaseBlocks) {
-				if (cas.Values == null)
-					continue;
-
+			var infos = GetCaseBlocks(body);
+			if (infos == null)
+				return null;
+			foreach (var info in infos) {
 				Action<XamlContext, XElement> cb = null;
-				foreach (var node in cas.Body) {
+				foreach (var node in info.nodes) {
 					var expr = node as ILExpression;
 					if (expr == null)
 						continue;
@@ -222,12 +217,85 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				}
 
 				if (cb != null) {
-					foreach (var id in cas.Values)
+					foreach (var id in info.connIds)
 						connIds[id] = cb;
 				}
 			}
 
-			return connIds.Count == 0 ? null : connIds;
+			return connIds;
+		}
+
+		List<(IList<int> connIds, List<ILNode> nodes)> GetCaseBlocks(ILBlock method) {
+			var list = new List<(IList<int>, List<ILNode>)>();
+			var body = method.Body;
+			if (body.Count == 0)
+				return list;
+
+			var sw = method.GetSelfAndChildrenRecursive<ILSwitch>().FirstOrDefault();
+			if (sw != null) {
+				foreach (var lbl in sw.CaseBlocks) {
+					if (lbl.Values == null)
+						continue;
+					list.Add((lbl.Values, lbl.Body));
+				}
+				return list;
+			}
+			else {
+				int pos = 0;
+				for (;;) {
+					if (pos >= body.Count)
+						return null;
+					var cond = body[pos] as ILCondition;
+					if (cond == null) {
+						if (!body[pos].Match(ILCode.Stfld, out IField field, out var ldthis, out var ldci4) || !ldthis.MatchThis() || !ldci4.MatchLdcI4(1))
+							return null;
+						return list;
+					}
+					pos++;
+					if (cond.TrueBlock == null || cond.FalseBlock == null)
+						return null;
+
+					bool isEq = true;
+					var condExpr = cond.Condition;
+					for (;;) {
+						if (!condExpr.Match(ILCode.LogicNot, out ILExpression expr))
+							break;
+						isEq = !isEq;
+						condExpr = expr;
+					}
+					if (condExpr.Code != ILCode.Ceq && condExpr.Code != ILCode.Cne)
+						return null;
+					if (condExpr.Arguments.Count != 2)
+						return null;
+					if (!condExpr.Arguments[0].Match(ILCode.Ldloc, out ILVariable v) || v.OriginalParameter?.Index != 1)
+						return null;
+					if (!condExpr.Arguments[1].Match(ILCode.Ldc_I4, out int val))
+						return null;
+					if (condExpr.Code == ILCode.Cne)
+						isEq ^= true;
+
+					if (isEq) {
+						list.Add((new[] { val }, cond.TrueBlock.Body));
+						if (cond.FalseBlock.Body.Count != 0) {
+							body = cond.FalseBlock.Body;
+							pos = 0;
+						}
+					}
+					else {
+						if (cond.FalseBlock.Body.Count != 0) {
+							list.Add((new[] { val }, cond.FalseBlock.Body));
+							if (cond.TrueBlock.Body.Count != 0) {
+								body = cond.TrueBlock.Body;
+								pos = 0;
+							}
+						}
+						else {
+							list.Add((new[] { val }, body.Skip(pos).ToList()));
+							return list;
+						}
+					}
+				}
+			}
 		}
 	}
 }

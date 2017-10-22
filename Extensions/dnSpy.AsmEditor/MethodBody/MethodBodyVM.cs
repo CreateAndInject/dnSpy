@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,13 +43,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		public CilBodyVM CilBodyVM { get; }
 
 		public MethodBodyVM(MethodBodyOptions options, ModuleDef ownerModule, IDecompilerService decompilerService, TypeDef ownerType, MethodDef ownerMethod) {
-			this.origOptions = options;
+			origOptions = options;
 
-			this.NativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
+			NativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
 			NativeMethodBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.CilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, decompilerService, ownerType, ownerMethod, false);
+			CilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, decompilerService, ownerType, ownerMethod, false);
 			CilBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.MethodBodyTypeVM = new EnumListVM(methodBodyTypeList, (a, b) => OnMethodBodyTypeChanged());
+			MethodBodyTypeVM = new EnumListVM(methodBodyTypeList, (a, b) => OnMethodBodyTypeChanged());
 
 			Reinitialize();
 		}

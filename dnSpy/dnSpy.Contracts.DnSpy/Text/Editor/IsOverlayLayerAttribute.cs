@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -28,9 +28,7 @@ namespace dnSpy.Contracts.Text.Editor {
 		/// Constructor
 		/// </summary>
 		/// <param name="isOverlayLayer">true if it's an overlay layer, false if it's a normal layer</param>
-		public IsOverlayLayerAttribute(bool isOverlayLayer) {
-			IsOverlayLayer = isOverlayLayer;
-		}
+		public IsOverlayLayerAttribute(bool isOverlayLayer) => IsOverlayLayer = isOverlayLayer;
 
 		/// <summary>
 		/// true if it's an overlay layer, false if it's a normal layer

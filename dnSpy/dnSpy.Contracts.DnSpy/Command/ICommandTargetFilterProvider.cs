@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,9 +48,7 @@ namespace dnSpy.Contracts.Command {
 		/// <summary>Constructor</summary>
 		/// <param name="order">Order of this instance, eg. <see cref="CommandTargetFilterOrder.TextEditor"/></param>
 		public ExportCommandTargetFilterProviderAttribute(double order)
-			: base(typeof(ICommandTargetFilterProvider)) {
-			Order = order;
-		}
+			: base(typeof(ICommandTargetFilterProvider)) => Order = order;
 
 		/// <summary>
 		/// Order of this instance

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -48,8 +48,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		protected override string OnNewValue(T value) {
-			this.type = value;
-			return ToString(this.type);
+			type = value;
+			return ToString(type);
 		}
 
 		protected override string ConvertToValue(out T value) {
@@ -60,8 +60,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
-			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options, ToTypeSig(type), out canceled);
+			var newTypeSig = typeSigCreator.Create(options, ToTypeSig(type), out bool canceled);
 			if (!canceled)
 				SetValue(ToType(newTypeSig));
 		}
@@ -127,7 +126,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		string CalculateStringValue() => string.Join(", ", types.Select(a => TypeSigVM.ToString(a)));
-		void InitializeStringValue() => this.StringValue = CalculateStringValue();
+		void InitializeStringValue() => StringValue = CalculateStringValue();
 
 		protected override string ConvertToValue(out IList<T> value) {
 			value = types.ToArray();
@@ -137,8 +136,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void AddType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
-			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options, null, out canceled);
+			var newTypeSig = typeSigCreator.Create(options, null, out bool canceled);
 			if (canceled)
 				return;
 

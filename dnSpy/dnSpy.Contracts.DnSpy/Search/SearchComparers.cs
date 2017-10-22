@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -63,8 +63,7 @@ namespace dnSpy.Contracts.Search {
 			var uval64 = TryParseUInt64(s);
 			if (uval64 != null)
 				return new IntegerLiteralSearchComparer(unchecked((long)uval64.Value));
-			double dbl;
-			if (double.TryParse(s, out dbl))
+			if (double.TryParse(s, out double dbl))
 				return new DoubleLiteralSearchComparer(dbl);
 
 			if (s.Length >= 2 && s[0] == '"' && s[s.Length - 1] == '"')
@@ -142,15 +141,10 @@ namespace dnSpy.Contracts.Search {
 	sealed class RegExStringLiteralSearchComparer : ISearchComparer {
 		readonly Regex regex;
 
-		public RegExStringLiteralSearchComparer(Regex regex) {
-			if (regex == null)
-				throw new ArgumentNullException(nameof(regex));
-			this.regex = regex;
-		}
+		public RegExStringLiteralSearchComparer(Regex regex) => this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 
 			text = obj as string;
@@ -164,16 +158,13 @@ namespace dnSpy.Contracts.Search {
 		readonly bool matchWholeString;
 
 		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false) {
-			if (s == null)
-				throw new ArgumentNullException(nameof(s));
-			this.str = s;
-			this.stringComparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+			str = s ?? throw new ArgumentNullException(nameof(s));
+			stringComparison = caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
 			this.matchWholeString = matchWholeString;
 		}
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 
 			text = obj as string;
@@ -188,13 +179,10 @@ namespace dnSpy.Contracts.Search {
 	sealed class IntegerLiteralSearchComparer : ISearchComparer {
 		readonly long searchValue;
 
-		public IntegerLiteralSearchComparer(long value) {
-			this.searchValue = value;
-		}
+		public IntegerLiteralSearchComparer(long value) => searchValue = value;
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 			if (obj == null)
 				return false;
@@ -222,13 +210,10 @@ namespace dnSpy.Contracts.Search {
 	sealed class DoubleLiteralSearchComparer : ISearchComparer {
 		readonly double searchValue;
 
-		public DoubleLiteralSearchComparer(double value) {
-			this.searchValue = value;
-		}
+		public DoubleLiteralSearchComparer(double value) => searchValue = value;
 
 		public bool IsMatch(string text, object obj) {
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null)
+			if (obj is IHasConstant hc && hc.Constant != null)
 				obj = hc.Constant.Value;
 			if (obj == null)
 				return false;
@@ -254,11 +239,7 @@ namespace dnSpy.Contracts.Search {
 	sealed class RegExSearchComparer : ISearchComparer {
 		readonly Regex regex;
 
-		public RegExSearchComparer(Regex regex) {
-			if (regex == null)
-				throw new ArgumentNullException(nameof(regex));
-			this.regex = regex;
-		}
+		public RegExSearchComparer(Regex regex) => this.regex = regex ?? throw new ArgumentNullException(nameof(regex));
 
 		public bool IsMatch(string text, object obj) {
 			if (text == null)

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using dnlib.DotNet;
-using dnSpy.Contracts.Text;
+using dnSpy.Contracts.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Visitors;
@@ -32,9 +32,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		readonly StringBuilder sb;
 
-		public ILSpyEnvironmentProvider(StringBuilder sb = null) {
-			this.sb = sb ?? new StringBuilder();
-		}
+		public ILSpyEnvironmentProvider(StringBuilder sb = null) => this.sb = sb ?? new StringBuilder();
 
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute) {
 			var mr = attribute.Type.Annotations
@@ -121,11 +119,11 @@ return loader.ReadTypeReference(annotation, entity: current).Resolve(context);*/
 				if (def == null)
 					continue;
 				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
-					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextColorHelper.GetColor(method));
+					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(method));
 				}
 
 				foreach (var property in def.Properties) {
-					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextColorHelper.GetColor(property));
+					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, VisualBasicMetadataTextColorProvider.Instance.GetColor(property));
 				}
 			}
 		}

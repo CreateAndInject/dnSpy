@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,9 +30,9 @@ namespace dnSpy.AsmEditor.Commands {
 		public IMenuItemContext MenuItemContextOrNull { get; }
 
 		public CodeContext(DocumentTreeNodeData[] nodes, bool isDefinition, IMenuItemContext menuItemContext) {
-			this.Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
-			this.IsDefinition = isDefinition;
-			this.MenuItemContextOrNull = menuItemContext;
+			Nodes = nodes ?? Array.Empty<DocumentTreeNodeData>();
+			IsDefinition = isDefinition;
+			MenuItemContextOrNull = menuItemContext;
 		}
 	}
 
@@ -44,9 +44,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		readonly IDocumentTreeView documentTreeView;
 
-		protected CodeContextMenuHandler(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		protected CodeContextMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))
@@ -68,9 +66,7 @@ namespace dnSpy.AsmEditor.Commands {
 
 		readonly IDocumentTreeView documentTreeView;
 
-		protected NodesCodeContextMenuHandler(IDocumentTreeView documentTreeView) {
-			this.documentTreeView = documentTreeView;
-		}
+		protected NodesCodeContextMenuHandler(IDocumentTreeView documentTreeView) => this.documentTreeView = documentTreeView;
 
 		protected sealed override CodeContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DOCUMENTVIEWERCONTROL_GUID))

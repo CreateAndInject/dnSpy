@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,15 +25,12 @@ namespace dnSpy.Settings.Dialog {
 	sealed class AppRefreshSettings : IAppRefreshSettings {
 		readonly Dictionary<Guid, object> dict = new Dictionary<Guid, object>();
 
-		public void Add(Guid guid, object value = null) {
-			dict[guid] = value;
-		}
+		public void Add(Guid guid, object value = null) => dict[guid] = value;
 
 		public bool Has(Guid guid) => dict.ContainsKey(guid);
 
 		public object GetValue(Guid guid) {
-			object value;
-			dict.TryGetValue(guid, out value);
+			dict.TryGetValue(guid, out object value);
 			return value;
 		}
 	}

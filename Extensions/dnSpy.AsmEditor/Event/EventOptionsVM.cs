@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -152,15 +152,15 @@ namespace dnSpy.AsmEditor.Event {
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
-			this.TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
+			TypeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
+			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
-			this.OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			OtherMethodsVM = new MethodDefsVM(ownerModule, decompilerService);
 
-			this.origOptions = options;
+			origOptions = options;
 
-			this.TypeSigCreator.CanAddFnPtr = false;
+			TypeSigCreator.CanAddFnPtr = false;
 			Reinitialize();
 		}
 

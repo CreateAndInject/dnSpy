@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -116,6 +116,11 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.ValueType"/>
 		/// </summary>
 		public const string ValueType = RoslynClassificationTypeNames.StructName;
+
+		/// <summary>
+		/// <see cref="TextColor.Module"/>
+		/// </summary>
+		public const string Module = RoslynClassificationTypeNames.ModuleName;
 
 		/// <summary>
 		/// <see cref="TextColor.TypeGenericParameter"/>
@@ -463,9 +468,9 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string AssemblyExe = nameof(AssemblyExe);
 
 		/// <summary>
-		/// <see cref="TextColor.Module"/>
+		/// <see cref="TextColor.AssemblyModule"/>
 		/// </summary>
-		public const string Module = RoslynClassificationTypeNames.ModuleName;
+		public const string AssemblyModule = nameof(AssemblyModule);
 
 		/// <summary>
 		/// <see cref="TextColor.DirectoryPart"/>
@@ -893,139 +898,149 @@ namespace dnSpy.Contracts.Text.Classification {
 		public const string FindMatchHighlightMarker = nameof(FindMatchHighlightMarker);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerNamespace"/>
+		/// <see cref="TextColor.BlockStructureNamespace"/>
 		/// </summary>
-		public const string StructureVisualizerNamespace = nameof(StructureVisualizerNamespace);
+		public const string BlockStructureNamespace = nameof(BlockStructureNamespace);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerType"/>
+		/// <see cref="TextColor.BlockStructureType"/>
 		/// </summary>
-		public const string StructureVisualizerType = nameof(StructureVisualizerType);
+		public const string BlockStructureType = nameof(BlockStructureType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerModule"/>
+		/// <see cref="TextColor.BlockStructureModule"/>
 		/// </summary>
-		public const string StructureVisualizerModule = nameof(StructureVisualizerModule);
+		public const string BlockStructureModule = nameof(BlockStructureModule);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerValueType"/>
+		/// <see cref="TextColor.BlockStructureValueType"/>
 		/// </summary>
-		public const string StructureVisualizerValueType = nameof(StructureVisualizerValueType);
+		public const string BlockStructureValueType = nameof(BlockStructureValueType);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerInterface"/>
+		/// <see cref="TextColor.BlockStructureInterface"/>
 		/// </summary>
-		public const string StructureVisualizerInterface = nameof(StructureVisualizerInterface);
+		public const string BlockStructureInterface = nameof(BlockStructureInterface);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerMethod"/>
+		/// <see cref="TextColor.BlockStructureMethod"/>
 		/// </summary>
-		public const string StructureVisualizerMethod = nameof(StructureVisualizerMethod);
+		public const string BlockStructureMethod = nameof(BlockStructureMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAccessor"/>
+		/// <see cref="TextColor.BlockStructureAccessor"/>
 		/// </summary>
-		public const string StructureVisualizerAccessor = nameof(StructureVisualizerAccessor);
+		public const string BlockStructureAccessor = nameof(BlockStructureAccessor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerAnonymousMethod"/>
+		/// <see cref="TextColor.BlockStructureAnonymousMethod"/>
 		/// </summary>
-		public const string StructureVisualizerAnonymousMethod = nameof(StructureVisualizerAnonymousMethod);
+		public const string BlockStructureAnonymousMethod = nameof(BlockStructureAnonymousMethod);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConstructor"/>
+		/// <see cref="TextColor.BlockStructureConstructor"/>
 		/// </summary>
-		public const string StructureVisualizerConstructor = nameof(StructureVisualizerConstructor);
+		public const string BlockStructureConstructor = nameof(BlockStructureConstructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerDestructor"/>
+		/// <see cref="TextColor.BlockStructureDestructor"/>
 		/// </summary>
-		public const string StructureVisualizerDestructor = nameof(StructureVisualizerDestructor);
+		public const string BlockStructureDestructor = nameof(BlockStructureDestructor);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOperator"/>
+		/// <see cref="TextColor.BlockStructureOperator"/>
 		/// </summary>
-		public const string StructureVisualizerOperator = nameof(StructureVisualizerOperator);
+		public const string BlockStructureOperator = nameof(BlockStructureOperator);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerConditional"/>
+		/// <see cref="TextColor.BlockStructureConditional"/>
 		/// </summary>
-		public const string StructureVisualizerConditional = nameof(StructureVisualizerConditional);
+		public const string BlockStructureConditional = nameof(BlockStructureConditional);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLoop"/>
+		/// <see cref="TextColor.BlockStructureLoop"/>
 		/// </summary>
-		public const string StructureVisualizerLoop = nameof(StructureVisualizerLoop);
+		public const string BlockStructureLoop = nameof(BlockStructureLoop);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerProperty"/>
+		/// <see cref="TextColor.BlockStructureProperty"/>
 		/// </summary>
-		public const string StructureVisualizerProperty = nameof(StructureVisualizerProperty);
+		public const string BlockStructureProperty = nameof(BlockStructureProperty);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerEvent"/>
+		/// <see cref="TextColor.BlockStructureEvent"/>
 		/// </summary>
-		public const string StructureVisualizerEvent = nameof(StructureVisualizerEvent);
+		public const string BlockStructureEvent = nameof(BlockStructureEvent);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerTry"/>
+		/// <see cref="TextColor.BlockStructureTry"/>
 		/// </summary>
-		public const string StructureVisualizerTry = nameof(StructureVisualizerTry);
+		public const string BlockStructureTry = nameof(BlockStructureTry);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCatch"/>
+		/// <see cref="TextColor.BlockStructureCatch"/>
 		/// </summary>
-		public const string StructureVisualizerCatch = nameof(StructureVisualizerCatch);
+		public const string BlockStructureCatch = nameof(BlockStructureCatch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFilter"/>
+		/// <see cref="TextColor.BlockStructureFilter"/>
 		/// </summary>
-		public const string StructureVisualizerFilter = nameof(StructureVisualizerFilter);
+		public const string BlockStructureFilter = nameof(BlockStructureFilter);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFinally"/>
+		/// <see cref="TextColor.BlockStructureFinally"/>
 		/// </summary>
-		public const string StructureVisualizerFinally = nameof(StructureVisualizerFinally);
+		public const string BlockStructureFinally = nameof(BlockStructureFinally);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFault"/>
+		/// <see cref="TextColor.BlockStructureFault"/>
 		/// </summary>
-		public const string StructureVisualizerFault = nameof(StructureVisualizerFault);
+		public const string BlockStructureFault = nameof(BlockStructureFault);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLock"/>
+		/// <see cref="TextColor.BlockStructureLock"/>
 		/// </summary>
-		public const string StructureVisualizerLock = nameof(StructureVisualizerLock);
+		public const string BlockStructureLock = nameof(BlockStructureLock);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerUsing"/>
+		/// <see cref="TextColor.BlockStructureUsing"/>
 		/// </summary>
-		public const string StructureVisualizerUsing = nameof(StructureVisualizerUsing);
+		public const string BlockStructureUsing = nameof(BlockStructureUsing);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerFixed"/>
+		/// <see cref="TextColor.BlockStructureFixed"/>
 		/// </summary>
-		public const string StructureVisualizerFixed = nameof(StructureVisualizerFixed);
+		public const string BlockStructureFixed = nameof(BlockStructureFixed);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerSwitch"/>
+		/// <see cref="TextColor.BlockStructureSwitch"/>
 		/// </summary>
-		public const string StructureVisualizerSwitch = nameof(StructureVisualizerSwitch);
+		public const string BlockStructureSwitch = nameof(BlockStructureSwitch);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerCase"/>
+		/// <see cref="TextColor.BlockStructureCase"/>
 		/// </summary>
-		public const string StructureVisualizerCase = nameof(StructureVisualizerCase);
+		public const string BlockStructureCase = nameof(BlockStructureCase);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerLocalFunction"/>
+		/// <see cref="TextColor.BlockStructureLocalFunction"/>
 		/// </summary>
-		public const string StructureVisualizerLocalFunction = nameof(StructureVisualizerLocalFunction);
+		public const string BlockStructureLocalFunction = nameof(BlockStructureLocalFunction);
 
 		/// <summary>
-		/// <see cref="TextColor.StructureVisualizerOther"/>
+		/// <see cref="TextColor.BlockStructureOther"/>
 		/// </summary>
-		public const string StructureVisualizerOther = nameof(StructureVisualizerOther);
+		public const string BlockStructureOther = nameof(BlockStructureOther);
+
+		/// <summary>
+		/// <see cref="TextColor.BlockStructureXml"/>
+		/// </summary>
+		public const string BlockStructureXml = nameof(BlockStructureXml);
+
+		/// <summary>
+		/// <see cref="TextColor.BlockStructureXaml"/>
+		/// </summary>
+		public const string BlockStructureXaml = nameof(BlockStructureXaml);
 
 		/// <summary>
 		/// <see cref="TextColor.CompletionMatchHighlight"/>
@@ -1151,5 +1166,365 @@ namespace dnSpy.Contracts.Text.Classification {
 		/// <see cref="TextColor.AppSettingsTextMatchHighlight"/>
 		/// </summary>
 		public const string AppSettingsTextMatchHighlight = nameof(AppSettingsTextMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentLine"/>
+		/// </summary>
+		public const string HexCurrentLine = nameof(HexCurrentLine);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentLineNoFocus"/>
+		/// </summary>
+		public const string HexCurrentLineNoFocus = nameof(HexCurrentLineNoFocus);
+
+		/// <summary>
+		/// <see cref="TextColor.HexInactiveSelectedText"/>
+		/// </summary>
+		public const string HexInactiveSelectedText = nameof(HexInactiveSelectedText);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLine0"/>
+		/// </summary>
+		public const string HexColumnLine0 = nameof(HexColumnLine0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLine1"/>
+		/// </summary>
+		public const string HexColumnLine1 = nameof(HexColumnLine1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLineGroup0"/>
+		/// </summary>
+		public const string HexColumnLineGroup0 = nameof(HexColumnLineGroup0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexColumnLineGroup1"/>
+		/// </summary>
+		public const string HexColumnLineGroup1 = nameof(HexColumnLineGroup1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexHighlightedValuesColumn"/>
+		/// </summary>
+		public const string HexHighlightedValuesColumn = nameof(HexHighlightedValuesColumn);
+
+		/// <summary>
+		/// <see cref="TextColor.HexHighlightedAsciiColumn"/>
+		/// </summary>
+		public const string HexHighlightedAsciiColumn = nameof(HexHighlightedAsciiColumn);
+
+		/// <summary>
+		/// <see cref="TextColor.HexGlyphMargin"/>
+		/// </summary>
+		public const string HexGlyphMargin = nameof(HexGlyphMargin);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentValueCell"/>
+		/// </summary>
+		public const string HexCurrentValueCell = nameof(HexCurrentValueCell);
+
+		/// <summary>
+		/// <see cref="TextColor.HexCurrentAsciiCell"/>
+		/// </summary>
+		public const string HexCurrentAsciiCell = nameof(HexCurrentAsciiCell);
+
+		/// <summary>
+		/// <see cref="TextColor.OutputWindowText"/>
+		/// </summary>
+		public const string OutputWindowText = nameof(OutputWindowText);
+
+		/// <summary>
+		/// <see cref="TextColor.HexFindMatchHighlightMarker"/>
+		/// </summary>
+		public const string HexFindMatchHighlightMarker = nameof(HexFindMatchHighlightMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceField0"/>
+		/// </summary>
+		public const string HexToolTipServiceField0 = nameof(HexToolTipServiceField0);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceField1"/>
+		/// </summary>
+		public const string HexToolTipServiceField1 = nameof(HexToolTipServiceField1);
+
+		/// <summary>
+		/// <see cref="TextColor.HexToolTipServiceCurrentField"/>
+		/// </summary>
+		public const string HexToolTipServiceCurrentField = nameof(HexToolTipServiceCurrentField);
+
+		/// <summary>
+		/// <see cref="TextColor.ListFindMatchHighlight"/>
+		/// </summary>
+		public const string ListFindMatchHighlight = nameof(ListFindMatchHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatement = nameof(AdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointStatementMarker = nameof(AdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointStatementMarker = nameof(SelectedAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatement = nameof(DisabledAdvancedBreakpointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedBreakpointStatementMarker = nameof(DisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedBreakpointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedBreakpointStatementMarker = nameof(SelectedDisabledAdvancedBreakpointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointWarningStatement"/>
+		/// </summary>
+		public const string BreakpointWarningStatement = nameof(BreakpointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string BreakpointWarningStatementMarker = nameof(BreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedBreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedBreakpointWarningStatementMarker = nameof(SelectedBreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointErrorStatement"/>
+		/// </summary>
+		public const string BreakpointErrorStatement = nameof(BreakpointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.BreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string BreakpointErrorStatementMarker = nameof(BreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedBreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedBreakpointErrorStatementMarker = nameof(SelectedBreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointWarningStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointWarningStatement = nameof(AdvancedBreakpointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointWarningStatementMarker = nameof(AdvancedBreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointWarningStatementMarker = nameof(SelectedAdvancedBreakpointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointErrorStatement"/>
+		/// </summary>
+		public const string AdvancedBreakpointErrorStatement = nameof(AdvancedBreakpointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedBreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string AdvancedBreakpointErrorStatementMarker = nameof(AdvancedBreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedBreakpointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedBreakpointErrorStatementMarker = nameof(SelectedAdvancedBreakpointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatement"/>
+		/// </summary>
+		public const string TracepointStatement = nameof(TracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointStatementMarker"/>
+		/// </summary>
+		public const string TracepointStatementMarker = nameof(TracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointStatementMarker = nameof(SelectedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatement"/>
+		/// </summary>
+		public const string DisabledTracepointStatement = nameof(DisabledTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledTracepointStatementMarker = nameof(DisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledTracepointStatementMarker = nameof(SelectedDisabledTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointStatement = nameof(AdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointStatementMarker = nameof(AdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointStatementMarker = nameof(SelectedAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatement"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatement = nameof(DisabledAdvancedTracepointStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.DisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string DisabledAdvancedTracepointStatementMarker = nameof(DisabledAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedDisabledAdvancedTracepointStatementMarker"/>
+		/// </summary>
+		public const string SelectedDisabledAdvancedTracepointStatementMarker = nameof(SelectedDisabledAdvancedTracepointStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointWarningStatement"/>
+		/// </summary>
+		public const string TracepointWarningStatement = nameof(TracepointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string TracepointWarningStatementMarker = nameof(TracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointWarningStatementMarker = nameof(SelectedTracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointErrorStatement"/>
+		/// </summary>
+		public const string TracepointErrorStatement = nameof(TracepointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.TracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string TracepointErrorStatementMarker = nameof(TracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedTracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedTracepointErrorStatementMarker = nameof(SelectedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointWarningStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointWarningStatement = nameof(AdvancedTracepointWarningStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointWarningStatementMarker = nameof(AdvancedTracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointWarningStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointWarningStatementMarker = nameof(SelectedAdvancedTracepointWarningStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointErrorStatement"/>
+		/// </summary>
+		public const string AdvancedTracepointErrorStatement = nameof(AdvancedTracepointErrorStatement);
+
+		/// <summary>
+		/// <see cref="TextColor.AdvancedTracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string AdvancedTracepointErrorStatementMarker = nameof(AdvancedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.SelectedAdvancedTracepointErrorStatementMarker"/>
+		/// </summary>
+		public const string SelectedAdvancedTracepointErrorStatementMarker = nameof(SelectedAdvancedTracepointErrorStatementMarker);
+
+		/// <summary>
+		/// <see cref="TextColor.BookmarkName"/>
+		/// </summary>
+		public const string BookmarkName = nameof(BookmarkName);
+
+		/// <summary>
+		/// <see cref="TextColor.ActiveBookmarkName"/>
+		/// </summary>
+		public const string ActiveBookmarkName = nameof(ActiveBookmarkName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugLogTrace"/>
+		/// </summary>
+		public const string DebugLogTrace = nameof(DebugLogTrace);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugLogExtensionMessage"/>
+		/// </summary>
+		public const string DebugLogExtensionMessage = nameof(DebugLogExtensionMessage);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerValueChangedHighlight"/>
+		/// </summary>
+		public const string DebuggerValueChangedHighlight = nameof(DebuggerValueChangedHighlight);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugExceptionName"/>
+		/// </summary>
+		public const string DebugExceptionName = nameof(DebugExceptionName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugStowedExceptionName"/>
+		/// </summary>
+		public const string DebugStowedExceptionName = nameof(DebugStowedExceptionName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugReturnValueName"/>
+		/// </summary>
+		public const string DebugReturnValueName = nameof(DebugReturnValueName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugVariableName"/>
+		/// </summary>
+		public const string DebugVariableName = nameof(DebugVariableName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebugObjectIdName"/>
+		/// </summary>
+		public const string DebugObjectIdName = nameof(DebugObjectIdName);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerDisplayAttributeEval"/>
+		/// </summary>
+		public const string DebuggerDisplayAttributeEval = nameof(DebuggerDisplayAttributeEval);
+
+		/// <summary>
+		/// <see cref="TextColor.DebuggerNoStringQuotesEval"/>
+		/// </summary>
+		public const string DebuggerNoStringQuotesEval = nameof(DebuggerNoStringQuotesEval);
 	}
 }

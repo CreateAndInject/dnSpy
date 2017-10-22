@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,12 +29,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			DataContextChanged += (s, e) => {
 				var ownerWindow = Window.GetWindow(this);
 
-				var data1 = DataContext as TypeDefOrRefAndCAsVM<GenericParamConstraint>;
-				if (data1 != null)
+				if (DataContext is TypeDefOrRefAndCAsVM<GenericParamConstraint> data1)
 					data1.EditObject = new EditTypeDefOrRefAndCA(ownerWindow);
 
-				var data2 = DataContext as TypeDefOrRefAndCAsVM<InterfaceImpl>;
-				if (data2 != null)
+				if (DataContext is TypeDefOrRefAndCAsVM<InterfaceImpl> data2)
 					data2.EditObject = new EditTypeDefOrRefAndCA(ownerWindow);
 			};
 		}

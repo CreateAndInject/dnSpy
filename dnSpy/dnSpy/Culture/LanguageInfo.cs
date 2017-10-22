@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -43,13 +43,13 @@ namespace dnSpy.Culture {
 		}
 
 		LanguageInfo(LanguageType type) {
-			this.Type = type;
-			this.CultureInfo = null;
+			Type = type;
+			CultureInfo = null;
 		}
 
 		LanguageInfo(CultureInfo cultureInfo) {
-			this.Type = LanguageType.CultureInfo;
-			this.CultureInfo = cultureInfo;
+			Type = LanguageType.CultureInfo;
+			CultureInfo = cultureInfo;
 		}
 
 		public bool Equals(LanguageInfo other) {

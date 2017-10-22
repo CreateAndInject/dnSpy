@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -26,8 +26,7 @@ namespace dnSpy.AsmEditor.Resources {
 		public ImageResourceElementControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as ImageResourceElementVM;
-				if (data != null) {
+				if (DataContext is ImageResourceElementVM data) {
 					var ownerWindow = Window.GetWindow(this);
 					data.OpenFile = new OpenFile(ownerWindow);
 				}

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,9 +38,7 @@ namespace dnSpy.Themes {
 		readonly IThemeServiceImpl themeService;
 
 		[ImportingConstructor]
-		ThemesMenu(IThemeServiceImpl themeService) {
-			this.themeService = themeService;
-		}
+		ThemesMenu(IThemeServiceImpl themeService) => this.themeService = themeService;
 
 		public override void Execute(IMenuItemContext context) { }
 
@@ -53,9 +51,7 @@ namespace dnSpy.Themes {
 				this.isChecked = isChecked;
 			}
 
-			public override void Execute(IMenuItemContext context) {
-				action(context);
-			}
+			public override void Execute(IMenuItemContext context) => action(context);
 
 			public override bool IsChecked(IMenuItemContext context) => isChecked;
 		}

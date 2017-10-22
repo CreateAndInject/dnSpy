@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		readonly DocumentTreeViewSettingsImpl documentTreeViewSettings;
 
 		[ImportingConstructor]
-		AssemblyExplorerAppSettingsPageProvider(DocumentTreeViewSettingsImpl documentTreeViewSettings) {
-			this.documentTreeViewSettings = documentTreeViewSettings;
-		}
+		AssemblyExplorerAppSettingsPageProvider(DocumentTreeViewSettingsImpl documentTreeViewSettings) => this.documentTreeViewSettings = documentTreeViewSettings;
 
 		public IEnumerable<AppSettingsPage> Create() {
 			yield return new AssemblyExplorerAppSettingsPage(documentTreeViewSettings);
@@ -170,9 +168,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 		}
 
 		public AssemblyExplorerAppSettingsPage(DocumentTreeViewSettingsImpl documentTreeViewSettings) {
-			if (documentTreeViewSettings == null)
-				throw new ArgumentNullException(nameof(documentTreeViewSettings));
-			this.documentTreeViewSettings = documentTreeViewSettings;
+			this.documentTreeViewSettings = documentTreeViewSettings ?? throw new ArgumentNullException(nameof(documentTreeViewSettings));
 
 			ShowToken = documentTreeViewSettings.ShowToken;
 			ShowAssemblyVersion = documentTreeViewSettings.ShowAssemblyVersion;
@@ -183,21 +179,21 @@ namespace dnSpy.Documents.Tabs.Settings {
 			var filterObjs = typeof(DocumentFilterType).GetEnumValues().Cast<DocumentFilterType>().ToArray();
 			DocumentFilterTypes = new DocumentFilterTypeVM[filterObjs.Length];
 			for (int i = 0; i < filterObjs.Length; i++)
-				this.DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
+				DocumentFilterTypes[i] = new DocumentFilterTypeVM(filterObjs[i], ToString(filterObjs[i]));
 
-			this.FilterDraggedItems = this.DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
+			FilterDraggedItems = DocumentFilterTypes.First(a => a.FilterType == documentTreeViewSettings.FilterDraggedItems);
 
 			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
-			this.memberKindVMs = new MemberKindVM[defObjs.Length];
+			memberKindVMs = new MemberKindVM[defObjs.Length];
 			for (int i = 0; i < defObjs.Length; i++)
-				this.memberKindVMs[i] = new MemberKindVM(defObjs[i], ToString(defObjs[i]));
-			this.memberKindVMs2 = this.memberKindVMs.ToArray();
+				memberKindVMs[i] = new MemberKindVM(defObjs[i], ToString(defObjs[i]));
+			memberKindVMs2 = memberKindVMs.ToArray();
 
-			this.MemberKind0 = this.memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind0);
-			this.MemberKind1 = this.memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind1);
-			this.MemberKind2 = this.memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind2);
-			this.MemberKind3 = this.memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind3);
-			this.MemberKind4 = this.memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind4);
+			MemberKind0 = memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind0);
+			MemberKind1 = memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind1);
+			MemberKind2 = memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind2);
+			MemberKind3 = memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind3);
+			MemberKind4 = memberKindVMs.First(a => a.Object == documentTreeViewSettings.MemberKind4);
 		}
 
 		static string ToString(MemberKind o) {
@@ -224,8 +220,7 @@ namespace dnSpy.Documents.Tabs.Settings {
 			}
 		}
 
-		public override void OnApply() { throw new InvalidOperationException(); }
-
+		public override void OnApply() => throw new InvalidOperationException();
 		public void OnApply(IAppRefreshSettings appRefreshSettings) {
 			documentTreeViewSettings.ShowToken = ShowToken;
 			documentTreeViewSettings.ShowAssemblyVersion = ShowAssemblyVersion;
@@ -258,8 +253,8 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public string Text { get; }
 
 		public MemberKindVM(MemberKind memberKind, string text) {
-			this.Object = memberKind;
-			this.Text = text;
+			Object = memberKind;
+			Text = text;
 		}
 	}
 
@@ -268,8 +263,8 @@ namespace dnSpy.Documents.Tabs.Settings {
 		public string Text { get; }
 
 		public DocumentFilterTypeVM(DocumentFilterType documentFilterType, string text) {
-			this.FilterType = documentFilterType;
-			this.Text = text;
+			FilterType = documentFilterType;
+			Text = text;
 		}
 	}
 }

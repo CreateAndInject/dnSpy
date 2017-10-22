@@ -26,6 +26,7 @@ using dnSpy.Contracts.Text;
 using dnSpy.Decompiler.ILSpy.Core.CSharp;
 using dnSpy.Decompiler.ILSpy.Core.Settings;
 using dnSpy.Decompiler.ILSpy.Core.Text;
+using dnSpy.Decompiler.VisualBasic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -43,9 +44,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 
 		public DecompilerProvider(DecompilerSettingsService decompilerSettingsService) {
 			Debug.Assert(decompilerSettingsService != null);
-			if (decompilerSettingsService == null)
-				throw new ArgumentNullException(nameof(decompilerSettingsService));
-			this.decompilerSettingsService = decompilerSettingsService;
+			this.decompilerSettingsService = decompilerSettingsService ?? throw new ArgumentNullException(nameof(decompilerSettingsService));
 		}
 
 		public IEnumerable<IDecompiler> Create() {
@@ -59,14 +58,17 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 	sealed class VBDecompiler : DecompilerBase {
 		readonly Predicate<IAstTransform> transformAbortCondition = null;
 		readonly bool showAllMembers = false;
+		readonly Func<BuilderCache> createBuilderCache;
 
 		public override DecompilerSettingsBase Settings => langSettings;
 		readonly CSharpVBDecompilerSettings langSettings;
 
 		public override double OrderUI => DecompilerConstants.VISUALBASIC_ILSPY_ORDERUI;
+		public override MetadataTextColorProvider MetadataTextColorProvider => VisualBasicMetadataTextColorProvider.Instance;
 
 		public VBDecompiler(CSharpVBDecompilerSettings langSettings) {
 			this.langSettings = langSettings;
+			createBuilderCache = () => new BuilderCache(this.langSettings.Settings.SettingsVersion);
 		}
 
 		public override string ContentTypeString => ContentTypesInternal.VisualBasicILSpy;
@@ -187,7 +189,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			var csharpUnit = astBuilder.SyntaxTree;
 			csharpUnit.AcceptVisitor(new ICSharpCode.NRefactory.CSharp.InsertParenthesesVisitor() { InsertParenthesesForReadability = true });
 			var unit = csharpUnit.AcceptVisitor(new CSharpToVBConverterVisitor(state.AstBuilder.Context.CurrentModule, new ILSpyEnvironmentProvider(state.State.XmlDoc_StringBuilder)), null);
-			var outputFormatter = new VBTextOutputFormatter(output);
+			var outputFormatter = new VBTextOutputFormatter(output, astBuilder.Context);
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
@@ -202,8 +204,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			settings.MakeAssignmentExpressions = false;
 			settings.QueryExpressions = false;
 			settings.AlwaysGenerateExceptionVariableForCatchBlocksUnlessTypeIsObject = true;
-			var cache = ctx.GetOrCreate<BuilderCache>();
-			var state = new BuilderState(ctx, cache);
+			var cache = ctx.GetOrCreate(createBuilderCache);
+			var state = new BuilderState(ctx, cache, MetadataTextColorProvider);
 			state.AstBuilder.Context.CurrentModule = currentModule;
 			state.AstBuilder.Context.CancellationToken = ctx.CancellationToken;
 			state.AstBuilder.Context.CurrentType = currentType;
@@ -215,7 +217,7 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			if (type == null)
 				throw new ArgumentNullException(nameof(type));
 
-			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
 		protected override void TypeToString(IDecompilerOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
@@ -239,8 +241,8 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 			}
 
 			var vbAstType = astType.AcceptVisitor(converter, null);
-
-			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output), new VBFormattingOptions()), null);
+			var ctx = new DecompilerContext(langSettings.Settings.SettingsVersion, type.Module, MetadataTextColorProvider);
+			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output, ctx), new VBFormattingOptions()), null);
 		}
 
 		public override bool CanDecompile(DecompilationType decompilationType) {
@@ -291,15 +293,24 @@ namespace dnSpy.Decompiler.ILSpy.Core.VisualBasic {
 		}
 
 		void DecompileTypeMethods(DecompileTypeMethods info) {
-			var state = CreateAstBuilder(info.Context, CSharpDecompiler.CreateDecompilerSettings_DecompileTypeMethods(langSettings.Settings, !info.DecompileHidden), currentType: info.Type);
+			var state = CreateAstBuilder(info.Context, CSharpDecompiler.CreateDecompilerSettings_DecompileTypeMethods(langSettings.Settings, !info.DecompileHidden, info.ShowAll), currentType: info.Type);
 			try {
 				state.AstBuilder.GetDecompiledBodyKind = (builder, method) => CSharpDecompiler.GetDecompiledBodyKind(info, builder, method);
 				state.AstBuilder.AddType(info.Type);
-				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic));
+				RunTransformsAndGenerateCode(ref state, info.Output, info.Context, new DecompileTypeMethodsTransform(info.Methods, !info.DecompileHidden, info.MakeEverythingPublic, info.ShowAll));
 			}
 			finally {
 				state.Dispose();
 			}
 		}
+
+		public override void WriteToolTip(ITextColorWriter output, IMemberRef member, IHasCustomAttribute typeAttributes) =>
+			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteToolTip(member);
+		public override void WriteToolTip(ITextColorWriter output, ISourceVariable variable) =>
+			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteToolTip(variable);
+		public override void WriteNamespaceToolTip(ITextColorWriter output, string @namespace) =>
+			new VisualBasicFormatter(output, DefaultFormatterOptions, null).WriteNamespaceToolTip(@namespace);
+		public override void Write(ITextColorWriter output, IMemberRef member, FormatterOptions flags) =>
+			new VisualBasicFormatter(output, flags, null).Write(member);
 	}
 }

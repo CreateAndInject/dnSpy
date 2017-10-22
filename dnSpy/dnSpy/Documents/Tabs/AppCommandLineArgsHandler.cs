@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -33,9 +33,7 @@ namespace dnSpy.Documents.Tabs {
 		readonly IDocumentTabService documentTabService;
 
 		[ImportingConstructor]
-		AppCommandLineArgsHandler(IDocumentTabService documentTabService) {
-			this.documentTabService = documentTabService;
-		}
+		AppCommandLineArgsHandler(IDocumentTabService documentTabService) => this.documentTabService = documentTabService;
 
 		public double Order => -1000;
 
@@ -61,8 +59,7 @@ namespace dnSpy.Documents.Tabs {
 			if (string.IsNullOrEmpty(args.SelectMember))
 				return false;
 
-			string error;
-			uint token = SimpleTypeConverter.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out error);
+			uint token = SimpleTypeConverter.ParseUInt32(args.SelectMember, uint.MinValue, uint.MaxValue, out string error);
 			if (string.IsNullOrEmpty(error)) {
 				var mod = GetLoadedFiles(args).FirstOrDefault();
 				var member = mod?.ResolveToken(token);

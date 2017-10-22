@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -25,10 +25,6 @@ namespace dnSpy.Documents.Tabs {
 	sealed class DocumentTabContentFactoryContext : IDocumentTabContentFactoryContext {
 		public DocumentTreeNodeData[] Nodes { get; }
 
-		public DocumentTabContentFactoryContext(DocumentTreeNodeData[] nodes) {
-			if (nodes == null)
-				throw new InvalidOperationException();
-			this.Nodes = nodes;
-		}
+		public DocumentTabContentFactoryContext(DocumentTreeNodeData[] nodes) => Nodes = nodes ?? throw new InvalidOperationException();
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -35,25 +35,25 @@ namespace dnSpy.AsmEditor.Event {
 		}
 
 		public EventDefOptions(EventDef evt) {
-			this.Attributes = evt.Attributes;
-			this.Name = evt.Name;
-			this.EventType = evt.EventType;
-			this.AddMethod = evt.AddMethod;
-			this.InvokeMethod = evt.InvokeMethod;
-			this.RemoveMethod = evt.RemoveMethod;
-			this.OtherMethods.AddRange(evt.OtherMethods);
-			this.CustomAttributes.AddRange(evt.CustomAttributes);
+			Attributes = evt.Attributes;
+			Name = evt.Name;
+			EventType = evt.EventType;
+			AddMethod = evt.AddMethod;
+			InvokeMethod = evt.InvokeMethod;
+			RemoveMethod = evt.RemoveMethod;
+			OtherMethods.AddRange(evt.OtherMethods);
+			CustomAttributes.AddRange(evt.CustomAttributes);
 		}
 
 		public EventDef CopyTo(EventDef evt) {
-			evt.Attributes = this.Attributes;
-			evt.Name = this.Name ?? UTF8String.Empty;
-			evt.EventType = this.EventType;
-			evt.AddMethod = this.AddMethod;
-			evt.InvokeMethod = this.InvokeMethod;
-			evt.RemoveMethod = this.RemoveMethod;
+			evt.Attributes = Attributes;
+			evt.Name = Name ?? UTF8String.Empty;
+			evt.EventType = EventType;
+			evt.AddMethod = AddMethod;
+			evt.InvokeMethod = InvokeMethod;
+			evt.RemoveMethod = RemoveMethod;
 			evt.OtherMethods.Clear();
-			evt.OtherMethods.AddRange(this.OtherMethods);
+			evt.OtherMethods.AddRange(OtherMethods);
 			evt.CustomAttributes.Clear();
 			evt.CustomAttributes.AddRange(CustomAttributes);
 			return evt;
@@ -61,12 +61,10 @@ namespace dnSpy.AsmEditor.Event {
 
 		public EventDef CreateEventDef(ModuleDef ownerModule) => ownerModule.UpdateRowId(CopyTo(new EventDefUser()));
 
-		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType) {
-			return new EventDefOptions {
-				Attributes = 0,
-				Name = name,
-				EventType = eventType,
-			};
-		}
+		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType) => new EventDefOptions {
+			Attributes = 0,
+			Name = name,
+			EventType = eventType,
+		};
 	}
 }

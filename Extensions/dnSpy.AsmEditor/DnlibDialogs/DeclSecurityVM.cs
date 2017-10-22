@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -88,13 +88,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.decompilerService = decompilerService;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
-			this.origOptions = options;
-			this.CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
+			origOptions = options;
+			CustomAttributesVM = new CustomAttributesVM(ownerModule, decompilerService);
 			CustomAttributesVM.PropertyChanged += CustomAttributesVM_PropertyChanged;
-			this.DeclSecVerEnumList = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
-			this.SecurityActionEnumList = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
-			this.SecurityAttributesVM = new SecurityAttributesVM(ownerModule, decompilerService, ownerType, ownerMethod);
-			this.SecurityAttributesVM.Collection.CollectionChanged += SecurityAttributesVM_CollectionChanged;
+			DeclSecVerEnumList = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
+			SecurityActionEnumList = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
+			SecurityAttributesVM = new SecurityAttributesVM(ownerModule, decompilerService, ownerType, ownerMethod);
+			SecurityAttributesVM.Collection.CollectionChanged += SecurityAttributesVM_CollectionChanged;
 			Reinitialize();
 		}
 

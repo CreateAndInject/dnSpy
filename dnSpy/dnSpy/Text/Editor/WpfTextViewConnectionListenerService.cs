@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -30,12 +30,10 @@ namespace dnSpy.Text.Editor {
 		readonly ListenerInfo[] listenerInfos;
 
 		public WpfTextViewConnectionListenerService(IWpfTextView wpfTextView, Lazy<IWpfTextViewConnectionListener, IContentTypeAndTextViewRoleMetadata>[] wpfTextViewConnectionListeners) {
-			if (wpfTextView == null)
-				throw new ArgumentNullException(nameof(wpfTextView));
 			if (wpfTextViewConnectionListeners == null)
 				throw new ArgumentNullException(nameof(wpfTextViewConnectionListeners));
-			this.wpfTextView = wpfTextView;
-			this.listenerInfos = wpfTextViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new ListenerInfo(a)).ToArray();
+			this.wpfTextView = wpfTextView ?? throw new ArgumentNullException(nameof(wpfTextView));
+			listenerInfos = wpfTextViewConnectionListeners.Where(a => wpfTextView.Roles.ContainsAny(a.Metadata.TextViewRoles)).Select(a => new ListenerInfo(a)).ToArray();
 			wpfTextView.Closed += WpfTextView_Closed;
 			wpfTextView.TextDataModel.ContentTypeChanged += TextDataModel_ContentTypeChanged;
 			InitializeListeners();

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -34,9 +34,7 @@ namespace dnSpy.Text.Editor {
 		readonly IMessageBoxService messageBoxService;
 
 		[ImportingConstructor]
-		GoToCommandTargetFilterProvider(IMessageBoxService messageBoxService) {
-			this.messageBoxService = messageBoxService;
-		}
+		GoToCommandTargetFilterProvider(IMessageBoxService messageBoxService) => this.messageBoxService = messageBoxService;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
@@ -109,12 +107,10 @@ namespace dnSpy.Text.Editor {
 			int maxLines = snapshotLine.Snapshot.LineCount;
 
 			var res = messageBoxService.Ask(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
-				int? line, column;
-				TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out line, out column);
+				TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out var line, out var column);
 				return Tuple.Create<int, int?>(line.Value, column);
 			}, s => {
-				int? line, column;
-				return TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out line, out column);
+				return TryGetRowCol(s, snapshotLine.LineNumber, maxLines, out var line, out var column);
 			}, ownerWindow);
 			if (res == null) {
 				chosenLine = 0;
@@ -154,8 +150,7 @@ namespace dnSpy.Text.Editor {
 		static readonly Regex goToLineRegex2 = new Regex(@"^\s*,\s*(\d+)\s*$");
 
 		static bool TryParseOneBasedToZeroBased(string valText, out int? res) {
-			int val;
-			if (int.TryParse(valText, out val) && val > 0) {
+			if (int.TryParse(valText, out int val) && val > 0) {
 				res = val - 1;
 				return true;
 			}

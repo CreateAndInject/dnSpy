@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -38,13 +38,13 @@ namespace dnSpy.Contracts.Command {
 		public static KeyInput CtrlShiftAlt(Key key) => new KeyInput(key, ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt);
 
 		public KeyInput(Key key, ModifierKeys modifiers) {
-			this.Key = key;
-			this.Modifiers = modifiers;
+			Key = key;
+			Modifiers = modifiers;
 		}
 
 		public KeyInput(KeyEventArgs e) {
-			this.Key = e.Key == Key.System ? e.SystemKey : e.Key;
-			this.Modifiers = e.KeyboardDevice.Modifiers;
+			Key = e.Key == Key.System ? e.SystemKey : e.Key;
+			Modifiers = e.KeyboardDevice.Modifiers;
 		}
 
 		public static bool operator ==(KeyInput a, KeyInput b) => a.Equals(b);

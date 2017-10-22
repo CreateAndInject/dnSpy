@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -45,9 +45,7 @@ namespace dnSpy.Contracts.Decompiler {
 		/// <param name="module">Type</param>
 		public DecompileAssemblyInfo(IDecompilerOutput output, DecompilationContext ctx, ModuleDef module)
 			: base(output, ctx) {
-			if (module == null)
-				throw new ArgumentNullException(nameof(module));
-			Module = module;
+			Module = module ?? throw new ArgumentNullException(nameof(module));
 			KeepAllAttributes = false;
 		}
 	}

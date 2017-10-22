@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -160,6 +160,8 @@ namespace dnSpy.Text.Editor {
 		}
 
 		public CommandInfo? CreateFromTextInput(object target, string text) {
+			if (!(target is ITextView))
+				return null;
 			if (text.Length == 0 || (text.Length == 1 && (text[0] == '\u001B' || text[0] == '\b')))
 				return null;
 			return TextEditorIds.TYPECHAR.ToCommandInfo(text);

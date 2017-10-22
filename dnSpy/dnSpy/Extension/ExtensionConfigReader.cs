@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -57,8 +57,7 @@ namespace dnSpy.Extension {
 				return null;
 
 			var s = ((XText)fn).Value;
-			Version version;
-			if (Version.TryParse(s, out version))
+			if (Version.TryParse(s, out var version))
 				return version;
 
 			return null;

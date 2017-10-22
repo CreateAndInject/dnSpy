@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -29,6 +29,7 @@ using dnSpy.Contracts.Documents.Tabs.DocViewer;
 using dnSpy.Contracts.Documents.Tabs.DocViewer.ToolTips;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Language.Intellisense;
+using dnSpy.Contracts.Settings.AppearanceCategory;
 using dnSpy.Contracts.Text;
 using dnSpy.Contracts.Text.Classification;
 using dnSpy.Contracts.Text.Editor;
@@ -44,9 +45,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) {
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-		}
+		DocumentViewerToolTipServiceCommandTargetFilterProvider(Lazy<DocumentViewerToolTipServiceProvider> documentViewerToolTipServiceProvider) => this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 
 		public ICommandTargetFilter Create(object target) {
 			var textView = target as ITextView;
@@ -62,12 +61,8 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
 
 		public DocumentViewerToolTipServiceCommandTargetFilter(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider, ITextView textView) {
-			if (documentViewerToolTipServiceProvider == null)
-				throw new ArgumentNullException(nameof(documentViewerToolTipServiceProvider));
-			if (textView == null)
-				throw new ArgumentNullException(nameof(textView));
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-			this.textView = textView;
+			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider ?? throw new ArgumentNullException(nameof(documentViewerToolTipServiceProvider));
+			this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
 		}
 
 		DocumentViewerToolTipService TryGetInstance() {
@@ -141,7 +136,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		}
 
 		public DocumentViewerToolTipService GetService(IDocumentViewer documentViewer) =>
-			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.QuickInfoToolTip), themeClassificationTypeService, decompilerService));
+			documentViewer.TextView.Properties.GetOrCreateSingletonProperty(typeof(DocumentViewerToolTipService), () => new DocumentViewerToolTipService(dotNetImageService, codeToolTipSettings, documentViewerToolTipProviders, documentViewer, quickInfoBroker, classificationFormatMapService.GetClassificationFormatMap(AppearanceCategoryConstants.UIMisc), themeClassificationTypeService, decompilerService));
 	}
 
 	[Export(typeof(IQuickInfoSourceProvider))]
@@ -151,9 +146,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider;
 
 		[ImportingConstructor]
-		DocumentViewerToolTipServiceQuickInfoSourceProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) {
-			this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
-		}
+		DocumentViewerToolTipServiceQuickInfoSourceProvider(DocumentViewerToolTipServiceProvider documentViewerToolTipServiceProvider) => this.documentViewerToolTipServiceProvider = documentViewerToolTipServiceProvider;
 
 		public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer) {
 			var docViewer = textBuffer.TryGetDocumentViewer();
@@ -166,11 +159,7 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 	sealed class DocumentViewerToolTipServiceQuickInfoSource : IQuickInfoSource {
 		readonly DocumentViewerToolTipService documentViewerToolTipService;
 
-		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) {
-			if (documentViewerToolTipService == null)
-				throw new ArgumentNullException(nameof(documentViewerToolTipService));
-			this.documentViewerToolTipService = documentViewerToolTipService;
-		}
+		public DocumentViewerToolTipServiceQuickInfoSource(DocumentViewerToolTipService documentViewerToolTipService) => this.documentViewerToolTipService = documentViewerToolTipService ?? throw new ArgumentNullException(nameof(documentViewerToolTipService));
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) =>
 			documentViewerToolTipService.AugmentQuickInfoSession(session, quickInfoContent, out applicableToSpan);
@@ -189,30 +178,14 @@ namespace dnSpy.Documents.Tabs.DocViewer.ToolTips {
 		readonly IDecompilerService decompilerService;
 
 		public DocumentViewerToolTipService(IDotNetImageService dotNetImageService, ICodeToolTipSettings codeToolTipSettings, Lazy<IDocumentViewerToolTipProvider, IDocumentViewerToolTipProviderMetadata>[] documentViewerToolTipProviders, IDocumentViewer documentViewer, IQuickInfoBroker quickInfoBroker, IClassificationFormatMap classificationFormatMap, IThemeClassificationTypeService themeClassificationTypeService, IDecompilerService decompilerService) {
-			if (dotNetImageService == null)
-				throw new ArgumentNullException(nameof(dotNetImageService));
-			if (codeToolTipSettings == null)
-				throw new ArgumentNullException(nameof(codeToolTipSettings));
-			if (documentViewerToolTipProviders == null)
-				throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
-			if (documentViewer == null)
-				throw new ArgumentNullException(nameof(documentViewer));
-			if (quickInfoBroker == null)
-				throw new ArgumentNullException(nameof(quickInfoBroker));
-			if (classificationFormatMap == null)
-				throw new ArgumentNullException(nameof(classificationFormatMap));
-			if (themeClassificationTypeService == null)
-				throw new ArgumentNullException(nameof(themeClassificationTypeService));
-			if (decompilerService == null)
-				throw new ArgumentNullException(nameof(decompilerService));
-			this.dotNetImageService = dotNetImageService;
-			this.codeToolTipSettings = codeToolTipSettings;
-			this.documentViewerToolTipProviders = documentViewerToolTipProviders;
-			this.documentViewer = documentViewer;
-			this.quickInfoBroker = quickInfoBroker;
-			this.classificationFormatMap = classificationFormatMap;
-			this.themeClassificationTypeService = themeClassificationTypeService;
-			this.decompilerService = decompilerService;
+			this.dotNetImageService = dotNetImageService ?? throw new ArgumentNullException(nameof(dotNetImageService));
+			this.codeToolTipSettings = codeToolTipSettings ?? throw new ArgumentNullException(nameof(codeToolTipSettings));
+			this.documentViewerToolTipProviders = documentViewerToolTipProviders ?? throw new ArgumentNullException(nameof(documentViewerToolTipProviders));
+			this.documentViewer = documentViewer ?? throw new ArgumentNullException(nameof(documentViewer));
+			this.quickInfoBroker = quickInfoBroker ?? throw new ArgumentNullException(nameof(quickInfoBroker));
+			this.classificationFormatMap = classificationFormatMap ?? throw new ArgumentNullException(nameof(classificationFormatMap));
+			this.themeClassificationTypeService = themeClassificationTypeService ?? throw new ArgumentNullException(nameof(themeClassificationTypeService));
+			this.decompilerService = decompilerService ?? throw new ArgumentNullException(nameof(decompilerService));
 		}
 
 		public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan) {

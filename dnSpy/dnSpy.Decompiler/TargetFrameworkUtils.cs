@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright (C) 2014-2016 de4dot@gmail.com
+    Copyright (C) 2014-2017 de4dot@gmail.com
 
     This file is part of dnSpy
 
@@ -22,7 +22,7 @@ using dnlib.PE;
 using dnSpy.Decompiler.Properties;
 
 namespace dnSpy.Decompiler {
-	public static class TargetFrameworkUtils {
+	static class TargetFrameworkUtils {
 		/// <summary>
 		/// Gets the arch as a string
 		/// </summary>
